@@ -1,9 +1,11 @@
 #include <stdio.h>
 
+#include "ERR_CODES.h"
+
 int main(int argc, char **argv)
 {
-	printf("Ahoj, jak se vede, salati? :)\n");
+	printf("Ahoj, jak se vede, salati? %d :)\n", ERR_OK);
 	//komentar
 	getchar();
-	return 0;
+	return ERR_OK;
 }
