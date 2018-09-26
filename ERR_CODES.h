@@ -1,12 +1,8 @@
-/*
-	ERROR CODES
-	Vytvořil xberan43
-*/
+//
+// Created by janbe on 26.09.2018.
+//
 
-#ifndef _ERR_CODES_H
-#define _ERR_CODES_H
+#ifndef IFJ2018_ERR_CODES_H
+#define IFJ2018_ERR_CODES_H
 
-#define ERR_OK 0
-#define ERR_NOT_OK 1
-
-#endif
+#endif //IFJ2018_ERR_CODES_H

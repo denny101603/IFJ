@@ -1,0 +1,3 @@
+C:/Users/janbe/CLionProjects/IFJ2018/cmake-build-debug/CMakeFiles/IFJ2018.dir
+C:/Users/janbe/CLionProjects/IFJ2018/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/janbe/CLionProjects/IFJ2018/cmake-build-debug/CMakeFiles/rebuild_cache.dir
