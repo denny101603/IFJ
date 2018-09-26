@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/IFJ2018.dir/main.c.obj"
+  "CMakeFiles/IFJ2018.dir/main.c.o"
   "IFJ2018.pdb"
-  "IFJ2018.exe"
-  "IFJ2018.exe.manifest"
-  "libIFJ2018.dll.a"
+  "IFJ2018"
 )
 
 # Per-language clean rules from dependency scanning.
