@@ -1,4 +1,11 @@
-"C:\Program Files\JetBrains\CLion 2018.2.4\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" C:\Users\janbe\CLionProjects\IFJ2018
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/Volumes/seconddisk/do školy/Vejška/Druhák Prvnisem/IFJ/IFJ"
+-- The C compiler identification is AppleClang 9.1.0.9020039
+-- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc
+-- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: C:/Users/janbe/CLionProjects/IFJ2018/cmake-build-debug
+-- Build files have been written to: /Volumes/seconddisk/do školy/Vejška/Druhák Prvnisem/IFJ/IFJ/cmake-build-debug
