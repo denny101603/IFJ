@@ -109,21 +109,12 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.IFJ2018">
+  <component name="RunManager">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="IFJ2018" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IFJ2018" TARGET_NAME="IFJ2018" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="IFJ2018" RUN_TARGET_NAME="IFJ2018">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Application.Build All" />
-      <item itemvalue="Application.IFJ2018" />
-    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
