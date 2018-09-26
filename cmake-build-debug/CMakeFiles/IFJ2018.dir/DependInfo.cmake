@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/Volumes/seconddisk/do školy/Vejška/Druhák Prvnisem/IFJ/IFJ/main.c" "/Volumes/seconddisk/do školy/Vejška/Druhák Prvnisem/IFJ/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.o"
+  "C:/Users/danbu/CLionProjects/IFJ/IFJ/main.c" "C:/Users/danbu/CLionProjects/IFJ/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
   )
-set(CMAKE_C_COMPILER_ID "AppleClang")
+set(CMAKE_C_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH

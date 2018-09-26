@@ -4,6 +4,7 @@ int main() {
     printf("Hello, World!\n");
     //ahoj, já jsem carbik a posilam comit
     //Galantní Jelen
-    //Berry was here! 
+    //Berry was here!
+    //z toho by se jeden posral(hlavně denny)
     return 0;
 }
