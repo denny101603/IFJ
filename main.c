@@ -6,7 +6,8 @@ int main(int argc, char **argv)
 {
 	printf("Ahoj, jak se vede, salati? %d :)\n", ERR_OK);
 	//komentar
-	//FUCK YOU!!!
+	//FUCK YOU !!!
+	//berry
 	getchar();
 	return ERR_OK;
 }
