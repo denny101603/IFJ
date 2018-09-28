@@ -6,8 +6,6 @@
  * Datum: 28.9.2018
  *
  */
-//TODO
-//Zmenit jmeno na mala pismena
 
 #ifndef IFJ2018_ERR_CODES_H
 #define IFJ2018_ERR_CODES_H
