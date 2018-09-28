@@ -5,6 +5,7 @@
  * Verze: 1.1
  * Datum: 28.9.2018
  *
+ * 
  */
 
 #ifndef IFJ2018_ERR_CODES_H
