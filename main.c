@@ -10,7 +10,7 @@ int main() {
     //Galantní Jelen
     //Berry was here!
     //z toho by se jeden posral(hlavně denny)
-    int Meduna[4] =[0, 15, 30, 45];
+    int Meduna[4] = {0, 15, 30, 45};
     int arr_time = 17;
     int shoda = 0;
     for (int i = 0; i < 4; i++)
