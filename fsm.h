@@ -27,6 +27,8 @@ enum states {
     OP_LESS_0,
     OP_LESS_1,
     OP_LESS_EQUAL,
+    LEFT_BRACKET,
+    RIGHT_BRACKET,
     OP_COMMA,
     EOL_0,
     EOL_1,
