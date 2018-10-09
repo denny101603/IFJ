@@ -10,6 +10,21 @@ int main() {
     //Galantní Jelen
     //Berry was here!
     //z toho by se jeden posral(hlavně denny)
+    
+    
+    
+    
+    
+    
+    
+    ///blah blah blah toto by pak mělo být v berrym na smrt
+    
+    
+    
+    
+    
+    
+    
     int Meduna[4] = {0, 15, 30, 45};
     int arr_time = 17;
     int shoda = 0;
