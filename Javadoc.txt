@@ -12,9 +12,6 @@ Do každého souboru dávat tuto preambuli:
 *	Jan Carba (xcarba00)			           *
 *	Matej Jelinek (xjelen49)			       *
 *						                           *
-*	Tento soubor je soucasti IFJ projektu.*
-*	Kopirovani prinese zhoubu nam i vam, 	*
-*	tak to prosim nedelejte. Diky! :D 	  *
 ***************************************/
 
 Do každého souboru dále tuto hlavičku: 
