@@ -4,6 +4,10 @@
 
 #ifndef IFJ_FSM_STATES_H
 #define IFJ_FSM_STATES_H
+
+///bla bal bal
+int get_token();
+
 enum states {
     START,
     LEX_ERROR = 1,

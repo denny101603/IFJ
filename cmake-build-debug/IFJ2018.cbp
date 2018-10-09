@@ -76,7 +76,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/Users/danbu/CLionProjects/IFJ/IFJ/ERR_CODES.h">
+		<Unit filename="C:/Users/danbu/CLionProjects/IFJ/IFJ/err_codes.h">
 			<Option target="IFJ2018"/>
 		</Unit>
 		<Unit filename="C:/Users/danbu/CLionProjects/IFJ/IFJ/main.c">
