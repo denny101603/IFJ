@@ -3,4 +3,4 @@ project(IFJ2018 C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(IFJ2018 main.c err_codes.h)
+add_executable(IFJ2018 main.c err_codes.h fsm.c fsm.h)

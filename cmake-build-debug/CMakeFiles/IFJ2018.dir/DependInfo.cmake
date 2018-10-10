@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "C:/Users/danbu/CLionProjects/IFJ/IFJ/fsm.c" "C:/Users/danbu/CLionProjects/IFJ/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/fsm.c.obj"
   "C:/Users/danbu/CLionProjects/IFJ/IFJ/main.c" "C:/Users/danbu/CLionProjects/IFJ/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
