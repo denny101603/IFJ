@@ -17,6 +17,10 @@
 #ifndef IFJ_FSM_STATES_H
 #define IFJ_FSM_STATES_H
 
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #define INIT_SIZE 128 //inicializacni velikost pole
 
 /**
