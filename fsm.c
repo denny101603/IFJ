@@ -117,7 +117,8 @@ int get_token()
         }
     }
 }
-int init_array(Tarray *arr)
+
+int arr_init(Tarray *arr)
 {
     arr->array = (char *) malloc(sizeof(char) * INIT_SIZE);
     if(arr->array == NULL)

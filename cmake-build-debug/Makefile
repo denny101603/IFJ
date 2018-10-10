@@ -122,6 +122,33 @@ IFJ2018/fast:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/build
 .PHONY : IFJ2018/fast
 
+fsm.obj: fsm.c.obj
+
+.PHONY : fsm.obj
+
+# target to build an object file
+fsm.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.obj
+.PHONY : fsm.c.obj
+
+fsm.i: fsm.c.i
+
+.PHONY : fsm.i
+
+# target to preprocess a source file
+fsm.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.i
+.PHONY : fsm.c.i
+
+fsm.s: fsm.c.s
+
+.PHONY : fsm.s
+
+# target to generate assembly for a file
+fsm.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.s
+.PHONY : fsm.c.s
+
 main.obj: main.c.obj
 
 .PHONY : main.obj
@@ -158,6 +185,9 @@ help:
 	@echo ... IFJ2018
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... fsm.obj
+	@echo ... fsm.i
+	@echo ... fsm.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
