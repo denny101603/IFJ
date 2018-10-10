@@ -22,7 +22,7 @@
 
 #define	MESSAGE_LEX "Chyba v lexikalnim analyzatoru, program bude ukoncen."
 #define	MESSAGE_SYN "Chyba syntakticke analyzy, program bude ukoncen."
-#define MESSAGE_SEM_DEF"Semanticka chyba (problem s definici). Program bude ukoncen."
+#define MESSAGE_SEM_DEF "Semanticka chyba (problem s definici). Program bude ukoncen."
 #define MESSAGE_SEM_TYPE "Semanticka chyba (typova kompatibilita). Program bude ukoncen."
 #define	MESSAGE_SEM_PARAM "Volani funkce s nespravnym poctem parametru, program bude ukoncen."
 #define MESSAGE_SEM_MISC "Doslo k neidentifikovane semanticke chybe. Program bude ukoncen."
