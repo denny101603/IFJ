@@ -1,10 +1,11 @@
 /*
  * err_codes.h jako soucast projektu do IFJ 2018
  * Hlavickovy soubor obsahuje vsechny potrebne chybove kody vcetne ERR_OK - navrat bez chyby.
- * Autor: xberan43
- * Verze: 1.1
- * Datum: 28.9.2018
+ * Autor: Jan Beran
+ * Verze: 1.2
+ * Datum: 11.10.2018
  *
+ * v1.2: doplněna chybová hlášení
  */
 
 #ifndef IFJ2018_ERR_CODES_H

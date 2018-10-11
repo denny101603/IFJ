@@ -10,8 +10,10 @@
 ***************************************/
 /**
 *	@file fsm.c
-*	@author Daniel Bubenicek
+*	@author Daniel Bubenicek, Jan Beran
 *	@brief implementace konecneho automatu pro lexikalni analyzator
+ *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
+ *
 */
 
 #include "fsm.h"
@@ -20,24 +22,120 @@
 int get_token()
 {
     int actual_state = START;
+    int next_state = LEX_ERROR;
     bool final_state = false;
+    char c;
 
-    while(!final_state) {
-        switch (actual_state) {
+    Tarray token_value;
+    arr_init(&token_value); //Pole znaku
+
+    while(!final_state)
+    {
+        switch (actual_state)
+        {
             case START:
-                actual_state = LEX_ERROR;
-                break;
+                c = (char) getchar();
+                arr_reset(&token_value); //TODO Resetuje flagy nebo ne?
+                switch(c)
+                {
+                    case ' ': //mezera
+                    case '\t': //tabulator
+                        next_state = START;
+                        break;
+                    case EOL:
+                        next_state = EOL_0;
+                        break;
+                    case '+':
+                        next_state = OP_PLUS;
+                        break;
+                    case '-':
+                        next_state = OP_MINUS;
+                        break;
+                    case '*':
+                        next_state = OP_MULT;
+                        break;
+                    case '/':
+                        next_state = OP_DIV;
+                        break;
+                    case '(':
+                        next_state = LEFT_BRACKET;
+                        break;
+                    case ')':
+                        next_state = RIGHT_BRACKET;
+                        break;
+                    case '0':
+                        next_state = NUMBER_0;
+                        break;
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        next_state = NUMBER_1;
+                        break;
+                    case '>':
+                        next_state = OP_MORE_0;
+                        break;
+                    case '<':
+                        next_state = OP_LESS_0;
+                        break;
+                    case',':
+                        next_state = OP_COMMA;
+                        break;
+                    case'"':
+                        next_state = STRING_0;
+                        break;
+                    case '#':
+                        next_state = ONE_LINE_COMMENT;
+                        break;
+                    case '.': //.IFJcode18 ??
+                    {
+                        char ifj[] = ".IFJcode18";
+                        for (int i = 0; ifj[i] != '\0'; i++)
+                        {
+                            if(ifj[i] != c)
+                            {
+                                next_state = LEX_ERROR;
+                                break; //break for
+                            }
+                            else
+                            {
+                                arr_add_char(&token_value, c);
+                            }
+                            c =(char) getchar();
+                        }
+                        next_state = IFJ_CODE_PREAM;
+                        break; //break case
+                    }
+                    case EOF:
+                        next_state = EOF_STATE;
+                        break;
+                    default:
+                        next_state = LEX_ERROR;
+                }
+                arr_add_char(&token_value, c);
+                break; //konec START
             case LEX_ERROR:
+                final_state = true;
                 break;
             case IFJ_CODE_PREAM:
+                final_state = true;
                 break;
             case OP_PLUS:
+                final_state = true;
                 break;
             case OP_MINUS:
+                final_state = true;
                 break;
             case OP_DIV:
+                final_state = true;
                 break;
             case OP_MULT:
+                final_state = true;
                 break;
             case OP_EQAL_0:
                 break;
@@ -61,21 +159,98 @@ int get_token()
                 break;
             case OP_LESS_EQUAL:
                 break;
+            case LEFT_BRACKET:
+                final_state = true;
+                break;
+            case RIGHT_BRACKET:
+                final_state = true;
+                break;
             case OP_COMMA:
                 break;
             case EOL_0:
+                c = (char) getchar();
+                if(c == '=')
+                    next_state = BLOCK_COMMENT_0;
+                else
+                {
+                    next_state = EOL_1;
+                    arr_add_to_buffer(&token_value, c); //TODO Vznika problem: jdeme do koncoveho stavu a budeme odesilat token, ale mame neco v bufferu a ten se nam smaze. Co s tim?
+                }
                 break;
             case EOL_1:
+                final_state = true;
                 break;
             case BLOCK_COMMENT_0:
+                c = (char) getchar();
+                char comm_begin[] = "begin";
+                for (int i = 0; comm_begin[i] != '\0'; i++)
+                {
+                    if(comm_begin[i] != c)
+                    {
+                        next_state = LEX_ERROR;
+                        break; //break for
+                    }
+                    else
+                    {
+                        arr_add_char(&token_value, c);
+                    }
+                    c =(char) getchar();
+                }
+                if (c == ' ' || c == '\t')
+                {
+                    next_state = BLOCK_COMMENT_1;
+                    arr_add_to_buffer(&token_value, c);
+                }
+                else
+                    next_state = LEX_ERROR;
                 break;
             case BLOCK_COMMENT_1:
+                c = (char) getchar();
+                while(c != EOL && c != EOF) //TODO Bude ten vstup ukonceny EOFem?
+                {
+                    c = (char) getchar();
+                }
+                if(c == EOL)
+                    next_state = BLOCK_COMMENT_2;
+                else
+                    next_state = LEX_ERROR;
                 break;
             case BLOCK_COMMENT_2:
+                c = (char) getchar();
+                char comm_end[] = "=end";
+                for (int i = 0; comm_end[i] != '\0'; i++)
+                {
+                    if(comm_end[i] != c)
+                    {
+                        next_state = LEX_ERROR;
+                        break; //break for
+                    }
+                    else
+                    {
+                        arr_add_char(&token_value, c);
+                    }
+                    c =(char) getchar();
+                }
+                if (c == ' ' || c == '\t')
+                {
+                    next_state = START;
+                    arr_add_to_buffer(&token_value, c);
+                }
+                else
+                    next_state = BLOCK_COMMENT_1;
                 break;
-            case BLOCK_COMMMENT_3:
+            case BLOCK_COMMMENT_3: //TODO vyhodit?
                 break;
             case ONE_LINE_COMMENT:
+                c = (char) getchar();
+                while(c != EOL && c != EOF) //TODO Bude ten vstup ukonceny EOFem?
+                {
+                    c = (char) getchar();
+                }
+                if(c == EOF)
+                    next_state = EOF_STATE;
+                if(c == EOL)
+                    next_state = START;
                 break;
             case ID_0:
                 break;
@@ -86,16 +261,73 @@ int get_token()
             case KEY_WORD:
                 break;
             case EOF_STATE:
+                final_state = true;
                 break;
             case STRING_0:
+                c = (char) getchar();
+                while (c != '"' && c != '\\')
+                {
+                    arr_add_char(&token_value, c);
+                    c = (char) getchar();
+                }
+                if (c == '"')
+                    next_state = STRING_1;
+                else if (c == '\\')
+                    next_state = ESCAPE_0;
                 break;
             case STRING_1:
+                final_state = true;
                 break;
             case ESCAPE_0:
+                c = (char) getchar(); //nactu znak bez lomitka
+                switch(c)
+                {
+                    case '"':
+                        arr_add_char(&token_value, '\"');
+                        break;
+                    case 'n':
+                        arr_add_char(&token_value, '\n');
+                        break;
+                    case 't':
+                        arr_add_char(&token_value, '\t');
+                        break;
+                    case 's':
+                        arr_add_char(&token_value, ' ');
+                        break;
+                    case '\\':
+                        arr_add_char(&token_value, '\\');
+                        break;
+                    case 'x':
+                        next_state = ESCAPE_1;
+                        break;
+                    default:
+                        arr_add_char(&token_value, c);
+                        next_state = STRING_1;
+                        break;
+                }
                 break;
             case ESCAPE_1:
+                c = (char)getchar();
+                char hexa[2];
+                int num = 0;
+                if((c >= '0' && c <= '9') ||
+                   (c >= 'a' && c <= 'f') ||
+                   (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
+                {
+                    hexa[0]=c;
+                    c = (char) getchar();
+                    if((c >= '0' && c <= '9') ||
+                       (c >= 'a' && c <= 'f') ||
+                       (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
+                    {
+                        hexa[1] = c;
+                        //TODO - jak z pole hexa udelat znak o ordinalni hodnote pole hexa??
+
+                    }
+                }
+
                 break;
-            case ESCAPE_2:
+            case ESCAPE_2: // asi pryč
                 break;
             case NUMBER_0:
                 break;
@@ -113,8 +345,10 @@ int get_token()
                 break;
             case FLOAT_EXP_2:
                 break;
-
+            default:
+                next_state = ERR_INTERNAL;
         }
+        actual_state = next_state;
     }
 }
 
@@ -153,6 +387,13 @@ int arr_add_char(Tarray *arr, char c)
     return SUCCESS;
 }
 
+int arr_add_to_buffer(Tarray *arr, char c)
+{
+    if(arr == NULL) return ERR_INTERNAL;
+    arr->buffer = c;
+    arr->buffer_flag = true;
+    return SUCCESS;
+}
 int arr_reset(Tarray *arr)
 {
     if(arr->lenght != INIT_SIZE) //pokud je pole vetsi nez vychozi velikos

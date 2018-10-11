@@ -12,6 +12,7 @@
 *	@file fsm.h
 *	@author Daniel Bubenicek, Jan Beran
 *	@brief knihovna pro potreby konecneho automatu pro lexikalni analyzator
+ *	v1.1: opraveny chyby v komentech
 */
 
 #ifndef IFJ2018_FSM_H
@@ -22,6 +23,8 @@
 #include <stdlib.h>
 
 #define INIT_SIZE 128 //inicializacni velikost pole
+
+#define EOL '\n'
 
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
@@ -39,11 +42,8 @@ typedef struct{
 
 /**
 *	@brief funkce pomoci ktere pozada syntakticky analyzator o dalsi token
-*	@author Daniel Bubenicek
-*	@param jmeno_parametru – hodnoty
-*	@param[in, out] jmeno_ukazatele – [in, out] = vstupni, vystupni. Muze byt i jen [in] nebo [out]
+*	@author Daniel Bubenicek, Jan Beran
 *	@return navratova_hodnota, pokud existuje
-*	@note poznamka (nepovinne)
 */
 int get_token();
 
@@ -56,7 +56,7 @@ int get_token();
 int arr_init(Tarray *arr);
 
 /**
-*	@brief Pridani znaku do pole arr (hlida presahnuti lenght a pripadne realukuje na vetsi)
+*	@brief Pridani znaku do pole arr (hlida presahnuti lenght a pripadne realokuje na vetsi)
 *	@author Daniel Bubenicek
 *	@param c - znak k pridani
 *	@param[in, out] arr – cilove pole
@@ -66,7 +66,16 @@ int arr_init(Tarray *arr);
 int arr_add_char(Tarray *arr, char c);
 
 /**
-*	@brief nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
+ * @brief Funkce prida do bufferu v poli arr znak c
+ * &author Jan Beran
+ * @param[in, out] arr - cilove pole
+ * @param c
+ * @return SUCCESS nebo ERR_INTERNAL, pokud arr == NULL
+ */
+int arr_add_to_buffer(Tarray *arr, char c);
+
+/**
+*	@brief Nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
 *	@author Daniel Bubenicek
 *	@param[in, out] arr – cilove pole
 *	@return SUCCES nebo ERR_INTERNAL pro neuspesnou realokaci
@@ -75,7 +84,7 @@ int arr_add_char(Tarray *arr, char c);
 int arr_reset(Tarray *arr);
 
 /**
-*	@brief uvolni pamet pole
+*	@brief Uvolni pamet pole
 *	@author Daniel Bubenicek
 *	@param[in, out] arr – cilove pole
 */
@@ -89,7 +98,10 @@ void arr_free(Tarray *arr);
 */
 char *arr_get_value(Tarray *arr);
 
-
+/**
+ *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.
+*   @author Jan Beran
+ */
 enum states {
     START,
     LEX_ERROR,
@@ -130,6 +142,7 @@ enum states {
     ESCAPE_1,
     ESCAPE_2,
     NUMBER_0,
+    NUMBER_1,
     INTEGER,
     FLOAT_0,
     FLOAT_1,
