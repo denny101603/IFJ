@@ -16,8 +16,6 @@
 
 #include "fsm.h"
 #include "err_codes.h"
-#include <stdbool.h>
-
 
 int get_token()
 {
@@ -119,7 +117,8 @@ int get_token()
         }
     }
 }
-int init_array(Tarray *arr)
+
+int arr_init(Tarray *arr)
 {
     arr->array = (char *) malloc(sizeof(char) * INIT_SIZE);
     if(arr->array == NULL)
@@ -138,7 +137,7 @@ int arr_add_char(Tarray *arr, char c)
 {
     if(arr->lenght > arr->used) //pokud je misto
     {
-        arr->array[used++] = c; //pridani prvku na prvni volne misto a zvyseni used
+        arr->array[arr->used++] = c; //pridani prvku na prvni volne misto a zvyseni used
         return SUCCESS;
     }
     char *temp_ptr = (char *) realloc(arr->array, sizeof(char) * arr->lenght * 2); //zvetseni pole na dvojnasobek
@@ -150,7 +149,7 @@ int arr_add_char(Tarray *arr, char c)
     }
     arr->array = temp_ptr; //predani noveho ukazatele na pole
     arr->lenght *= 2; //velikost se nam zdvojnasobila
-    arr->array[used++] = c; //pridani prvku na prvni volne misto a zvyseni used
+    arr->array[arr->used++] = c; //pridani prvku na prvni volne misto a zvyseni used
     return SUCCESS;
 }
 

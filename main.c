@@ -9,6 +9,7 @@
 * Matej Jelinek xjelin49
 *******************************/
 #include <stdio.h>
+#include "fsm.h"
 
 int main() {
     printf("Hello, World!\n");
@@ -17,5 +18,9 @@ int main() {
     //Berry was here!
     //TODO
     //z toho by se jeden posral(hlavně denny)
+
+    Tarray arr;
+    arr_init(&arr);
+    arr_free(&arr);
     return 0;
 }

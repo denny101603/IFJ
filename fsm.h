@@ -14,8 +14,12 @@
 *	@brief knihovna pro potreby konecneho automatu pro lexikalni analyzator
 */
 
-#ifndef IFJ_FSM_STATES_H
-#define IFJ_FSM_STATES_H
+#ifndef IFJ2018_FSM_H
+#define IFJ2018_FSM_H
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define INIT_SIZE 128 //inicializacni velikost pole
 
@@ -135,4 +139,4 @@ enum states {
     FLOAT_EXP_2,
 };
 
-#endif //IFJ_FSM_STATES_H
+#endif //IFJ2018_FSM_H
