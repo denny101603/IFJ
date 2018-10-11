@@ -19,23 +19,21 @@
 #include "fsm.h"
 #include "err_codes.h"
 
-int get_token()
+
+Ttoken get_token(Tarray token_value)
 {
     int actual_state = START;
     int next_state = LEX_ERROR;
     bool final_state = false;
-    char c;
-
-    Tarray token_value;
-    arr_init(&token_value); //Pole znaku
+    int c;
 
     while(!final_state)
     {
         switch (actual_state)
         {
-            case START:
-                c = (char) getchar();
-                arr_reset(&token_value); //TODO Resetuje flagy nebo ne?
+            case START: //plne hotovy
+                c = get_next_char(&token_value);
+                arr_reset(&token_value);
                 switch(c)
                 {
                     case ' ': //mezera
@@ -106,7 +104,7 @@ int get_token()
                             {
                                 arr_add_char(&token_value, c);
                             }
-                            c =(char) getchar();
+                            c =get_next_char(&token_value);
                         }
                         next_state = IFJ_CODE_PREAM;
                         break; //break case
@@ -120,9 +118,10 @@ int get_token()
                 arr_add_char(&token_value, c);
                 break; //konec START
             case LEX_ERROR:
+                return ERR_LEX; //TODO takhle to nepůjde, jak jinak to čistě ukončit?
                 final_state = true;
                 break;
-            case IFJ_CODE_PREAM:
+            case IFJ_CODE_PREAM: //TODO budoucí syntaktak by mel mit kontrolu, jestli prvni flag je preambule
                 final_state = true;
                 break;
             case OP_PLUS:
@@ -168,7 +167,7 @@ int get_token()
             case OP_COMMA:
                 break;
             case EOL_0:
-                c = (char) getchar();
+                c = get_next_char(&token_value);
                 if(c == '=')
                     next_state = BLOCK_COMMENT_0;
                 else
@@ -181,7 +180,7 @@ int get_token()
                 final_state = true;
                 break;
             case BLOCK_COMMENT_0:
-                c = (char) getchar();
+                c = get_next_char(&token_value);
                 char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
                 {
@@ -194,7 +193,7 @@ int get_token()
                     {
                         arr_add_char(&token_value, c);
                     }
-                    c =(char) getchar();
+                    c = get_next_char(&token_value);
                 }
                 if (c == ' ' || c == '\t')
                 {
@@ -205,10 +204,10 @@ int get_token()
                     next_state = LEX_ERROR;
                 break;
             case BLOCK_COMMENT_1:
-                c = (char) getchar();
-                while(c != EOL && c != EOF) //TODO Bude ten vstup ukonceny EOFem?
+                c = get_next_char(&token_value);
+                while(c != EOL && c != EOF)
                 {
-                    c = (char) getchar();
+                    c = get_next_char(&token_value);
                 }
                 if(c == EOL)
                     next_state = BLOCK_COMMENT_2;
@@ -216,7 +215,7 @@ int get_token()
                     next_state = LEX_ERROR;
                 break;
             case BLOCK_COMMENT_2:
-                c = (char) getchar();
+                c = get_next_char(&token_value);
                 char comm_end[] = "=end";
                 for (int i = 0; comm_end[i] != '\0'; i++)
                 {
@@ -229,7 +228,7 @@ int get_token()
                     {
                         arr_add_char(&token_value, c);
                     }
-                    c =(char) getchar();
+                    c = get_next_char(&token_value);
                 }
                 if (c == ' ' || c == '\t')
                 {
@@ -242,10 +241,10 @@ int get_token()
             case BLOCK_COMMMENT_3: //TODO vyhodit?
                 break;
             case ONE_LINE_COMMENT:
-                c = (char) getchar();
-                while(c != EOL && c != EOF) //TODO Bude ten vstup ukonceny EOFem?
+                c = get_next_char(&token_value);
+                while(c != EOL && c != EOF)
                 {
-                    c = (char) getchar();
+                    c = get_next_char(&token_value);
                 }
                 if(c == EOF)
                     next_state = EOF_STATE;
@@ -264,11 +263,11 @@ int get_token()
                 final_state = true;
                 break;
             case STRING_0:
-                c = (char) getchar();
+                c = get_next_char(&token_value);
                 while (c != '"' && c != '\\')
                 {
                     arr_add_char(&token_value, c);
-                    c = (char) getchar();
+                    c = get_next_char(&token_value);
                 }
                 if (c == '"')
                     next_state = STRING_1;
@@ -279,7 +278,7 @@ int get_token()
                 final_state = true;
                 break;
             case ESCAPE_0:
-                c = (char) getchar(); //nactu znak bez lomitka
+                c = get_next_char(&token_value); //nactu znak bez lomitka
                 switch(c)
                 {
                     case '"':
@@ -307,7 +306,7 @@ int get_token()
                 }
                 break;
             case ESCAPE_1:
-                c = (char)getchar();
+                c = get_next_char(&token_value);
                 char hexa[2];
                 int num = 0;
                 if((c >= '0' && c <= '9') ||
@@ -315,14 +314,15 @@ int get_token()
                    (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                 {
                     hexa[0]=c;
-                    c = (char) getchar();
+                    c = get_next_char(&token_value);
                     if((c >= '0' && c <= '9') ||
                        (c >= 'a' && c <= 'f') ||
                        (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                     {
                         hexa[1] = c;
-                        //TODO - jak z pole hexa udelat znak o ordinalni hodnote pole hexa??
-
+                        //TODO - Je zadano char pole o dvou znacích, které vyjadřuje číslo v hexasoustavě. Cíl: funkce, která vrátí znak s danou hodnotou v ASCII tabulce.
+                        sscanf(hexa, "%x", &num);
+                        arr_add_char(&token_value, (char)c);
                     }
                 }
 
@@ -387,6 +387,18 @@ int arr_add_char(Tarray *arr, char c)
     return SUCCESS;
 }
 
+int get_from_buffer(Tarray *arr)
+{
+    return arr->buffer;
+}
+
+int get_next_char(Tarray *arr)
+{
+  if(arr->buffer_flag == true)
+      return get_from_buffer(arr);
+  else
+      return getchar();
+}
 int arr_add_to_buffer(Tarray *arr, char c)
 {
     if(arr == NULL) return ERR_INTERNAL;

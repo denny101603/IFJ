@@ -21,7 +21,8 @@ int main() {
 
 
     Tarray arr;
-    arr_init(&arr);
+    arr_init(&arr); //Pole znaku
+    get_token(arr);
     arr_free(&arr);
     return 0;
 }

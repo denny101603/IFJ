@@ -28,6 +28,7 @@
 
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
+ *	@author Daniel Bubenicek
  *	@warning k upravam promennych array, lenght, used jsou vyuzity funkce, neupravovat rucne!
 */
 typedef struct{
@@ -39,13 +40,24 @@ typedef struct{
     bool eol_flag; //jestli predchazel EOL
 }Tarray;
 
+/**
+ * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
+ * @author Jan Beran
+ * @warning Pro load a get hodnot z a do struktury pouzivat prosim specialni funkce
+ * @warning v0.1 = jen aby kompilator nerval pri prekladu, zatim neni plne funkcni (nejsou funkce pro praci)
+ */
+typedef struct{
+    char *value;
+    char *attribute;
+}Ttoken;
 
 /**
 *	@brief funkce pomoci ktere pozada syntakticky analyzator o dalsi token
 *	@author Daniel Bubenicek, Jan Beran
+ *	@param arr pole pro pripravu tokenu
 *	@return navratova_hodnota, pokud existuje
 */
-int get_token();
+Ttoken get_token(Tarray arr);
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)
@@ -74,6 +86,23 @@ int arr_add_char(Tarray *arr, char c);
  */
 int arr_add_to_buffer(Tarray *arr, char c);
 
+/**
+ *  @brief Funkce, pres kterou se nacita novy znak v KA Lex. analyzatoru. Pri flagu buffer_flag bere hodnotu z bufferu, jinak ze stdin
+ * @author Jan Beran
+ * @param arr - odkaz na pole pro tvorbu tokenu
+ * @return nacteny znak
+ */
+int get_next_char(Tarray *arr);
+
+/**
+ * @brief Funkce vraci hodnotu c z pole arr a rovnou nastavuje flag buffer_flag na false
+ * @author Jan Beran
+ * @param arr - odkaz na pole typu Tarray
+ * @return znak z bufferu
+ * @note Jedna se o privatni funkci, pro ziskani znaku z bufferu doporucuji funkci get_next_char(), ktera rovnou hlida i flag
+ * @warning Funkce se smi volat pouze pri buffer_flag = true
+ */
+ int get_from_buffer(Tarray *arr);
 /**
 *	@brief Nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
 *	@author Daniel Bubenicek
