@@ -21,7 +21,7 @@
 
 char TOKEN_TYPE = 'a';//TODO dodelat #define TYPE_INT atd kazdy typ tokenu TOKEN_TYPE pouze docasny
 
-Ttoken get_token(Tarray token_value)
+Ttoken *get_token(Tarray token_value)
 {
     int actual_state = START;
     int next_state = LEX_ERROR;
@@ -181,7 +181,7 @@ Ttoken get_token(Tarray token_value)
             case EOL_1:
                 final_state = true;
                 break;
-            case BLOCK_COMMENT_0:
+            case BLOCK_COMMENT_0: //DONE
                 c = get_next_char(&token_value);
                 char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
@@ -197,15 +197,15 @@ Ttoken get_token(Tarray token_value)
                     }
                     c = get_next_char(&token_value);
                 }
-                if (c == ' ' || c == '\t')
+                if (c == ' ' || c == '\t') //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
                     arr_add_to_buffer(&token_value, c);
                 }
                 else
                     next_state = LEX_ERROR;
-                break;
-            case BLOCK_COMMENT_1:
+                break; //konec BLOCK_COMMENT_0
+            case BLOCK_COMMENT_1: // DONE
                 c = get_next_char(&token_value);
                 while(c != EOL && c != EOF)
                 {
@@ -213,10 +213,10 @@ Ttoken get_token(Tarray token_value)
                 }
                 if(c == EOL)
                     next_state = BLOCK_COMMENT_2;
-                else
+                else //else if (c == EOF)
                     next_state = LEX_ERROR;
-                break;
-            case BLOCK_COMMENT_2:
+                break;//konec BLOCK_COMMENT_1
+            case BLOCK_COMMENT_2: //TODO next (berry)
                 c = get_next_char(&token_value);
                 char comm_end[] = "=end";
                 for (int i = 0; comm_end[i] != '\0'; i++)
@@ -322,7 +322,6 @@ Ttoken get_token(Tarray token_value)
                        (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                     {
                         hexa[1] = c;
-                        //TODO - Je zadano char pole o dvou znacích, které vyjadřuje číslo v hexasoustavě. Cíl: funkce, která vrátí znak s danou hodnotou v ASCII tabulce.
                         sscanf(hexa, "%x", &num);
                         arr_add_char(&token_value, (char)c);
                     }

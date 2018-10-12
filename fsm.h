@@ -60,9 +60,9 @@ typedef struct{
 *	@author Daniel Bubenicek, Jan Beran
  *	@param arr pole pro pripravu tokenu
  *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
-*	@return Ttoken - token typu Ttoken
+*	@return Ttoken - ukazatel na token
 */
-Ttoken get_token(Tarray arr);
+Ttoken *get_token(Tarray arr);
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)
