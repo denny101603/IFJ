@@ -434,8 +434,7 @@ void arr_free(Tarray *arr)
 
 char *arr_get_value(Tarray *arr)
 {
-    //TODO DENNY, jsi si jist prioritou operaci? nemaji tam byt zavorky?
-    char *output = (char *) malloc(sizeof(char) * arr->used + 1); //alokace pro predavany retezec, jedno misto navic pro \0
+    char *output = (char *) malloc(sizeof(char) * (arr->used + 1)); //alokace pro predavany retezec, jedno misto navic pro \0
     if(output == NULL)
     {
         fprintf(stderr, MESSAGE_ALLOCATION);
