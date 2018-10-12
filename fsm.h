@@ -43,19 +43,24 @@ typedef struct{
 /**
  * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
  * @author Jan Beran
+ * @note pro operatory je attribut shodny s typem (type = '*' => attribute = '*')
  * @warning Pro load a get hodnot z a do struktury pouzivat prosim specialni funkce
- * @warning v0.1 = jen aby kompilator nerval pri prekladu, zatim neni plne funkcni (nejsou funkce pro praci)
+ * @warning v0.5 = funkce hotove, netestovane.
  */
 typedef struct{
-    char *value;
-    char *attribute;
+    char *type; //pole pro typ tokenu
+    char *attribute; //pole pro atribut tokenu
+    int t_used; //skutecna delka typu
+    int a_used; //skutecna delka atributu
+    int a_len; //maximalni delka atributu, pri presahu nutno realokovat
 }Ttoken;
 
 /**
 *	@brief funkce pomoci ktere pozada syntakticky analyzator o dalsi token
 *	@author Daniel Bubenicek, Jan Beran
  *	@param arr pole pro pripravu tokenu
-*	@return navratova_hodnota, pokud existuje
+ *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
+*	@return Ttoken - token typu Ttoken
 */
 Ttoken get_token(Tarray arr);
 
@@ -122,10 +127,63 @@ void arr_free(Tarray *arr);
 /**
 *	@brief vraci retezec s obsahem pole
 *	@author Daniel Bubenicek
-*	@param[in] arr – cilove pole
+*	@param[in] arr – zdrojove pole
 *	@return ukazatel na dyn. alokovany retezec zakonceny \0, pro prazdne pole "\0", pri neuspesne alokaci null
 */
 char *arr_get_value(Tarray *arr);
+
+/**
+ * @brief Inicializace tokenu; dynamicka alokace pameti atp
+ * @author Jan Beran
+ * @param token - token k inicializace
+ * @return SUCCESS nebo ERR_INTERNAL
+ */
+int token_init(Ttoken *token);
+
+/**
+ * @brief Funkce vraci retezec s polozkou token.type
+ * @author Jan Beran
+ * @param token - zdrojovy token
+ * @return ukazatel na dyn. alokovany retezec s typem tokenu zakonceny '\0', pri prazdnem typu '\0, pri chybe NULL
+ */
+char *token_get_type(Ttoken *token);
+
+/**
+ * @brief Funkce vraci retezec s polozkou token.attribute
+ * @author Jan Beran
+ * @param token  - zdrojovy token
+ * @return ukazatel na dyn. alokovany retezec s atributem tokenu zakonceny '\0', pri prazdnem typu '\0, pri chybe NULL
+ */
+char *token_get_attribute(Ttoken *token);
+
+/**
+ * @brief Funkce nahraje do tokenu jeho typ
+ * @author Jan Beran
+ * @param token - cilovy token
+ * @param arr zdrojove pole
+ * @warning Maximalni delka typu je INIT_SIZE-1
+ * @note typy nahravat pomoci preddefinovanych maker
+ * @return SUCCESS nebo ERR_INTERNAL
+ */
+int token_load_type(Ttoken *token, char *token_type);
+
+/**
+ * @brief Funkce nahraje do tokenu jeho atribut
+ * @author Jan Beran
+ * @param token - cilovy token
+ * @paragraph arr - zdrojove pole
+ * @note velikost pole token.attribute je automaticky regulovana
+ * @return SUCCESS nebo ERR_INTERNAL
+ */
+int token_load_attribute(Ttoken *token, Tarray *arr);
+
+/**
+ *
+ * @brief Uvolni token
+ * @author Jan Beran
+ * @param token - token k zabiti
+ */
+void token_free(Ttoken *token);
 
 /**
  *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.

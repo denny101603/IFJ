@@ -19,6 +19,7 @@
 #include "fsm.h"
 #include "err_codes.h"
 
+char TOKEN_TYPE = 'a';//TODO dodelat #define TYPE_INT atd kazdy typ tokenu TOKEN_TYPE pouze docasny
 
 Ttoken get_token(Tarray token_value)
 {
@@ -31,7 +32,7 @@ Ttoken get_token(Tarray token_value)
     {
         switch (actual_state)
         {
-            case START: //plne hotovy
+            case START: //DONE
                 c = get_next_char(&token_value);
                 arr_reset(&token_value);
                 switch(c)
@@ -118,10 +119,11 @@ Ttoken get_token(Tarray token_value)
                 arr_add_char(&token_value, c);
                 break; //konec START
             case LEX_ERROR:
-                return ERR_LEX; //TODO takhle to nepůjde, jak jinak to čistě ukončit?
                 final_state = true;
+                fprintf(stderr, MESSAGE_LEX); //TODO takhle to nepůjde, jak jinak to čistě ukončit??
                 break;
-            case IFJ_CODE_PREAM: //TODO budoucí syntaktak by mel mit kontrolu, jestli prvni flag je preambule
+            case IFJ_CODE_PREAM: //TODO nezapomenout na token_typ "preambule"
+                //TODO sestavit token a poslat ho do syntaktaku
                 final_state = true;
                 break;
             case OP_PLUS:
@@ -166,14 +168,14 @@ Ttoken get_token(Tarray token_value)
                 break;
             case OP_COMMA:
                 break;
-            case EOL_0:
+            case EOL_0: //DONE
                 c = get_next_char(&token_value);
                 if(c == '=')
                     next_state = BLOCK_COMMENT_0;
                 else
                 {
                     next_state = EOL_1;
-                    arr_add_to_buffer(&token_value, c); //TODO Vznika problem: jdeme do koncoveho stavu a budeme odesilat token, ale mame neco v bufferu a ten se nam smaze. Co s tim?
+                    arr_add_to_buffer(&token_value, c);
                 }
                 break;
             case EOL_1:
@@ -389,6 +391,7 @@ int arr_add_char(Tarray *arr, char c)
 
 int get_from_buffer(Tarray *arr)
 {
+    arr->buffer_flag = false;
     return arr->buffer;
 }
 
@@ -408,7 +411,7 @@ int arr_add_to_buffer(Tarray *arr, char c)
 }
 int arr_reset(Tarray *arr)
 {
-    if(arr->lenght != INIT_SIZE) //pokud je pole vetsi nez vychozi velikos
+    if(arr->lenght != INIT_SIZE) //pokud je pole vetsi nez vychozi velikost
     {
         char *temp_ptr = (char *) realloc(arr->array, sizeof(char) * INIT_SIZE); //zmenseni na INIT_SIZE
         if(temp_ptr == NULL) //realokace neuspesna
@@ -431,6 +434,7 @@ void arr_free(Tarray *arr)
 
 char *arr_get_value(Tarray *arr)
 {
+    //TODO DENNY, jsi si jist prioritou operaci? nemaji tam byt zavorky?
     char *output = (char *) malloc(sizeof(char) * arr->used + 1); //alokace pro predavany retezec, jedno misto navic pro \0
     if(output == NULL)
     {
@@ -441,4 +445,93 @@ char *arr_get_value(Tarray *arr)
         output[i] = arr->array[i];
     output[arr->used] = '\0'; //na konec retezce dam ukoncovaci znak
     return output;
+}
+
+
+//funkce pro praci s tokenem
+int token_init(Ttoken *token)
+{
+    token->type = (char *) malloc(sizeof(char) * INIT_SIZE); //typ by INIT_SIZE presahnout nikdy nemel
+    if(token->type == NULL)
+        return ERR_INTERNAL;
+
+    token->attribute = (char *) malloc (sizeof(char) * INIT_SIZE); //atribut bude muset byt realokovan dle velikosti pole arr
+    if(token->attribute == NULL)
+    {
+        free(token->type);
+        return ERR_INTERNAL;
+    }
+    token->a_len = INIT_SIZE;
+    token->a_used = 0;
+    token->t_used = 0;
+        return SUCCESS;
+}
+
+char *token_get_type(Ttoken *token)
+{
+    char *output = (char *) malloc(sizeof(char)*(token->t_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
+    if(output == NULL)
+    {
+        fprintf(stderr, MESSAGE_ALLOCATION);
+        return NULL;
+    }
+    for(int i = 0; i < token->t_used; i++) //kopirovani pole
+        output[i] = token->type[i];
+    output[token->t_used] = '\0'; //na konec retezce dam ukoncovaci znak
+    return output;
+}
+
+
+char *token_get_attribute(Ttoken *token)
+{
+    char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
+    if(output == NULL)
+    {
+        fprintf(stderr, MESSAGE_ALLOCATION);
+        return NULL;
+    }
+    for(int i = 0; i < token->a_used; i++) //kopirovani pole
+        output[i] = token->attribute[i];
+    output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
+    return output;
+}
+
+
+int token_load_type(Ttoken *token, char *token_type)
+{
+    if(token->type == NULL)
+        return ERR_INTERNAL;
+    for(int i =0; token_type[i] != '\0'; i++) // kopirovani typu tokenu do token->type
+    {
+        token->type[i] = token_type[i];
+        token->t_used += 1;
+    }
+    return SUCCESS;
+}
+
+int token_load_attribute(Ttoken *token, Tarray *arr)
+{
+    if(token->a_len <= arr->used) //pokud je maximalni delka atributu mensi nebo rovna nez arr->used  realokovat
+    {
+        char *temp_ptr = (char *) realloc(token->attribute, sizeof(char) * token->a_len * 2); //zvetseni pole na dvojnasobek, stejne jako u arr
+        if(temp_ptr == NULL) //realokace neuspesna
+        {
+            fprintf(stderr, MESSAGE_ALLOCATION);
+            free(token->attribute); //dealokace pole
+            return ERR_INTERNAL;
+        }
+        token->attribute = temp_ptr; //predani noveho ukazatele na pole
+        token->a_len *= 2; //zdvojnasobena velikost pole
+    }
+    for(int i = 0; i < arr->used; i++) //kopirujeme z arr->array do token->attribute
+    {
+        token->attribute[i] = arr->array[i];
+        token->a_used += 1;
+    }
+}
+
+void token_free(Ttoken *token)
+{
+    free(token->type);
+    free(token->attribute);
 }
