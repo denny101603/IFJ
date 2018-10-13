@@ -4,7 +4,6 @@
  * Autor: Jan Beran
  * Verze: 1.2
  * Datum: 11.10.2018
- *
  * v1.2: doplněna chybová hlášení
  */
 
