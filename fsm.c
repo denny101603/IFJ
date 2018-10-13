@@ -128,11 +128,12 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX); //TODO takhle to nepůjde, jak jinak to čistě ukončit??
                 break;
-            case IFJ_CODE_PREAM:
-                //TODO sestavit token a poslat ho do syntaktaku
+            case IFJ_CODE_PREAM: //DONE
+                token_load_type(&token, IFJ_CODE_PREAM); //token ready
                 final_state = true;
                 break;
-            case OP_PLUS:
+            case OP_PLUS: //DONE
+                token_load_type(&token, OP_PLUS); //token ready
                 final_state = true;
                 break;
             case OP_MINUS:
@@ -186,7 +187,7 @@ Ttoken get_token(Tarray *token_value)
             case EOL_1:
                 final_state = true;
                 break;
-            case BLOCK_COMMENT_0: //DONE //todo
+            case BLOCK_COMMENT_0: //DONE
             {   char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
                 {
