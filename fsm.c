@@ -264,7 +264,25 @@ Ttoken get_token(Tarray *token_value)
                 if(c == EOL)
                     next_state = START;
                 break; //konec OONE_LINE_COMMENT
-            case ID_0:
+            case ID_0: //DONE
+                ;
+                int type = type_of_char(c);
+                if(type == NUM || type == SMALL || type == CAPITAL || c == '_') //actual state zustava
+                    ;
+                else if(c == '!' || c == '?')
+                    next_state = ID_2;
+                else
+                {
+                    next_state = ID_1;
+                    arr_add_to_buffer(c);
+                    break;
+                }
+
+                if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
+                {
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
+                }
                 break;
             case ID_1:
                 break;
@@ -356,7 +374,7 @@ Ttoken get_token(Tarray *token_value)
             }
             case ESCAPE_2: // asi pryč
                 break;
-            case NUMBER_0:
+            case NUMBER_0: //DONE
                 if(type_of_char((char)c) == NUM)
                     next_state = LEX_ERROR;
                 else if(c == '.')
@@ -366,27 +384,103 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = INTEGER;
-                    arr_add_to_buffer(token_value, (char)c);
+                    arr_add_to_buffer(token_value, (char) c);
                     break;
                 }
                 if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
                 {
-
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
                 }
                 break;
-            case INTEGER:
+            case INTEGER: //DONE
+                if(token_load_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                {
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
+                }
+                token_load_type(&token, actual_state);
+                final_state = true;
                 break;
-            case FLOAT_0:
+            case FLOAT_0: //DONE
+                if(type_of_char(c) == NUM)
+                {
+                    next_state = FLOAT_1;
+                    if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
+                    {
+                        token_load_type(&token, ERR_INTERNAL);
+                        return token;
+                    }
+                }
+                else
+                    next_state = LEX_ERROR;
                 break;
-            case FLOAT_1:
+            case FLOAT_1: //DONE
+                if(type_of_char(c) == NUM) //zustavam ve stejnem stavu
+                    ;
+                else if(c == 'E' || c == 'e')
+                    next_state = FLOAT_EXP_0;
+                else
+                {
+                    next_state = FLOAT_2;
+                    arr_add_to_buffer(token_value, c);
+                    break;
+                }
+                if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
+                {
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
+                }
                 break;
-            case FLOAT_2:
+            case FLOAT_2: //DONE
+                if(token_load_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                {
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
+                }
+                token_load_type(&token, actual_state);
+                final_state = true;
                 break;
-            case FLOAT_EXP_0:
+            case FLOAT_EXP_0: //DONE
+                if(type_of_char(c) == NUM)
+                    next_state = FLOAT_EXP_2;
+                else if(c == '+' || c == '-')
+                    next_state = FLOAT_EXP_1;
+                else
+                    next_state = LEX_ERROR;
+
+                if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
+                {
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
+                }
                 break;
-            case FLOAT_EXP_1:
+            case FLOAT_EXP_1: //DONE
+                if(type_of_char(c) == NUM)
+                    next_state = FLOAT_EXP_2;
+                else
+                    next_state = LEX_ERROR;
+
+                if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
+                {
+                    token_load_type(&token, ERR_INTERNAL);
+                    return token;
+                }
                 break;
-            case FLOAT_EXP_2:
+            case FLOAT_EXP_2: //DONE
+                if(type_of_char(c) != NUM)
+                {
+                    next_state = FLOAT_2;
+                    arr_add_to_buffer(token_value, c);
+                }
+                else //==NUM
+                {
+                    if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
+                    {
+                        token_load_type(&token, ERR_INTERNAL);
+                        return token;
+                    }
+                }
                 break;
             default:
                 next_state = ERR_INTERNAL;
@@ -480,6 +574,7 @@ char *arr_get_value(Tarray *arr)
     if(output == NULL)
     {
         fprintf(stderr, MESSAGE_ALLOCATION);
+        arr_free(arr);
         return NULL;
     }
     for(int i = 0; i < arr->used; i++) //kopirovani pole

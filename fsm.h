@@ -15,6 +15,8 @@
  *	v1.1: opraveny chyby v komentech
 */
 
+//TODO berry (by denny) upravit popisky predelanych fci
+
 #ifndef IFJ2018_FSM_H
 #define IFJ2018_FSM_H
 
@@ -89,7 +91,7 @@ int arr_add_char(Tarray *arr, char c);
  * @param c
  * @return SUCCESS nebo ERR_INTERNAL, pokud arr == NULL
  */
-int arr_add_to_buffer(Tarray *arr, char c);
+int arr_add_to_buffer(Tarray *arr, char c); //TODO berry (by denny) co to taky prejmenovat? arr_set_buffer bylo by to jednotne, stale premyslim jestli mam loadovat nebo addovat nebo co :D
 
 /**
  *  @brief Funkce, pres kterou se nacita novy znak v KA Lex. analyzatoru. Pri flagu buffer_flag bere hodnotu z bufferu, jinak ze stdin
@@ -107,7 +109,8 @@ int get_next_char(Tarray *arr);
  * @note Jedna se o privatni funkci, pro ziskani znaku z bufferu doporucuji funkci get_next_char(), ktera rovnou hlida i flag
  * @warning Funkce se smi volat pouze pri buffer_flag = true
  */
- int arr_get_from_buffer(Tarray *arr);
+ int arr_get_from_buffer(Tarray *arr); //TODO berry (by denny) co to taky prejmenovat? arr_get_buffer
+
 /**
 *	@brief Nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
 *	@author Daniel Bubenicek
@@ -129,6 +132,7 @@ void arr_free(Tarray *arr);
 *	@author Daniel Bubenicek
 *	@param[in] arr – zdrojove pole
 *	@return ukazatel na dyn. alokovany retezec zakonceny \0, pro prazdne pole "\0", pri neuspesne alokaci null
+ *	@note pri neuspesne alokaci dealokuje arr
 */
 char *arr_get_value(Tarray *arr);
 
@@ -165,7 +169,7 @@ char *token_get_attribute(Ttoken *token);
  * @note typy nahravat pomoci preddefinovanych maker
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_type(Ttoken *token, int token_type);
+int token_load_type(Ttoken *token, int token_type); //TODO berry (by denny) rename to token_set_type, upravit popis javadoc(vic veci nesouhlasi)
 
 /**
  * @brief Funkce nahraje do tokenu jeho atribut
@@ -175,7 +179,7 @@ int token_load_type(Ttoken *token, int token_type);
  * @note velikost pole token.attribute je automaticky regulovana
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_attribute(Ttoken *token, Tarray *arr);
+int token_load_attribute(Ttoken *token, Tarray *arr); //TODO berry (by denny) rename to token_set_attribute
 
 /**
  *
