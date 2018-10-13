@@ -1,3 +1,0 @@
-C:/Users/danbu/CLionProjects/IFJ/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir
-C:/Users/danbu/CLionProjects/IFJ/IFJ/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/danbu/CLionProjects/IFJ/IFJ/cmake-build-debug/CMakeFiles/rebuild_cache.dir

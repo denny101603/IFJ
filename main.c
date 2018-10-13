@@ -16,11 +16,13 @@ int main() {
     //ahoj, já jsem carbik a posilam comit
     //Galantní Jelen
     //Berry was here!
-    //TODO
+
     //z toho by se jeden posral(hlavně denny)
 
+
     Tarray arr;
-    arr_init(&arr);
+    arr_init(&arr); //Pole znaku
+    get_token(arr);
     arr_free(&arr);
     return 0;
 }

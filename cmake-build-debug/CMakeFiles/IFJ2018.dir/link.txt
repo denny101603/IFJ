@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2018.2.4\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\IFJ2018.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\IFJ2018.dir/objects.a @CMakeFiles\IFJ2018.dir\objects1.rsp
-C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\IFJ2018.dir/objects.a -Wl,--no-whole-archive  -o IFJ2018.exe -Wl,--out-implib,libIFJ2018.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\IFJ2018.dir\linklibs.rsp
