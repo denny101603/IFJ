@@ -274,7 +274,7 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = ID_1;
-                    arr_add_to_buffer(c);
+                    arr_add_to_buffer(token_value, c);
                     break;
                 }
 
@@ -285,6 +285,7 @@ Ttoken get_token(Tarray *token_value)
                 }
                 break;
             case ID_1:
+
                 break;
             case ID_2:
                 break;
@@ -652,7 +653,7 @@ void token_free(Ttoken *token)
     free(token->attribute);
 }
 
-int type_of_char(char c)
+int type_of_char(const int c)
 {
     if(c >= 'a' && c <= 'z')
         return SMALL;
@@ -662,4 +663,9 @@ int type_of_char(char c)
         return NUM;
     else
         return OTHER;
+}
+
+int is_keyword(const char *str)
+{
+
 }
