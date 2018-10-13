@@ -48,11 +48,11 @@ typedef struct{
  * @warning v0.5 = funkce hotove, netestovane.
  */
 typedef struct{
-    char *type; //pole pro typ tokenu
+    int type; //pole pro typ tokenu
     char *attribute; //pole pro atribut tokenu
-    int t_used; //skutecna delka typu
-    int a_used; //skutecna delka atributu
-    int a_len; //maximalni delka atributu, pri presahu nutno realokovat
+   // int t_used; //skutecna delka typu
+    //int a_used; //skutecna delka atributu
+    //int a_len; //maximalni delka atributu, pri presahu nutno realokovat
 }Ttoken;
 
 /**
@@ -165,7 +165,7 @@ char *token_get_attribute(Ttoken *token);
  * @note typy nahravat pomoci preddefinovanych maker
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_type(Ttoken *token, char *token_type);
+int token_load_type(Ttoken *token, int token_type);
 
 /**
  * @brief Funkce nahraje do tokenu jeho atribut
@@ -184,6 +184,20 @@ int token_load_attribute(Ttoken *token, Tarray *arr);
  * @param token - token k zabiti
  */
 void token_free(Ttoken *token);
+
+/**
+ * @brief
+ * @author Daniel Bubenicek
+ * @param c
+ * @return
+ */
+int type_of_char(char c);
+
+/**
+ * @brief
+ * @author Daniel Bubenicek
+ */
+enum char_type{SMALL, CAPITAL, NUM, OTHER};
 
 /**
  *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.
@@ -238,5 +252,6 @@ enum states {
     FLOAT_EXP_1,
     FLOAT_EXP_2,
 };
+
 
 #endif //IFJ2018_FSM_H
