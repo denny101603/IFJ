@@ -3,7 +3,7 @@
 * 						               *
 *	Autori:			                   *
 *	Jan Beran (xberan43)	           *
-*	Daniel Bubenicek (xbuben43)	       *
+*	Daniel Bubenicek (xbuben05)	       *
 *	Jan Carba (xcarba00)		       *
 *	Matej Jelinek (xjelen49)	       *
 *                                      *
@@ -21,20 +21,23 @@
 
 char TOKEN_TYPE = 'a';//TODO dodelat #define TYPE_INT atd kazdy typ tokenu TOKEN_TYPE pouze docasny
 
-Ttoken *get_token(Tarray token_value)
+Ttoken get_token(Tarray *token_value)
 {
     int actual_state = START;
     int next_state = LEX_ERROR;
     bool final_state = false;
-    int c;
+    int c; //znak ze stdin nebo bufferu
+
+    Ttoken token;
+    token_init(&token);
 
     while(!final_state)
     {
+        c = get_next_char(token_value);
         switch (actual_state)
         {
             case START: //DONE
-                c = get_next_char(&token_value);
-                arr_reset(&token_value);
+                arr_reset(token_value);
                 switch(c)
                 {
                     case ' ': //mezera
@@ -103,9 +106,9 @@ Ttoken *get_token(Tarray token_value)
                             }
                             else
                             {
-                                arr_add_char(&token_value, c);
+                                arr_add_char(token_value, (char)c);
                             }
-                            c = get_next_char(&token_value);
+                            c = get_next_char(token_value);
                         }
                         if (c == EOL) // ifj preambule ma byt na samostatnem radku
                         	next_state = IFJ_CODE_PREAM;
@@ -119,13 +122,13 @@ Ttoken *get_token(Tarray token_value)
                     default:
                         next_state = LEX_ERROR;
                 }
-                arr_add_char(&token_value, c);
+                arr_add_char(token_value, c);
                 break; //konec START
             case LEX_ERROR:
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX); //TODO takhle to nepůjde, jak jinak to čistě ukončit??
                 break;
-            case IFJ_CODE_PREAM: //TODO nezapomenout na token_typ "preambule"
+            case IFJ_CODE_PREAM:
                 //TODO sestavit token a poslat ho do syntaktaku
                 final_state = true;
                 break;
@@ -172,21 +175,19 @@ Ttoken *get_token(Tarray token_value)
             case OP_COMMA:
                 break;
             case EOL_0: //DONE
-                c = get_next_char(&token_value);
                 if(c == '=')
                     next_state = BLOCK_COMMENT_0;
                 else
                 {
                     next_state = EOL_1;
-                    arr_add_to_buffer(&token_value, c);
+                    arr_add_to_buffer(token_value, c);
                 }
                 break;
             case EOL_1:
                 final_state = true;
                 break;
-            case BLOCK_COMMENT_0: //DONE
-                c = get_next_char(&token_value);
-                char comm_begin[] = "begin";
+            case BLOCK_COMMENT_0: //DONE //todo
+            {   char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
                 {
                     if(comm_begin[i] != c)
@@ -196,31 +197,30 @@ Ttoken *get_token(Tarray token_value)
                     }
                     else
                     {
-                        arr_add_char(&token_value, c);
+                        arr_add_char(token_value, c);
                     }
-                    c = get_next_char(&token_value);
+                    c = get_next_char(token_value);
                 }
                 if (c == ' ' || c == '\t') //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
-                    arr_add_to_buffer(&token_value, c);
+                    arr_add_to_buffer(token_value, c);
                 }
                 else
-                    next_state = LEX_ERROR;
+                    next_state = LEX_ERROR;}
                 break; //konec BLOCK_COMMENT_0
             case BLOCK_COMMENT_1: // DONE
-                c = get_next_char(&token_value);
                 while(c != EOL && c != EOF)
                 {
-                    c = get_next_char(&token_value);
+                    c = get_next_char(token_value);
                 }
                 if(c == EOL)
                     next_state = BLOCK_COMMENT_2;
                 else //else if (c == EOF)
                     next_state = LEX_ERROR;
                 break;//konec BLOCK_COMMENT_1
-            case BLOCK_COMMENT_2: //TODO next (berry)
-                c = get_next_char(&token_value);
+            case BLOCK_COMMENT_2: //DONE
+            {
                 char comm_end[] = "=end";
                 for (int i = 0; comm_end[i] != '\0'; i++)
                 {
@@ -231,31 +231,32 @@ Ttoken *get_token(Tarray token_value)
                     }
                     else
                     {
-                        arr_add_char(&token_value, c);
+                        arr_add_char(token_value, c);
                     }
-                    c = get_next_char(&token_value);
+                    c = get_next_char(token_value);
                 }
                 if (c == ' ' || c == '\t')
                 {
                     next_state = START;
-                    arr_add_to_buffer(&token_value, c);
+                    arr_add_to_buffer(token_value, c);
                 }
+                else if (c == EOF)
+                    next_state = LEX_ERROR;
                 else
-                    next_state = BLOCK_COMMENT_1;
+                    next_state = BLOCK_COMMENT_1;}
                 break;
             case BLOCK_COMMMENT_3: //TODO vyhodit?
                 break;
-            case ONE_LINE_COMMENT:
-                c = get_next_char(&token_value);
+            case ONE_LINE_COMMENT://DONE
                 while(c != EOL && c != EOF)
                 {
-                    c = get_next_char(&token_value);
+                    c = get_next_char(token_value);
                 }
                 if(c == EOF)
                     next_state = EOF_STATE;
                 if(c == EOL)
                     next_state = START;
-                break;
+                break; //konec OONE_LINE_COMMENT
             case ID_0:
                 break;
             case ID_1:
@@ -267,73 +268,98 @@ Ttoken *get_token(Tarray token_value)
             case EOF_STATE:
                 final_state = true;
                 break;
-            case STRING_0:
-                c = get_next_char(&token_value);
-                while (c != '"' && c != '\\')
+            case STRING_0: //DONE
+                while (c != '"' && c != '\\' && c != EOF)
                 {
-                    arr_add_char(&token_value, c);
-                    c = get_next_char(&token_value);
+                    arr_add_char(token_value, c);
+                    c = get_next_char(token_value);
                 }
                 if (c == '"')
                     next_state = STRING_1;
                 else if (c == '\\')
                     next_state = ESCAPE_0;
-                break;
+                else if(c == EOF)
+                    next_state = LEX_ERROR;
+                break; //konec STRING_0
             case STRING_1:
                 final_state = true;
                 break;
-            case ESCAPE_0:
-                c = get_next_char(&token_value); //nactu znak bez lomitka
+            case ESCAPE_0://DONE
                 switch(c)
                 {
                     case '"':
-                        arr_add_char(&token_value, '\"');
+                        arr_add_char(token_value, '\"');
                         break;
-                    case 'n':
-                        arr_add_char(&token_value, '\n');
+                    case 'n': //EOL
+                        arr_add_char(token_value, '\n');
                         break;
                     case 't':
-                        arr_add_char(&token_value, '\t');
+                        arr_add_char(token_value, '\t');
                         break;
                     case 's':
-                        arr_add_char(&token_value, ' ');
+                        arr_add_char(token_value, ' ');
                         break;
                     case '\\':
-                        arr_add_char(&token_value, '\\');
+                        arr_add_char(token_value, '\\');
                         break;
                     case 'x':
                         next_state = ESCAPE_1;
                         break;
+                    case EOF:
+                        next_state = LEX_ERROR;
                     default:
-                        arr_add_char(&token_value, c);
+                        arr_add_char(token_value, c);
                         next_state = STRING_1;
                         break;
                 }
-                break;
-            case ESCAPE_1:
-                c = get_next_char(&token_value);
-                char hexa[2];
+                break;//konec ESCAPE_0
+            case ESCAPE_1://DONE
+            {   char hexa[2];
                 int num = 0;
                 if((c >= '0' && c <= '9') ||
                    (c >= 'a' && c <= 'f') ||
                    (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                 {
-                    hexa[0]=c;
-                    c = get_next_char(&token_value);
-                    if((c >= '0' && c <= '9') ||
-                       (c >= 'a' && c <= 'f') ||
-                       (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
+                    hexa[0] = (char)c;
+                    c = get_next_char(token_value);
+                    if ((c >= '0' && c <= '9') ||
+                        (c >= 'a' && c <= 'f') ||
+                        (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                     {
-                        hexa[1] = c;
+                        hexa[1] = (char)c;
                         sscanf(hexa, "%x", &num);
-                        arr_add_char(&token_value, (char)c);
+                        arr_add_char(token_value, (char) c);
+                    }
+                    else
+                    {
+                        next_state = LEX_ERROR;
+                        break;
                     }
                 }
-
-                break;
+                else
+                {
+                    next_state = LEX_ERROR;
+                    break;
+                }
+                next_state = STRING_0;
+                break;//konec case ESCAPE_1
+            }
             case ESCAPE_2: // asi pryč
                 break;
             case NUMBER_0:
+                if(type_of_char((char)c) == NUM)
+                    next_state = LEX_ERROR;
+                else if(c == '.')
+                    next_state = FLOAT_0;
+                else if(c == 'e' || c == 'E')
+                    next_state = FLOAT_EXP_0;
+                else
+                {
+                    next_state = INTEGER;
+                    arr_add_to_buffer(token_value, (char)c);
+                    break;
+                }
+                arr_add_char(token_value, (char)c);
                 break;
             case INTEGER:
                 break;
@@ -354,6 +380,7 @@ Ttoken *get_token(Tarray token_value)
         }
         actual_state = next_state;
     }
+    return token;
 }
 
 int arr_init(Tarray *arr)
@@ -391,7 +418,7 @@ int arr_add_char(Tarray *arr, char c)
     return SUCCESS;
 }
 
-int get_from_buffer(Tarray *arr)
+int arr_get_from_buffer(Tarray *arr)
 {
     arr->buffer_flag = false;
     return arr->buffer;
@@ -400,7 +427,7 @@ int get_from_buffer(Tarray *arr)
 int get_next_char(Tarray *arr)
 {
   if(arr->buffer_flag == true)
-      return get_from_buffer(arr);
+      return arr_get_from_buffer(arr);
   else
       return getchar();
 }
@@ -446,6 +473,14 @@ char *arr_get_value(Tarray *arr)
         output[i] = arr->array[i];
     output[arr->used] = '\0'; //na konec retezce dam ukoncovaci znak
     return output;
+}
+
+
+int token_init(Ttoken *token)
+{
+    token->type = EMPTY;
+    token->attribute = NULL;
+    return SUCCESS;
 }
 
 char *token_get_type(Ttoken *token)
