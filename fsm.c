@@ -384,7 +384,7 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = INTEGER;
-                    arr_add_to_buffer(token_value, (char) c);
+                    arr_add_to_buffer(token_value, c);
                     break;
                 }
                 if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
@@ -538,7 +538,7 @@ int get_next_char(Tarray *arr)
   else
       return getchar();
 }
-int arr_add_to_buffer(Tarray *arr, char c)
+int arr_add_to_buffer(Tarray *arr, int c)
 {
     if(arr == NULL) return ERR_INTERNAL;
     arr->buffer = c;

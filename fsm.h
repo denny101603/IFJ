@@ -31,13 +31,13 @@
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
  *	@author Daniel Bubenicek
- *	@warning k upravam promennych array, lenght, used jsou vyuzity funkce, neupravovat rucne!
+ *	@warning k upravam promennych jsou vyuzity funkce, neupravovat rucne!
 */
 typedef struct{
     char *array;
     int lenght; //delka pole
     int used; //pocet vyuzitych znaku
-    char buffer; //nacteny znak z minule
+    int buffer; //nacteny znak z minule
     bool buffer_flag; //jestli cist z bufferu
     bool eol_flag; //jestli predchazel EOL
 }Tarray;
@@ -91,7 +91,7 @@ int arr_add_char(Tarray *arr, char c);
  * @param c
  * @return SUCCESS nebo ERR_INTERNAL, pokud arr == NULL
  */
-int arr_add_to_buffer(Tarray *arr, char c); //TODO berry (by denny) co to taky prejmenovat? arr_set_buffer bylo by to jednotne, stale premyslim jestli mam loadovat nebo addovat nebo co :D
+int arr_add_to_buffer(Tarray *arr, int c); //TODO berry (by denny) co to taky prejmenovat? arr_set_buffer bylo by to jednotne, stale premyslim jestli mam loadovat nebo addovat nebo co :D
 
 /**
  *  @brief Funkce, pres kterou se nacita novy znak v KA Lex. analyzatoru. Pri flagu buffer_flag bere hodnotu z bufferu, jinak ze stdin
