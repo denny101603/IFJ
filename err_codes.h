@@ -1,4 +1,4 @@
-/*
+/**
  * err_codes.h jako soucast projektu do IFJ 2018
  * Hlavickovy soubor obsahuje vsechny potrebne chybove kody vcetne ERR_OK - navrat bez chyby.
  * Autor: Jan Beran

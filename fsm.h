@@ -3,7 +3,7 @@
 * 						               *
 *	Autori:			                   *
 *	Jan Beran (xberan43)	           *
-*	Daniel Bubenicek (xbuben43)	       *
+*	Daniel Bubenicek (xbuben05)	       *
 *	Jan Carba (xcarba00)		       *
 *	Matej Jelinek (xjelen49)	       *
 *                                      *
@@ -25,7 +25,7 @@
 #define INIT_SIZE 128 //inicializacni velikost pole
 
 #define EOL '\n'
-
+# define EMPTY -1;
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
  *	@author Daniel Bubenicek
@@ -43,7 +43,7 @@ typedef struct{
 /**
  * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
  * @author Jan Beran
- * @note pro operatory je attribut shodny s typem (type = '*' => attribute = '*')
+ * @note pro operatory a EOF je atribut prazdny
  * @warning Pro load a get hodnot z a do struktury pouzivat prosim specialni funkce
  * @warning v0.5 = funkce hotove, netestovane.
  */
@@ -62,7 +62,7 @@ typedef struct{
  *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
 *	@return Ttoken - ukazatel na token
 */
-Ttoken *get_token(Tarray arr);
+Ttoken get_token(Tarray *arr);
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)
@@ -107,7 +107,7 @@ int get_next_char(Tarray *arr);
  * @note Jedna se o privatni funkci, pro ziskani znaku z bufferu doporucuji funkci get_next_char(), ktera rovnou hlida i flag
  * @warning Funkce se smi volat pouze pri buffer_flag = true
  */
- int get_from_buffer(Tarray *arr);
+ int arr_get_from_buffer(Tarray *arr);
 /**
 *	@brief Nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
 *	@author Daniel Bubenicek
@@ -133,10 +133,10 @@ void arr_free(Tarray *arr);
 char *arr_get_value(Tarray *arr);
 
 /**
- * @brief Inicializace tokenu; dynamicka alokace pameti atp
+ * @brief Inicializace tokenu
  * @author Jan Beran
  * @param token - token k inicializace
- * @return SUCCESS nebo ERR_INTERNAL
+ * @return SUCCESS
  */
 int token_init(Ttoken *token);
 
@@ -202,6 +202,7 @@ enum char_type{SMALL, CAPITAL, NUM, OTHER};
 /**
  *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.
 *   @author Jan Beran
+ *  @warning Zadny ze stavu nemuze mit hodnotu -1, protoze hodnota -1 je pouzivana jako EMPTY u tokenu
  */
 enum states {
     START,
