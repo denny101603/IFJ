@@ -203,6 +203,7 @@ enum char_type{SMALL, CAPITAL, NUM, OTHER};
  *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.
 *   @author Jan Beran
  *  @warning Zadny ze stavu nemuze mit hodnotu -1, protoze hodnota -1 je pouzivana jako EMPTY u tokenu
+ *  @warning Zadny ze stavu nesmi mit hodnotu ERR_INTERNAL
  */
 enum states {
     START,
