@@ -105,9 +105,12 @@ Ttoken *get_token(Tarray token_value)
                             {
                                 arr_add_char(&token_value, c);
                             }
-                            c =get_next_char(&token_value);
+                            c = get_next_char(&token_value);
                         }
-                        next_state = IFJ_CODE_PREAM;
+                        if (c == EOL) // ifj preambule ma byt na samostatnem radku
+                        	next_state = IFJ_CODE_PREAM;
+                        else
+                        	next_state = LEX_ERROR; //
                         break; //break case
                     }
                     case EOF:
@@ -445,44 +448,15 @@ char *arr_get_value(Tarray *arr)
     return output;
 }
 
-
-//funkce pro praci s tokenem
-int token_init(Ttoken *token)
-{
-    token->type = (char *) malloc(sizeof(char) * INIT_SIZE); //typ by INIT_SIZE presahnout nikdy nemel
-    if(token->type == NULL)
-        return ERR_INTERNAL;
-
-    token->attribute = (char *) malloc (sizeof(char) * INIT_SIZE); //atribut bude muset byt realokovan dle velikosti pole arr
-    if(token->attribute == NULL)
-    {
-        free(token->type);
-        return ERR_INTERNAL;
-    }
-    token->a_len = INIT_SIZE;
-    token->a_used = 0;
-    token->t_used = 0;
-        return SUCCESS;
-}
-
 char *token_get_type(Ttoken *token)
 {
-    char *output = (char *) malloc(sizeof(char)*(token->t_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
-    if(output == NULL)
-    {
-        fprintf(stderr, MESSAGE_ALLOCATION);
-        return NULL;
-    }
-    for(int i = 0; i < token->t_used; i++) //kopirovani pole
-        output[i] = token->type[i];
-    output[token->t_used] = '\0'; //na konec retezce dam ukoncovaci znak
-    return output;
+    return token->type;
 }
 
 
-char *token_get_attribute(Ttoken *token)
+char *token_get_attribute(Ttoken *token) //TODO bude to syntaktak potrebovat?
 {
-    char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
+   /* char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
     if(output == NULL)
     {
         fprintf(stderr, MESSAGE_ALLOCATION);
@@ -491,25 +465,27 @@ char *token_get_attribute(Ttoken *token)
     for(int i = 0; i < token->a_used; i++) //kopirovani pole
         output[i] = token->attribute[i];
     output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
-    return output;
+    return output;*/
+   return NULL;
 }
 
 
-int token_load_type(Ttoken *token, char *token_type)
+int token_load_type(Ttoken *token, int token_type)
 {
-    if(token->type == NULL)
-        return ERR_INTERNAL;
-    for(int i =0; token_type[i] != '\0'; i++) // kopirovani typu tokenu do token->type
-    {
-        token->type[i] = token_type[i];
-        token->t_used += 1;
-    }
+    token->type = token_type;
     return SUCCESS;
 }
 
 int token_load_attribute(Ttoken *token, Tarray *arr)
 {
-    if(token->a_len <= arr->used) //pokud je maximalni delka atributu mensi nebo rovna nez arr->used  realokovat
+    char *attribute = arr_get_value(arr);
+    if (attribute == NULL)
+    {
+        return ERR_INTERNAL;
+    }
+    token->attribute = attribute;
+    return SUCCESS;
+    /*if(token->a_len <= arr->used) //pokud je maximalni delka atributu mensi nebo rovna nez arr->used  realokovat
     {
         char *temp_ptr = (char *) realloc(token->attribute, sizeof(char) * token->a_len * 2); //zvetseni pole na dvojnasobek, stejne jako u arr
         if(temp_ptr == NULL) //realokace neuspesna
@@ -525,11 +501,22 @@ int token_load_attribute(Ttoken *token, Tarray *arr)
     {
         token->attribute[i] = arr->array[i];
         token->a_used += 1;
-    }
+    }*/
 }
 
 void token_free(Ttoken *token)
 {
-    free(token->type);
     free(token->attribute);
+}
+
+int type_of_char(char c)
+{
+    if(c >= 'a' && c <= 'z')
+        return SMALL;
+    else if(c >= 'A' && c <= 'Z')
+        return CAPITAL;
+    else if(c >= '0' && c <= '9')
+        return NUM;
+    else
+        return OTHER;
 }
