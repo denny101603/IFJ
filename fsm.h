@@ -24,10 +24,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INIT_SIZE 128 //inicializacni velikost pole
+#define INIT_SIZE 256 //inicializacni velikost pole
 
 #define EOL '\n'
-# define EMPTY -1;
+# define EMPTY -1
+
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
  *	@author Daniel Bubenicek
@@ -190,12 +191,14 @@ int token_load_attribute(Ttoken *token, Tarray *arr); //TODO berry (by denny) re
 void token_free(Ttoken *token);
 
 /**
- * @brief
+ * @brief Zjisti typ znaku (male, velke pismeno, cislice, ostatni) (viz enum char_type)
  * @author Daniel Bubenicek
- * @param c
- * @return
+ * @param c znak
+ * @return char_type podle typu predaneho znaku
  */
-int type_of_char(char c);
+int type_of_char(const int c);
+
+int is_keyword(const char *str);
 
 /**
  * @brief
@@ -205,7 +208,7 @@ enum char_type{SMALL, CAPITAL, NUM, OTHER};
 
 /**
  *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.
-*   @author Jan Beran
+*   @author Jan Beran, Daniel Bubenicek
  *  @warning Zadny ze stavu nemuze mit hodnotu -1, protoze hodnota -1 je pouzivana jako EMPTY u tokenu
  *  @warning Zadny ze stavu nesmi mit hodnotu ERR_INTERNAL
  */
@@ -257,6 +260,15 @@ enum states {
     FLOAT_EXP_0,
     FLOAT_EXP_1,
     FLOAT_EXP_2,
+    KEY_DEF;
+    KEY_DO;
+    KEY_ELSE;
+    KEY_END;
+    KEY_IF;
+    KEY_NOT;
+    KEY_NIL;
+    KEY_THEN;
+    KEY_WHILE;
 };
 
 
