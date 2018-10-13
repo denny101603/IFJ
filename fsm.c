@@ -369,7 +369,10 @@ Ttoken get_token(Tarray *token_value)
                     arr_add_to_buffer(token_value, (char)c);
                     break;
                 }
-                arr_add_char(token_value, (char)c);
+                if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                {
+
+                }
                 break;
             case INTEGER:
                 break;
