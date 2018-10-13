@@ -19,8 +19,6 @@
 #include "fsm.h"
 #include "err_codes.h"
 
-char TOKEN_TYPE = 'a';//TODO dodelat #define TYPE_INT atd kazdy typ tokenu TOKEN_TYPE pouze docasny
-
 Ttoken get_token(Tarray *token_value)
 {
     int actual_state = START;
@@ -36,7 +34,7 @@ Ttoken get_token(Tarray *token_value)
         c = get_next_char(token_value);
         switch (actual_state)
         {
-            case START: //DONE
+            case START: //TODO doplnit stavy pro směr ID a keyword
                 arr_reset(token_value);
                 switch(c)
                 {
@@ -124,9 +122,10 @@ Ttoken get_token(Tarray *token_value)
                 }
                 arr_add_char(token_value, c);
                 break; //konec START
-            case LEX_ERROR:
+            case LEX_ERROR: //DONE
+                token_load_type(&token, LEX_ERROR);
                 final_state = true;
-                fprintf(stderr, MESSAGE_LEX); //TODO takhle to nepůjde, jak jinak to čistě ukončit??
+                fprintf(stderr, MESSAGE_LEX);
                 break;
             case IFJ_CODE_PREAM: //DONE
                 token_load_type(&token, IFJ_CODE_PREAM); //token ready
@@ -136,13 +135,16 @@ Ttoken get_token(Tarray *token_value)
                 token_load_type(&token, OP_PLUS); //token ready
                 final_state = true;
                 break;
-            case OP_MINUS:
+            case OP_MINUS: //DONE
+                token_load_type(&token, OP_MINUS); //token ready
                 final_state = true;
                 break;
-            case OP_DIV:
+            case OP_DIV: //DONE
+                token_load_type(&token, OP_DIV); //token ready
                 final_state = true;
                 break;
-            case OP_MULT:
+            case OP_MULT: //DONE
+                token_load_type(&token, OP_MULT); //token ready
                 final_state = true;
                 break;
             case OP_EQAL_0:
@@ -167,13 +169,17 @@ Ttoken get_token(Tarray *token_value)
                 break;
             case OP_LESS_EQUAL:
                 break;
-            case LEFT_BRACKET:
+            case LEFT_BRACKET: //DONE
+                token_load_type(&token, LEFT_BRACKET); //token ready
                 final_state = true;
                 break;
-            case RIGHT_BRACKET:
+            case RIGHT_BRACKET: //DONE
+                token_load_type(&token, RIGHT_BRACKET); //token ready
                 final_state = true;
                 break;
-            case OP_COMMA:
+            case OP_COMMA: //DONE
+                token_load_type(&token, OP_COMMA); //token ready
+                final_state = true;
                 break;
             case EOL_0: //DONE
                 if(c == '=')
@@ -266,7 +272,8 @@ Ttoken get_token(Tarray *token_value)
                 break;
             case KEY_WORD:
                 break;
-            case EOF_STATE:
+            case EOF_STATE: //DONE
+                token_load_type(&token, EOF_STATE); //token ready
                 final_state = true;
                 break;
             case STRING_0: //DONE
@@ -282,7 +289,9 @@ Ttoken get_token(Tarray *token_value)
                 else if(c == EOF)
                     next_state = LEX_ERROR;
                 break; //konec STRING_0
-            case STRING_1:
+            case STRING_1: //DONE
+                token_load_type(&token, STRING_1);
+                token_load_attribute(&token, token_value); //token ready
                 final_state = true;
                 break;
             case ESCAPE_0://DONE
