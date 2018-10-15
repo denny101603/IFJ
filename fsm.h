@@ -50,7 +50,7 @@ typedef struct{
  * @warning Pro load a get hodnot z a do struktury pouzivat prosim specialni funkce
  * @warning v0.5 = funkce hotove, netestovane.
  */
-typedef struct{
+typedef struct{ //todo berry doplnit že atribut je dynalokovany
     int type; //pole pro typ tokenu
     char *attribute; //pole pro atribut tokenu
    // int t_used; //skutecna delka typu
@@ -260,15 +260,15 @@ enum states {
     FLOAT_EXP_0,
     FLOAT_EXP_1,
     FLOAT_EXP_2,
-    KEY_DEF;
-    KEY_DO;
-    KEY_ELSE;
-    KEY_END;
-    KEY_IF;
-    KEY_NOT;
-    KEY_NIL;
-    KEY_THEN;
-    KEY_WHILE;
+    KEY_DEF,
+    KEY_DO,
+    KEY_ELSE,
+    KEY_END,
+    KEY_IF,
+    KEY_NOT,
+    KEY_NIL,
+    KEY_THEN,
+    KEY_WHILE
 };
 
 

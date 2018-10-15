@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/fsm.h" />
+  </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
       <config projectName="IFJ2018" targetName="IFJ2018" />
@@ -13,7 +16,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7eb79f89-134a-45d7-90bb-7f1b92fd3ec8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fsm.c" beforeDir="false" afterPath="$PROJECT_DIR$/fsm.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fsm.h" beforeDir="false" afterPath="$PROJECT_DIR$/fsm.h" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -54,26 +56,26 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="c" value="7519" />
-          <entry key="h" value="5000" />
+          <entry key="h" value="5051" />
           <entry key="txt" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Doxygen file" value="63" />
-          <entry key="ObjectiveC" value="12456" />
+          <entry key="ObjectiveC" value="12507" />
           <entry key="PLAIN_TEXT" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="11" />
+          <entry key="project.closed" value="15" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.5" value="3" />
-          <entry key="project.open.time.6" value="3" />
-          <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="3" />
-          <entry key="project.opened" value="11" />
+          <entry key="project.open.time.6" value="5" />
+          <entry key="project.open.time.7" value="2" />
+          <entry key="project.open.time.8" value="4" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -82,6 +84,7 @@
           <entry key="h" value="3" />
           <entry key="html" value="2" />
           <entry key="properties" value="1" />
+          <entry key="xml" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -89,6 +92,7 @@
           <entry key="HTML" value="2" />
           <entry key="ObjectiveC" value="8" />
           <entry key="PLAIN_TEXT" value="1" />
+          <entry key="XML" value="1" />
         </counts>
       </usages-collector>
     </session>
@@ -116,11 +120,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fsm.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3043">
-              <caret line="151" column="27" lean-forward="true" selection-start-line="151" selection-start-column="27" selection-end-line="151" selection-end-column="27" />
+            <state relative-caret-position="629">
+              <caret line="37" column="39" selection-start-line="37" selection-start-column="39" selection-end-line="37" selection-end-column="39" />
               <folding>
                 <element signature="e#566#582#0" expanded="true" />
               </folding>
@@ -128,11 +132,19 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Konecny automat.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fsm.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="197" column="27" lean-forward="true" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
+            <state relative-caret-position="4590">
+              <caret line="270" column="14" selection-start-line="270" selection-start-column="14" selection-end-line="270" selection-end-column="14" />
+              <folding>
+                <element signature="e#637#657#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -156,6 +168,7 @@
       <find>number_0</find>
       <find>op_minu</find>
       <find>token_i</find>
+      <find>eof_state</find>
     </findStrings>
     <replaceStrings>
       <replace>c = getchar()</replace>
@@ -191,8 +204,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-119" />
-    <option name="y" value="-13" />
+    <option name="x" value="-120" />
+    <option name="y" value="-15" />
     <option name="width" value="1560" />
     <option name="height" value="1040" />
   </component>
@@ -201,7 +214,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -213,6 +225,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -263,7 +276,11 @@
       <workItem from="1539335433178" duration="61000" />
       <workItem from="1539352070615" duration="693000" />
       <workItem from="1539413940996" duration="569000" />
-      <workItem from="1539414977570" duration="9475000" />
+      <workItem from="1539414977570" duration="9655000" />
+      <workItem from="1539426717695" duration="549000" />
+      <workItem from="1539435659390" duration="745000" />
+      <workItem from="1539617074286" duration="3471000" />
+      <workItem from="1539629307794" duration="262000" />
     </task>
     <task id="LOCAL-00001" summary="Berryho branch">
       <created>1537995771558</created>
@@ -391,11 +408,18 @@
       <option name="project" value="LOCAL" />
       <updated>1539424883116</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Berryho branch">
+      <created>1539425898387</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1539425898387</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="43417000" />
+    <option name="totallyTimeSpent" value="48624000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -408,9 +432,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.11543624" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12080537" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -419,12 +442,12 @@
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49798658" weight="0.024113474" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49597314" visible="true" weight="0.14184397" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49328858" weight="0.32907802" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32907802" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50402683" side_tool="true" visible="true" weight="0.14184397" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.24161074" side_tool="true" visible="true" weight="0.4893617" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.10638298" />
       <window_info anchor="bottom" id="CMake" order="10" sideWeight="0.49932885" weight="0.32907802" />
-      <window_info active="true" anchor="bottom" id="Messages" order="11" sideWeight="0.7590604" visible="true" weight="0.4893617" />
+      <window_info active="true" anchor="bottom" id="Messages" order="11" sideWeight="0.75838923" visible="true" weight="0.4893617" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -531,6 +554,13 @@
     <entry file="file://$PROJECT_DIR$/Konecny automat.html">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/err_codes.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
@@ -541,29 +571,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/err_codes.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fsm.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="197" column="27" lean-forward="true" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fsm.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3043">
-          <caret line="151" column="27" lean-forward="true" selection-start-line="151" selection-start-column="27" selection-end-line="151" selection-end-column="27" />
+        <state relative-caret-position="629">
+          <caret line="37" column="39" selection-start-line="37" selection-start-column="39" selection-end-line="37" selection-end-column="39" />
           <folding>
             <element signature="e#566#582#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fsm.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4590">
+          <caret line="270" column="14" selection-start-line="270" selection-start-column="14" selection-end-line="270" selection-end-column="14" />
+          <folding>
+            <element signature="e#637#657#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Konecny automat.xml">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
