@@ -15,6 +15,8 @@
  *	v1.1: opraveny chyby v komentech
 */
 
+//TODO berry (by denny) upravit popisky predelanych fci
+
 #ifndef IFJ2018_FSM_H
 #define IFJ2018_FSM_H
 
@@ -22,20 +24,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INIT_SIZE 128 //inicializacni velikost pole
+#define INIT_SIZE 256 //inicializacni velikost pole
 
 #define EOL '\n'
-# define EMPTY -1;
+# define EMPTY -1
+
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
  *	@author Daniel Bubenicek
- *	@warning k upravam promennych array, lenght, used jsou vyuzity funkce, neupravovat rucne!
+ *	@warning k upravam promennych jsou vyuzity funkce, neupravovat rucne!
 */
 typedef struct{
     char *array;
     int lenght; //delka pole
     int used; //pocet vyuzitych znaku
-    char buffer; //nacteny znak z minule
+    int buffer; //nacteny znak z minule
     bool buffer_flag; //jestli cist z bufferu
     bool eol_flag; //jestli predchazel EOL
 }Tarray;
@@ -89,7 +92,7 @@ int arr_add_char(Tarray *arr, char c);
  * @param c
  * @return SUCCESS nebo ERR_INTERNAL, pokud arr == NULL
  */
-int arr_add_to_buffer(Tarray *arr, char c);
+int arr_add_to_buffer(Tarray *arr, int c); //TODO berry (by denny) co to taky prejmenovat? arr_set_buffer bylo by to jednotne, stale premyslim jestli mam loadovat nebo addovat nebo co :D
 
 /**
  *  @brief Funkce, pres kterou se nacita novy znak v KA Lex. analyzatoru. Pri flagu buffer_flag bere hodnotu z bufferu, jinak ze stdin
@@ -107,7 +110,8 @@ int get_next_char(Tarray *arr);
  * @note Jedna se o privatni funkci, pro ziskani znaku z bufferu doporucuji funkci get_next_char(), ktera rovnou hlida i flag
  * @warning Funkce se smi volat pouze pri buffer_flag = true
  */
- int arr_get_from_buffer(Tarray *arr);
+ int arr_get_from_buffer(Tarray *arr); //TODO berry (by denny) co to taky prejmenovat? arr_get_buffer
+
 /**
 *	@brief Nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
 *	@author Daniel Bubenicek
@@ -129,6 +133,7 @@ void arr_free(Tarray *arr);
 *	@author Daniel Bubenicek
 *	@param[in] arr – zdrojove pole
 *	@return ukazatel na dyn. alokovany retezec zakonceny \0, pro prazdne pole "\0", pri neuspesne alokaci null
+ *	@note pri neuspesne alokaci dealokuje arr
 */
 char *arr_get_value(Tarray *arr);
 
@@ -165,7 +170,7 @@ char *token_get_attribute(Ttoken *token);
  * @note typy nahravat pomoci preddefinovanych maker
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_type(Ttoken *token, int token_type);
+int token_load_type(Ttoken *token, int token_type); //TODO berry (by denny) rename to token_set_type, upravit popis javadoc(vic veci nesouhlasi)
 
 /**
  * @brief Funkce nahraje do tokenu jeho atribut
@@ -175,7 +180,7 @@ int token_load_type(Ttoken *token, int token_type);
  * @note velikost pole token.attribute je automaticky regulovana
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_attribute(Ttoken *token, Tarray *arr);
+int token_load_attribute(Ttoken *token, Tarray *arr); //TODO berry (by denny) rename to token_set_attribute
 
 /**
  *
@@ -186,12 +191,14 @@ int token_load_attribute(Ttoken *token, Tarray *arr);
 void token_free(Ttoken *token);
 
 /**
- * @brief
+ * @brief Zjisti typ znaku (male, velke pismeno, cislice, ostatni) (viz enum char_type)
  * @author Daniel Bubenicek
- * @param c
- * @return
+ * @param c znak
+ * @return char_type podle typu predaneho znaku
  */
-int type_of_char(char c);
+int type_of_char(const int c);
+
+int is_keyword(const char *str);
 
 /**
  * @brief
@@ -201,7 +208,7 @@ enum char_type{SMALL, CAPITAL, NUM, OTHER};
 
 /**
  *  @brief Vycet vsech stavu, pouzitych v KA pro lexikalni analyzu.
-*   @author Jan Beran
+*   @author Jan Beran, Daniel Bubenicek
  *  @warning Zadny ze stavu nemuze mit hodnotu -1, protoze hodnota -1 je pouzivana jako EMPTY u tokenu
  *  @warning Zadny ze stavu nesmi mit hodnotu ERR_INTERNAL
  */
@@ -253,6 +260,15 @@ enum states {
     FLOAT_EXP_0,
     FLOAT_EXP_1,
     FLOAT_EXP_2,
+    KEY_DEF;
+    KEY_DO;
+    KEY_ELSE;
+    KEY_END;
+    KEY_IF;
+    KEY_NOT;
+    KEY_NIL;
+    KEY_THEN;
+    KEY_WHILE;
 };
 
 
