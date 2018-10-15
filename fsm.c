@@ -45,7 +45,7 @@ Ttoken get_token(Tarray *token_value)
                     case EOL:
                         next_state = EOL_0;
                         break;
-                    case '+':
+                    case '+': //denny neumí s githubem
                         next_state = OP_PLUS;
                         break;
                     case '-':
