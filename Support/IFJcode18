@@ -1,0 +1,6 @@
+*Parametry zadávat přes datový zásobník
+*Pushovat odzadu (standard C)
+*V print zadat jako poslední argument počet termů
+* Předávání návratové hodnoty: pushnout na datový zásobník jako poslední proměnnou
+*TF vždy pushnout a pracovat s ním dále jako s LF
+*Každá funkce po sobě uklízí LF
