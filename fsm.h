@@ -46,11 +46,11 @@ typedef struct{
 /**
  * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
  * @author Jan Beran
- * @note pro operatory a EOF je atribut prazdny
- * @warning Pro load a get hodnot z a do struktury pouzivat prosim specialni funkce
+ * @note atribut je dynamicky alokovany
+ * @warning Pro set a get hodnot z a do struktury pouzivat prosim specialni funkce
  * @warning v0.5 = funkce hotove, netestovane.
  */
-typedef struct{ //todo berry doplnit že atribut je dynalokovany
+typedef struct{
     int type; //pole pro typ tokenu
     char *attribute; //pole pro atribut tokenu
    // int t_used; //skutecna delka typu
@@ -92,7 +92,7 @@ int arr_add_char(Tarray *arr, char c);
  * @param c
  * @return SUCCESS nebo ERR_INTERNAL, pokud arr == NULL
  */
-int arr_add_to_buffer(Tarray *arr, int c); //TODO berry (by denny) co to taky prejmenovat? arr_set_buffer bylo by to jednotne, stale premyslim jestli mam loadovat nebo addovat nebo co :D
+int arr_set_buffer(Tarray *arr, int c);
 
 /**
  *  @brief Funkce, pres kterou se nacita novy znak v KA Lex. analyzatoru. Pri flagu buffer_flag bere hodnotu z bufferu, jinak ze stdin
@@ -110,7 +110,7 @@ int get_next_char(Tarray *arr);
  * @note Jedna se o privatni funkci, pro ziskani znaku z bufferu doporucuji funkci get_next_char(), ktera rovnou hlida i flag
  * @warning Funkce se smi volat pouze pri buffer_flag = true
  */
- int arr_get_from_buffer(Tarray *arr); //TODO berry (by denny) co to taky prejmenovat? arr_get_buffer
+ int arr_get_buffer(Tarray *arr);
 
 /**
 *	@brief Nastavi used na 0, pripadne zmensi velikost alokovaneho pole na vychozi, aby setril misto
@@ -149,15 +149,16 @@ int token_init(Ttoken *token);
  * @brief Funkce vraci retezec s polozkou token.type
  * @author Jan Beran
  * @param token - zdrojovy token
- * @return ukazatel na dyn. alokovany retezec s typem tokenu zakonceny '\0', pri prazdnem typu '\0, pri chybe NULL
+ * @return ukazatel na pole znaků
  */
 char *token_get_type(Ttoken *token);
 
 /**
- * @brief Funkce vraci retezec s polozkou token.attribute
+ * @brief NON IMPLEMENTED
  * @author Jan Beran
  * @param token  - zdrojovy token
- * @return ukazatel na dyn. alokovany retezec s atributem tokenu zakonceny '\0', pri prazdnem typu '\0, pri chybe NULL
+ * @warning FUNKCE NENI IMPLEMENTOVANA
+ * @return
  */
 char *token_get_attribute(Ttoken *token);
 
@@ -170,7 +171,7 @@ char *token_get_attribute(Ttoken *token);
  * @note typy nahravat pomoci preddefinovanych maker
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_type(Ttoken *token, int token_type); //TODO berry (by denny) rename to token_set_type, upravit popis javadoc(vic veci nesouhlasi)
+int token_set_type(Ttoken *token, int token_type);
 
 /**
  * @brief Funkce nahraje do tokenu jeho atribut
@@ -180,7 +181,7 @@ int token_load_type(Ttoken *token, int token_type); //TODO berry (by denny) rena
  * @note velikost pole token.attribute je automaticky regulovana
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_load_attribute(Ttoken *token, Tarray *arr); //TODO berry (by denny) rename to token_set_attribute
+int token_set_attribute(Ttoken *token, Tarray *arr);
 
 /**
  *
