@@ -123,28 +123,28 @@ Ttoken get_token(Tarray *token_value)
                 arr_add_char(token_value, c);
                 break; //konec START
             case LEX_ERROR: //DONE
-                token_load_type(&token, LEX_ERROR);
+                token_set_type(&token, LEX_ERROR);
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX);
                 break;
             case IFJ_CODE_PREAM: //DONE
-                token_load_type(&token, IFJ_CODE_PREAM); //token ready
+                token_set_type(&token, IFJ_CODE_PREAM); //token ready
                 final_state = true;
                 break;
             case OP_PLUS: //DONE
-                token_load_type(&token, OP_PLUS); //token ready
+                token_set_type(&token, OP_PLUS); //token ready
                 final_state = true;
                 break;
             case OP_MINUS: //DONE
-                token_load_type(&token, OP_MINUS); //token ready
+                token_set_type(&token, OP_MINUS); //token ready
                 final_state = true;
                 break;
             case OP_DIV: //DONE
-                token_load_type(&token, OP_DIV); //token ready
+                token_set_type(&token, OP_DIV); //token ready
                 final_state = true;
                 break;
             case OP_MULT: //DONE
-                token_load_type(&token, OP_MULT); //token ready
+                token_set_type(&token, OP_MULT); //token ready
                 final_state = true;
                 break;
             case OP_EQAL_0:
@@ -170,15 +170,15 @@ Ttoken get_token(Tarray *token_value)
             case OP_LESS_EQUAL:
                 break;
             case LEFT_BRACKET: //DONE
-                token_load_type(&token, LEFT_BRACKET); //token ready
+                token_set_type(&token, LEFT_BRACKET); //token ready
                 final_state = true;
                 break;
             case RIGHT_BRACKET: //DONE
-                token_load_type(&token, RIGHT_BRACKET); //token ready
+                token_set_type(&token, RIGHT_BRACKET); //token ready
                 final_state = true;
                 break;
             case OP_COMMA: //DONE
-                token_load_type(&token, OP_COMMA); //token ready
+                token_set_type(&token, OP_COMMA); //token ready
                 final_state = true;
                 break;
             case EOL_0: //DONE
@@ -187,7 +187,7 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = EOL_1;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 break;
             case EOL_1:
@@ -211,7 +211,7 @@ Ttoken get_token(Tarray *token_value)
                 if (c == ' ' || c == '\t') //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 else
                     next_state = LEX_ERROR;}
@@ -245,7 +245,7 @@ Ttoken get_token(Tarray *token_value)
                 if (c == ' ' || c == '\t')
                 {
                     next_state = START;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 else if (c == EOF)
                     next_state = LEX_ERROR;
@@ -274,13 +274,13 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = ID_1;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                     break;
                 }
 
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
@@ -292,7 +292,7 @@ Ttoken get_token(Tarray *token_value)
             case KEY_WORD:
                 break;
             case EOF_STATE: //DONE
-                token_load_type(&token, EOF_STATE); //token ready
+                token_set_type(&token, EOF_STATE); //token ready
                 final_state = true;
                 break;
             case STRING_0: //DONE
@@ -309,8 +309,8 @@ Ttoken get_token(Tarray *token_value)
                     next_state = LEX_ERROR;
                 break; //konec STRING_0
             case STRING_1: //DONE
-                token_load_type(&token, STRING_1);
-                token_load_attribute(&token, token_value); //token ready
+                token_set_type(&token, STRING_1);
+                token_set_attribute(&token, token_value); //token ready
                 final_state = true;
                 break;
             case ESCAPE_0://DONE
@@ -385,22 +385,22 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = INTEGER;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                     break;
                 }
                 if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
             case INTEGER: //DONE
-                if(token_load_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                if(token_set_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
-                token_load_type(&token, actual_state);
+                token_set_type(&token, actual_state);
                 final_state = true;
                 break;
             case FLOAT_0: //DONE
@@ -409,7 +409,7 @@ Ttoken get_token(Tarray *token_value)
                     next_state = FLOAT_1;
                     if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                     {
-                        token_load_type(&token, ERR_INTERNAL);
+                        token_set_type(&token, ERR_INTERNAL);
                         return token;
                     }
                 }
@@ -424,22 +424,22 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = FLOAT_2;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                     break;
                 }
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
             case FLOAT_2: //DONE
-                if(token_load_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                if(token_set_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
-                token_load_type(&token, actual_state);
+                token_set_type(&token, actual_state);
                 final_state = true;
                 break;
             case FLOAT_EXP_0: //DONE
@@ -452,7 +452,7 @@ Ttoken get_token(Tarray *token_value)
 
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
@@ -464,7 +464,7 @@ Ttoken get_token(Tarray *token_value)
 
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
@@ -472,13 +472,13 @@ Ttoken get_token(Tarray *token_value)
                 if(type_of_char(c) != NUM)
                 {
                     next_state = FLOAT_2;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 else //==NUM
                 {
                     if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                     {
-                        token_load_type(&token, ERR_INTERNAL);
+                        token_set_type(&token, ERR_INTERNAL);
                         return token;
                     }
                 }
@@ -526,7 +526,7 @@ int arr_add_char(Tarray *arr, char c)
     return SUCCESS;
 }
 
-int arr_get_from_buffer(Tarray *arr)
+int arr_get_buffer(Tarray *arr)
 {
     arr->buffer_flag = false;
     return arr->buffer;
@@ -535,11 +535,11 @@ int arr_get_from_buffer(Tarray *arr)
 int get_next_char(Tarray *arr)
 {
   if(arr->buffer_flag == true)
-      return arr_get_from_buffer(arr);
+      return arr_get_buffer(arr);
   else
       return getchar();
 }
-int arr_add_to_buffer(Tarray *arr, int c)
+int arr_set_buffer(Tarray *arr, int c)
 {
     if(arr == NULL) return ERR_INTERNAL;
     arr->buffer = c;
@@ -614,13 +614,13 @@ char *token_get_attribute(Ttoken *token) //TODO bude to syntaktak potrebovat?
 }
 
 
-int token_load_type(Ttoken *token, int token_type)
+int token_set_type(Ttoken *token, int token_type)
 {
     token->type = token_type;
     return SUCCESS;
 }
 
-int token_load_attribute(Ttoken *token, Tarray *arr)
+int token_set_attribute(Ttoken *token, Tarray *arr)
 {
     char *attribute = arr_get_value(arr);
     if (attribute == NULL)
