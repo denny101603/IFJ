@@ -15,7 +15,7 @@
  *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
  *
 */
-
+//TODO: Berry? by Berry: odstranit stavy pro preambuli
 #include "fsm.h"
 #include "err_codes.h"
 
@@ -36,6 +36,7 @@ Ttoken get_token(Tarray *token_value)
         {
             case START: //TODO doplnit stavy pro směr ID a keyword
                 arr_reset(token_value);
+
                 switch(c)
                 {
                     case ' ': //mezera
@@ -118,7 +119,10 @@ Ttoken get_token(Tarray *token_value)
                         next_state = EOF_STATE;
                         break;
                     default:
-                        next_state = LEX_ERROR;
+                        if(type_of_char(c) == SMALL || c == '_')
+                            next_state = ID_0;
+                        else
+                            next_state = LEX_ERROR;
                 }
                 arr_add_char(token_value, c);
                 break; //konec START
@@ -190,7 +194,8 @@ Ttoken get_token(Tarray *token_value)
                     arr_set_buffer(token_value, c);
                 }
                 break;
-            case EOL_1:
+            case EOL_1:// upraveno
+                token_set_type(&token, OP_COMMA); //token ready
                 final_state = true;
                 break;
             case BLOCK_COMMENT_0: //DONE
