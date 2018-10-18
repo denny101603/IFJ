@@ -146,12 +146,12 @@ char *arr_get_value(Tarray *arr);
 int token_init(Ttoken *token);
 
 /**
- * @brief Funkce vraci retezec s polozkou token.type
+ * @brief Funkce vraci typ tokenu
  * @author Jan Beran
  * @param token - zdrojovy token
- * @return ukazatel na pole znaků
+ * @return tyo tokenu (int/enum)
  */
-char *token_get_type(Ttoken *token);
+int token_get_type(Ttoken *token);
 
 /**
  * @brief NON IMPLEMENTED

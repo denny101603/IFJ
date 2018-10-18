@@ -592,7 +592,7 @@ int token_init(Ttoken *token)
     return SUCCESS;
 }
 
-char *token_get_type(Ttoken *token)
+ int token_get_type(Ttoken *token)
 {
     return token->type;
 }
