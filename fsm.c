@@ -31,10 +31,10 @@ Ttoken get_token(Tarray *token_value)
 
     while(!final_state)
     {
-        c = get_next_char(token_value);
         switch (actual_state)
         {
             case START: //TODO doplnit stavy pro směr ID a keyword
+                c = get_next_char(token_value);
                 arr_reset(token_value);
                 switch(c)
                 {
@@ -148,18 +148,44 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case OP_EQAL_0:
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_EQAL_1;
+                else
+                {
+                    next_state = OP_EQAL_2;
+                    arr_set_buffer(token_value, c);
+                }
                 break;
-            case OP_EQAL_1:
+            case OP_EQAL_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_EQAL_2:
+            case OP_EQAL_2: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_NOT_EQ_0:
+            case OP_NOT_EQ_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_NOT_EQ_1;
+                else
+                    next_state = LEX_ERROR;
                 break;
-            case OP_NOT_EQ_1:
+            case OP_NOT_EQ_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_MORE_0:
+            case OP_MORE_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_MORE_EQUAL;
+                else
+                    next_state = OP_MORE_1;
                 break;
-            case OP_MORE_1:
+            case OP_MORE_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
             case OP_MORE_EQUAL:
                 break;
@@ -182,6 +208,7 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case EOL_0: //DONE
+                c = get_next_char(token_value);
                 if(c == '=')
                     next_state = BLOCK_COMMENT_0;
                 else
@@ -190,11 +217,12 @@ Ttoken get_token(Tarray *token_value)
                     arr_set_buffer(token_value, c);
                 }
                 break;
-            case EOL_1:
+            case EOL_1: //TODO berry? by denny dodelat?
                 final_state = true;
                 break;
-            case BLOCK_COMMENT_0: //DONE
-            {   char comm_begin[] = "begin";
+            case BLOCK_COMMENT_0: //DONE TODO Berry by denny vyzmizet slozeno zavorky, pridan radek se ctenim, takze by uz nemely byt potreba
+            {   c = get_next_char(token_value);
+                char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
                 {
                     if(comm_begin[i] != c)
@@ -217,6 +245,7 @@ Ttoken get_token(Tarray *token_value)
                     next_state = LEX_ERROR;}
                 break; //konec BLOCK_COMMENT_0
             case BLOCK_COMMENT_1: // DONE
+                c = get_next_char(token_value);
                 while(c != EOL && c != EOF)
                 {
                     c = get_next_char(token_value);
@@ -226,8 +255,9 @@ Ttoken get_token(Tarray *token_value)
                 else //else if (c == EOF)
                     next_state = LEX_ERROR;
                 break;//konec BLOCK_COMMENT_1
-            case BLOCK_COMMENT_2: //DONE
+            case BLOCK_COMMENT_2: //DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
             {
+                c = get_next_char(token_value);
                 char comm_end[] = "=end";
                 for (int i = 0; comm_end[i] != '\0'; i++)
                 {
@@ -255,6 +285,7 @@ Ttoken get_token(Tarray *token_value)
             case BLOCK_COMMMENT_3: //TODO vyhodit?
                 break;
             case ONE_LINE_COMMENT://DONE
+                c = get_next_char(token_value);
                 while(c != EOL && c != EOF)
                 {
                     c = get_next_char(token_value);
@@ -265,7 +296,7 @@ Ttoken get_token(Tarray *token_value)
                     next_state = START;
                 break; //konec OONE_LINE_COMMENT
             case ID_0: //DONE
-                ;
+                c = get_next_char(token_value);
                 int type = type_of_char(c);
                 if(type == NUM || type == SMALL || type == CAPITAL || c == '_') //actual state zustava
                     ;
@@ -296,6 +327,7 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case STRING_0: //DONE
+                c = get_next_char(token_value);
                 while (c != '"' && c != '\\' && c != EOF)
                 {
                     arr_add_char(token_value, c);
@@ -314,6 +346,7 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case ESCAPE_0://DONE
+                c = get_next_char(token_value);
                 switch(c)
                 {
                     case '"':
@@ -342,8 +375,9 @@ Ttoken get_token(Tarray *token_value)
                         break;
                 }
                 break;//konec ESCAPE_0
-            case ESCAPE_1://DONE
-            {   char hexa[2];
+            case ESCAPE_1://DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
+            {   c = get_next_char(token_value);
+                char hexa[2];
                 int num = 0;
                 if((c >= '0' && c <= '9') ||
                    (c >= 'a' && c <= 'f') ||
@@ -376,6 +410,7 @@ Ttoken get_token(Tarray *token_value)
             case ESCAPE_2: // asi pryč
                 break;
             case NUMBER_0: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char((char)c) == NUM)
                     next_state = LEX_ERROR;
                 else if(c == '.')
@@ -404,6 +439,7 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case FLOAT_0: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM)
                 {
                     next_state = FLOAT_1;
@@ -417,6 +453,7 @@ Ttoken get_token(Tarray *token_value)
                     next_state = LEX_ERROR;
                 break;
             case FLOAT_1: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM) //zustavam ve stejnem stavu
                     ;
                 else if(c == 'E' || c == 'e')
@@ -443,6 +480,7 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case FLOAT_EXP_0: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM)
                     next_state = FLOAT_EXP_2;
                 else if(c == '+' || c == '-')
@@ -457,6 +495,7 @@ Ttoken get_token(Tarray *token_value)
                 }
                 break;
             case FLOAT_EXP_1: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM)
                     next_state = FLOAT_EXP_2;
                 else
@@ -469,6 +508,7 @@ Ttoken get_token(Tarray *token_value)
                 }
                 break;
             case FLOAT_EXP_2: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) != NUM)
                 {
                     next_state = FLOAT_2;
