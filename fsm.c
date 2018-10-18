@@ -147,7 +147,7 @@ Ttoken get_token(Tarray *token_value)
                 token_set_type(&token, OP_MULT); //token ready
                 final_state = true;
                 break;
-            case OP_EQAL_0:
+            case OP_EQAL_0: //DONE
                 c = get_next_char(token_value);
                 if(c == '=')
                     next_state = OP_EQAL_1;
@@ -181,19 +181,36 @@ Ttoken get_token(Tarray *token_value)
                 if(c == '=')
                     next_state = OP_MORE_EQUAL;
                 else
+                {
                     next_state = OP_MORE_1;
+                    arr_set_buffer(token_value, c);
+                }
                 break;
             case OP_MORE_1: //DONE
                 token_set_type(&token, actual_state);
                 final_state = true;
                 break;
-            case OP_MORE_EQUAL:
+            case OP_MORE_EQUAL: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_LESS_0:
+            case OP_LESS_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_LESS_EQUAL;
+                else
+                {
+                    next_state = OP_LESS_1;
+                    arr_set_buffer(token_value, c);
+                }
                 break;
-            case OP_LESS_1:
+            case OP_LESS_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_LESS_EQUAL:
+            case OP_LESS_EQUAL: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
             case LEFT_BRACKET: //DONE
                 token_set_type(&token, LEFT_BRACKET); //token ready
@@ -217,8 +234,9 @@ Ttoken get_token(Tarray *token_value)
                     arr_set_buffer(token_value, c);
                 }
                 break;
-            case EOL_1: //TODO berry? by denny dodelat?
+            case EOL_1: //DONE
                 final_state = true;
+                token_set_type(&token, EOL_1);
                 break;
             case BLOCK_COMMENT_0: //DONE TODO Berry by denny vyzmizet slozeno zavorky, pridan radek se ctenim, takze by uz nemely byt potreba
             {   c = get_next_char(token_value);
@@ -315,12 +333,29 @@ Ttoken get_token(Tarray *token_value)
                     return token;
                 }
                 break;
-            case ID_1:
-
+            case ID_1: //DONE
+                ;
+                char *str = arr_get_value(token_value); //pozor, dynamicky alokovane
+                if(str == NULL) //chyba alokace
+                {
+                    token_set_type(&token, ERR_INTERNAL);
+                    return token;
+                }
+                int type_key; //pro keyword
+                if((type_key = is_keyword(str)) != 0) //pokud je to keyword nastavim jako final state
+                {
+                    token_set_type(&token, type_key); //token ready
+                    final_state = true;
+                }
+                else
+                    next_state = ID_2;
+                free(str);
                 break;
-            case ID_2:
+            case ID_2: //DONE
+                token_set_type(&token, actual_state); //token ready
+                final_state = true;
                 break;
-            case KEY_WORD:
+            case KEY_WORD: //TODO asi pryc, poreseno na prasaka v ID_1
                 break;
             case EOF_STATE: //DONE
                 token_set_type(&token, EOF_STATE); //token ready
