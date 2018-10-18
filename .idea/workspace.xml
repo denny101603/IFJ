@@ -14,11 +14,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7eb79f89-134a-45d7-90bb-7f1b92fd3ec8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fsm.c" beforeDir="false" afterPath="$PROJECT_DIR$/fsm.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fsm.h" beforeDir="false" afterPath="$PROJECT_DIR$/fsm.h" afterDir="false" />
-    </list>
+    <list default="true" id="7eb79f89-134a-45d7-90bb-7f1b92fd3ec8" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +66,7 @@
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="16" />
+          <entry key="project.closed" value="17" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.5" value="3" />
           <entry key="project.open.time.6" value="5" />
@@ -121,11 +117,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fsm.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-90">
-              <caret line="596" column="23" selection-start-line="596" selection-start-column="23" selection-end-line="596" selection-end-column="23" />
+            <state relative-caret-position="148">
+              <caret line="601" column="1" lean-forward="true" selection-start-line="601" selection-start-column="1" selection-end-line="601" selection-end-column="1" />
               <folding>
                 <element signature="e#566#582#0" expanded="true" />
               </folding>
@@ -138,7 +134,7 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fsm.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="141">
@@ -286,7 +282,7 @@
       <workItem from="1539435659390" duration="745000" />
       <workItem from="1539617074286" duration="3471000" />
       <workItem from="1539629307794" duration="876000" />
-      <workItem from="1539775343680" duration="1056000" />
+      <workItem from="1539775343680" duration="1674000" />
     </task>
     <task id="LOCAL-00001" summary="Berryho branch">
       <created>1537995771558</created>
@@ -435,11 +431,18 @@
       <option name="project" value="LOCAL" />
       <updated>1539629914428</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Berryho branch">
+      <created>1539776844532</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1539776844532</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50294000" />
+    <option name="totallyTimeSpent" value="50912000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -595,22 +598,22 @@
     <entry file="file://$PROJECT_DIR$/Konecny automat.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/fsm.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-90">
-          <caret line="596" column="23" selection-start-line="596" selection-start-column="23" selection-end-line="596" selection-end-column="23" />
-          <folding>
-            <element signature="e#566#582#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fsm.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="141">
           <caret line="183" column="52" selection-start-line="183" selection-start-column="52" selection-end-line="183" selection-end-column="52" />
           <folding>
             <element signature="e#637#657#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fsm.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="601" column="1" lean-forward="true" selection-start-line="601" selection-start-column="1" selection-end-line="601" selection-end-column="1" />
+          <folding>
+            <element signature="e#566#582#0" expanded="true" />
           </folding>
         </state>
       </provider>
