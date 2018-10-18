@@ -28,6 +28,7 @@
 
 #define EOL '\n'
 # define EMPTY -1
+#define NUM_OF_KEYWORDS 9
 
 /**
 *	@brief dymamicky alokovane pole pro potreby nacitani ze vstupu, samo si hlida a pripadne realokuje velikost
@@ -199,6 +200,12 @@ void token_free(Ttoken *token);
  */
 int type_of_char(const int c);
 
+/**
+ * @brief porovnava str s polem keywords
+ * @author Daniel Bubenicek
+ * @param str kontrolovany retezec
+ * @return false pro neni keyword, state keywordu pokud je to keyword
+ */
 int is_keyword(const char *str);
 
 /**
@@ -212,6 +219,7 @@ enum char_type{SMALL, CAPITAL, NUM, OTHER};
 *   @author Jan Beran, Daniel Bubenicek
  *  @warning Zadny ze stavu nemuze mit hodnotu -1, protoze hodnota -1 je pouzivana jako EMPTY u tokenu
  *  @warning Zadny ze stavu nesmi mit hodnotu ERR_INTERNAL
+ *  @warning keywords musi zustat v rade za sebou a poradi musi souhlasit s polem keywords (a nebyt 0)
  */
 enum states {
     START,
@@ -261,7 +269,7 @@ enum states {
     FLOAT_EXP_0,
     FLOAT_EXP_1,
     FLOAT_EXP_2,
-    KEY_DEF,
+    KEY_DEF,//prvni keyword
     KEY_DO,
     KEY_ELSE,
     KEY_END,
@@ -269,7 +277,7 @@ enum states {
     KEY_NOT,
     KEY_NIL,
     KEY_THEN,
-    KEY_WHILE
+    KEY_WHILE //posledni keyword
 };
 
 
