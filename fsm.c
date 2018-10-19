@@ -15,7 +15,7 @@
  *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
  *
 */
-//TODO: Berry? by Berry: odstranit stavy pro preambuli
+
 #include "fsm.h"
 #include "err_codes.h"
 
@@ -48,7 +48,7 @@ Ttoken get_token(Tarray *token_value)
                     case EOL:
                         next_state = EOL_0;
                         break;
-                    case '+': //denny neumí s githubem
+                    case '+': //denny neumí s githubem. Potvrzeno
                         next_state = OP_PLUS;
                         break;
                     case '-':
@@ -95,7 +95,7 @@ Ttoken get_token(Tarray *token_value)
                     case '#':
                         next_state = ONE_LINE_COMMENT;
                         break;
-                    case '.': //.IFJcode18 ??
+                    /*case '.': //.IFJcode18 ??
                     {
                         char ifj[] = ".IFJcode18";
                         for (int i = 0; ifj[i] != '\0'; i++)
@@ -116,7 +116,7 @@ Ttoken get_token(Tarray *token_value)
                         else
                         	next_state = LEX_ERROR; //
                         break; //break case
-                    }
+                    }*/
                     case EOF:
                         next_state = EOF_STATE;
                         break;
@@ -133,10 +133,10 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX);
                 break;
-            case IFJ_CODE_PREAM: //DONE
+            /*case IFJ_CODE_PREAM: //DONE
                 token_set_type(&token, IFJ_CODE_PREAM); //token ready
                 final_state = true;
-                break;
+                break;*/
             case OP_PLUS: //DONE
                 token_set_type(&token, OP_PLUS); //token ready
                 final_state = true;
