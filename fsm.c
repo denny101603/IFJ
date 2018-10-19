@@ -16,6 +16,7 @@
  *
 */
 
+#include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
 
@@ -358,6 +359,11 @@ Ttoken get_token(Tarray *token_value)
                 free(str);
                 break;
             case ID_2: //DONE
+                if(token_set_attribute(&token, token_value) == ERR_INTERNAL)
+                {
+                    token_set_type(&token, ERR_INTERNAL);
+                    return token;
+                }
                 token_set_type(&token, actual_state); //token ready
                 final_state = true;
                 break;
