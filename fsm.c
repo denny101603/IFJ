@@ -15,7 +15,7 @@
  *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
  *
 */
-//TODO: Berry? by Berry: odstranit stavy pro preambuli
+//TODO: Berry? by Berry: odstranit stavy pro preambuli .IFJcode18
 #include "fsm.h"
 #include "err_codes.h"
 
