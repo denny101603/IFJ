@@ -428,6 +428,7 @@ Ttoken get_token(Tarray *token_value)
                         break;
                     case EOF:
                         next_state = LEX_ERROR;
+                        break;
                     default:
                         arr_add_char(token_value, c);
                         next_state = STRING_1;
