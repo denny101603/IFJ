@@ -19,7 +19,7 @@
 #include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
-
+#include <string.h>
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
 Ttoken get_token(Tarray *token_value)
@@ -39,7 +39,6 @@ Ttoken get_token(Tarray *token_value)
             case START: //TODO doplnit stavy pro směr ID a keyword
                 c = get_next_char(token_value);
                 arr_reset(token_value);
-
                 switch(c)
                 {
                     case ' ': //mezera
@@ -66,6 +65,9 @@ Ttoken get_token(Tarray *token_value)
                         break;
                     case ')':
                         next_state = RIGHT_BRACKET;
+                        break;
+                    case '=':
+                        next_state = OP_EQAL_0;
                         break;
                     case '0':
                         next_state = NUMBER_0;
@@ -133,6 +135,7 @@ Ttoken get_token(Tarray *token_value)
                 token_set_type(&token, LEX_ERROR);
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX);
+                fflush(stderr);
                 break;
             /*case IFJ_CODE_PREAM: //DONE
                 token_set_type(&token, IFJ_CODE_PREAM); //token ready
@@ -245,7 +248,7 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 token_set_type(&token, EOL_1);
                 break;
-            case BLOCK_COMMENT_0: //DONE TODO Berry by denny vyzmizet slozeno zavorky, pridan radek se ctenim, takze by uz nemely byt potreba
+            case BLOCK_COMMENT_0: //DONE //TODO ALL by Berry: musi byt za =begin jen mezera/tabulator, nebo i EOL? ze zadání nejasné, Ruby sežere i EOL. Momentálně verze EOL
             {   c = get_next_char(token_value);
                 char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
@@ -261,7 +264,7 @@ Ttoken get_token(Tarray *token_value)
                     }
                     c = get_next_char(token_value);
                 }
-                if (c == ' ' || c == '\t') //c == whitespace, musi byt za =begin
+                if (c == ' ' || c == '\t' || c == EOL) //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
                     arr_set_buffer(token_value, c);
@@ -280,7 +283,7 @@ Ttoken get_token(Tarray *token_value)
                 else //else if (c == EOF)
                     next_state = LEX_ERROR;
                 break;//konec BLOCK_COMMENT_1
-            case BLOCK_COMMENT_2: //DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
+            case BLOCK_COMMENT_2:
             {
                 c = get_next_char(token_value);
                 char comm_end[] = "=end";
@@ -288,7 +291,7 @@ Ttoken get_token(Tarray *token_value)
                 {
                     if(comm_end[i] != c)
                     {
-                        next_state = LEX_ERROR;
+                        next_state = BLOCK_COMMENT_1;
                         break; //break for
                     }
                     else
@@ -297,17 +300,27 @@ Ttoken get_token(Tarray *token_value)
                     }
                     c = get_next_char(token_value);
                 }
-                if (c == ' ' || c == '\t')
+                if (c == ' ' || c == '\t' || c == EOL)
                 {
-                    next_state = START;
+                    next_state = BLOCK_COMMMENT_3;
                     arr_set_buffer(token_value, c);
                 }
-                else if (c == EOF)
+                else if (c == EOF) //konec souboru
                     next_state = LEX_ERROR;
                 else
                     next_state = BLOCK_COMMENT_1;}
                 break;
-            case BLOCK_COMMMENT_3: //TODO vyhodit?
+            case BLOCK_COMMMENT_3:
+                while(c != EOL)
+                {
+                    c = get_next_char(token_value);
+                    if (c == EOF)
+                    {
+                        next_state = LEX_ERROR;
+                        break;
+                    }
+                }
+                next_state = START;
                 break;
             case ONE_LINE_COMMENT://DONE
                 c = get_next_char(token_value);
@@ -398,18 +411,23 @@ Ttoken get_token(Tarray *token_value)
                 {
                     case '"':
                         arr_add_char(token_value, '\"');
+                        next_state = STRING_0;
                         break;
                     case 'n': //EOL
                         arr_add_char(token_value, '\n');
+                        next_state = STRING_0;
                         break;
                     case 't':
                         arr_add_char(token_value, '\t');
+                        next_state = STRING_0;
                         break;
                     case 's':
                         arr_add_char(token_value, ' ');
+                        next_state = STRING_0;
                         break;
                     case '\\':
                         arr_add_char(token_value, '\\');
+                        next_state = STRING_0;
                         break;
                     case 'x':
                         next_state = ESCAPE_1;
