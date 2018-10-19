@@ -38,7 +38,6 @@ Ttoken get_token(Tarray *token_value)
             case START: //TODO doplnit stavy pro směr ID a keyword
                 c = get_next_char(token_value);
                 arr_reset(token_value);
-
                 switch(c)
                 {
                     case ' ': //mezera
@@ -65,6 +64,9 @@ Ttoken get_token(Tarray *token_value)
                         break;
                     case ')':
                         next_state = RIGHT_BRACKET;
+                        break;
+                    case '=':
+                        next_state = OP_EQAL_0;
                         break;
                     case '0':
                         next_state = NUMBER_0;
@@ -132,6 +134,7 @@ Ttoken get_token(Tarray *token_value)
                 token_set_type(&token, LEX_ERROR);
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX);
+                fflush(stderr);
                 break;
             /*case IFJ_CODE_PREAM: //DONE
                 token_set_type(&token, IFJ_CODE_PREAM); //token ready
@@ -402,18 +405,23 @@ Ttoken get_token(Tarray *token_value)
                 {
                     case '"':
                         arr_add_char(token_value, '\"');
+                        next_state = STRING_0;
                         break;
                     case 'n': //EOL
                         arr_add_char(token_value, '\n');
+                        next_state = STRING_0;
                         break;
                     case 't':
                         arr_add_char(token_value, '\t');
+                        next_state = STRING_0;
                         break;
                     case 's':
                         arr_add_char(token_value, ' ');
+                        next_state = STRING_0;
                         break;
                     case '\\':
                         arr_add_char(token_value, '\\');
+                        next_state = STRING_0;
                         break;
                     case 'x':
                         next_state = ESCAPE_1;
