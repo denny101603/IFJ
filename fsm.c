@@ -19,6 +19,8 @@
 #include "fsm.h"
 #include "err_codes.h"
 
+char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
+
 Ttoken get_token(Tarray *token_value)
 {
     int actual_state = START;
@@ -31,11 +33,12 @@ Ttoken get_token(Tarray *token_value)
 
     while(!final_state)
     {
-        c = get_next_char(token_value);
         switch (actual_state)
         {
             case START: //TODO doplnit stavy pro směr ID a keyword
+                c = get_next_char(token_value);
                 arr_reset(token_value);
+
                 switch(c)
                 {
                     case ' ': //mezera
@@ -45,7 +48,7 @@ Ttoken get_token(Tarray *token_value)
                     case EOL:
                         next_state = EOL_0;
                         break;
-                    case '+':
+                    case '+': //denny neumí s githubem. Potvrzeno
                         next_state = OP_PLUS;
                         break;
                     case '-':
@@ -92,7 +95,7 @@ Ttoken get_token(Tarray *token_value)
                     case '#':
                         next_state = ONE_LINE_COMMENT;
                         break;
-                    case '.': //.IFJcode18 ??
+                    /*case '.': //.IFJcode18 ??
                     {
                         char ifj[] = ".IFJcode18";
                         for (int i = 0; ifj[i] != '\0'; i++)
@@ -113,88 +116,137 @@ Ttoken get_token(Tarray *token_value)
                         else
                         	next_state = LEX_ERROR; //
                         break; //break case
-                    }
+                    }*/
                     case EOF:
                         next_state = EOF_STATE;
                         break;
                     default:
-                        next_state = LEX_ERROR;
+                        if(type_of_char(c) == SMALL || c == '_')
+                            next_state = ID_0;
+                        else
+                            next_state = LEX_ERROR;
                 }
                 arr_add_char(token_value, c);
                 break; //konec START
             case LEX_ERROR: //DONE
-                token_load_type(&token, LEX_ERROR);
+                token_set_type(&token, LEX_ERROR);
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX);
                 break;
-            case IFJ_CODE_PREAM: //DONE
-                token_load_type(&token, IFJ_CODE_PREAM); //token ready
+            /*case IFJ_CODE_PREAM: //DONE
+                token_set_type(&token, IFJ_CODE_PREAM); //token ready
                 final_state = true;
-                break;
+                break;*/
             case OP_PLUS: //DONE
-                token_load_type(&token, OP_PLUS); //token ready
+                token_set_type(&token, OP_PLUS); //token ready
                 final_state = true;
                 break;
             case OP_MINUS: //DONE
-                token_load_type(&token, OP_MINUS); //token ready
+                token_set_type(&token, OP_MINUS); //token ready
                 final_state = true;
                 break;
             case OP_DIV: //DONE
-                token_load_type(&token, OP_DIV); //token ready
+                token_set_type(&token, OP_DIV); //token ready
                 final_state = true;
                 break;
             case OP_MULT: //DONE
-                token_load_type(&token, OP_MULT); //token ready
+                token_set_type(&token, OP_MULT); //token ready
                 final_state = true;
                 break;
-            case OP_EQAL_0:
+            case OP_EQAL_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_EQAL_1;
+                else
+                {
+                    next_state = OP_EQAL_2;
+                    arr_set_buffer(token_value, c);
+                }
                 break;
-            case OP_EQAL_1:
+            case OP_EQAL_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_EQAL_2:
+            case OP_EQAL_2: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_NOT_EQ_0:
+            case OP_NOT_EQ_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_NOT_EQ_1;
+                else
+                    next_state = LEX_ERROR;
                 break;
-            case OP_NOT_EQ_1:
+            case OP_NOT_EQ_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_MORE_0:
+            case OP_MORE_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_MORE_EQUAL;
+                else
+                {
+                    next_state = OP_MORE_1;
+                    arr_set_buffer(token_value, c);
+                }
                 break;
-            case OP_MORE_1:
+            case OP_MORE_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_MORE_EQUAL:
+            case OP_MORE_EQUAL: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_LESS_0:
+            case OP_LESS_0: //DONE
+                c = get_next_char(token_value);
+                if(c == '=')
+                    next_state = OP_LESS_EQUAL;
+                else
+                {
+                    next_state = OP_LESS_1;
+                    arr_set_buffer(token_value, c);
+                }
                 break;
-            case OP_LESS_1:
+            case OP_LESS_1: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
-            case OP_LESS_EQUAL:
+            case OP_LESS_EQUAL: //DONE
+                token_set_type(&token, actual_state);
+                final_state = true;
                 break;
             case LEFT_BRACKET: //DONE
-                token_load_type(&token, LEFT_BRACKET); //token ready
+                token_set_type(&token, LEFT_BRACKET); //token ready
                 final_state = true;
                 break;
             case RIGHT_BRACKET: //DONE
-                token_load_type(&token, RIGHT_BRACKET); //token ready
+                token_set_type(&token, RIGHT_BRACKET); //token ready
                 final_state = true;
                 break;
             case OP_COMMA: //DONE
-                token_load_type(&token, OP_COMMA); //token ready
+                token_set_type(&token, OP_COMMA); //token ready
                 final_state = true;
                 break;
             case EOL_0: //DONE
+                c = get_next_char(token_value);
                 if(c == '=')
                     next_state = BLOCK_COMMENT_0;
                 else
                 {
                     next_state = EOL_1;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 break;
-            case EOL_1:
+            case EOL_1: //DONE
                 final_state = true;
+                token_set_type(&token, EOL_1);
                 break;
-            case BLOCK_COMMENT_0: //DONE
-            {   char comm_begin[] = "begin";
+            case BLOCK_COMMENT_0: //DONE TODO Berry by denny vyzmizet slozeno zavorky, pridan radek se ctenim, takze by uz nemely byt potreba
+            {   c = get_next_char(token_value);
+                char comm_begin[] = "begin";
                 for (int i = 0; comm_begin[i] != '\0'; i++)
                 {
                     if(comm_begin[i] != c)
@@ -211,12 +263,13 @@ Ttoken get_token(Tarray *token_value)
                 if (c == ' ' || c == '\t') //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 else
                     next_state = LEX_ERROR;}
                 break; //konec BLOCK_COMMENT_0
             case BLOCK_COMMENT_1: // DONE
+                c = get_next_char(token_value);
                 while(c != EOL && c != EOF)
                 {
                     c = get_next_char(token_value);
@@ -226,8 +279,9 @@ Ttoken get_token(Tarray *token_value)
                 else //else if (c == EOF)
                     next_state = LEX_ERROR;
                 break;//konec BLOCK_COMMENT_1
-            case BLOCK_COMMENT_2: //DONE
+            case BLOCK_COMMENT_2: //DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
             {
+                c = get_next_char(token_value);
                 char comm_end[] = "=end";
                 for (int i = 0; comm_end[i] != '\0'; i++)
                 {
@@ -245,7 +299,7 @@ Ttoken get_token(Tarray *token_value)
                 if (c == ' ' || c == '\t')
                 {
                     next_state = START;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 else if (c == EOF)
                     next_state = LEX_ERROR;
@@ -255,6 +309,7 @@ Ttoken get_token(Tarray *token_value)
             case BLOCK_COMMMENT_3: //TODO vyhodit?
                 break;
             case ONE_LINE_COMMENT://DONE
+                c = get_next_char(token_value);
                 while(c != EOL && c != EOF)
                 {
                     c = get_next_char(token_value);
@@ -265,7 +320,7 @@ Ttoken get_token(Tarray *token_value)
                     next_state = START;
                 break; //konec OONE_LINE_COMMENT
             case ID_0: //DONE
-                ;
+                c = get_next_char(token_value);
                 int type = type_of_char(c);
                 if(type == NUM || type == SMALL || type == CAPITAL || c == '_') //actual state zustava
                     ;
@@ -274,28 +329,46 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = ID_1;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                     break;
                 }
 
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
-            case ID_1:
-
+            case ID_1: //DONE
+                ;
+                char *str = arr_get_value(token_value); //pozor, dynamicky alokovane
+                if(str == NULL) //chyba alokace
+                {
+                    token_set_type(&token, ERR_INTERNAL);
+                    return token;
+                }
+                int type_key; //pro keyword
+                if((type_key = is_keyword(str)) != 0) //pokud je to keyword nastavim jako final state
+                {
+                    token_set_type(&token, type_key); //token ready
+                    final_state = true;
+                }
+                else
+                    next_state = ID_2;
+                free(str);
                 break;
-            case ID_2:
+            case ID_2: //DONE
+                token_set_type(&token, actual_state); //token ready
+                final_state = true;
                 break;
-            case KEY_WORD:
+            case KEY_WORD: //TODO asi pryc, poreseno na prasaka v ID_1
                 break;
             case EOF_STATE: //DONE
-                token_load_type(&token, EOF_STATE); //token ready
+                token_set_type(&token, EOF_STATE); //token ready
                 final_state = true;
                 break;
             case STRING_0: //DONE
+                c = get_next_char(token_value);
                 while (c != '"' && c != '\\' && c != EOF)
                 {
                     arr_add_char(token_value, c);
@@ -309,11 +382,12 @@ Ttoken get_token(Tarray *token_value)
                     next_state = LEX_ERROR;
                 break; //konec STRING_0
             case STRING_1: //DONE
-                token_load_type(&token, STRING_1);
-                token_load_attribute(&token, token_value); //token ready
+                token_set_type(&token, STRING_1);
+                token_set_attribute(&token, token_value); //token ready
                 final_state = true;
                 break;
             case ESCAPE_0://DONE
+                c = get_next_char(token_value);
                 switch(c)
                 {
                     case '"':
@@ -342,8 +416,9 @@ Ttoken get_token(Tarray *token_value)
                         break;
                 }
                 break;//konec ESCAPE_0
-            case ESCAPE_1://DONE
-            {   char hexa[2];
+            case ESCAPE_1://DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
+            {   c = get_next_char(token_value);
+                char hexa[2];
                 int num = 0;
                 if((c >= '0' && c <= '9') ||
                    (c >= 'a' && c <= 'f') ||
@@ -376,6 +451,7 @@ Ttoken get_token(Tarray *token_value)
             case ESCAPE_2: // asi pryč
                 break;
             case NUMBER_0: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char((char)c) == NUM)
                     next_state = LEX_ERROR;
                 else if(c == '.')
@@ -385,31 +461,32 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = INTEGER;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                     break;
                 }
                 if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
             case INTEGER: //DONE
-                if(token_load_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                if(token_set_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
-                token_load_type(&token, actual_state);
+                token_set_type(&token, actual_state);
                 final_state = true;
                 break;
             case FLOAT_0: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM)
                 {
                     next_state = FLOAT_1;
                     if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                     {
-                        token_load_type(&token, ERR_INTERNAL);
+                        token_set_type(&token, ERR_INTERNAL);
                         return token;
                     }
                 }
@@ -417,6 +494,7 @@ Ttoken get_token(Tarray *token_value)
                     next_state = LEX_ERROR;
                 break;
             case FLOAT_1: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM) //zustavam ve stejnem stavu
                     ;
                 else if(c == 'E' || c == 'e')
@@ -424,25 +502,26 @@ Ttoken get_token(Tarray *token_value)
                 else
                 {
                     next_state = FLOAT_2;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                     break;
                 }
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
             case FLOAT_2: //DONE
-                if(token_load_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                if(token_set_attribute(&token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
-                token_load_type(&token, actual_state);
+                token_set_type(&token, actual_state);
                 final_state = true;
                 break;
             case FLOAT_EXP_0: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM)
                     next_state = FLOAT_EXP_2;
                 else if(c == '+' || c == '-')
@@ -452,11 +531,12 @@ Ttoken get_token(Tarray *token_value)
 
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
             case FLOAT_EXP_1: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) == NUM)
                     next_state = FLOAT_EXP_2;
                 else
@@ -464,21 +544,22 @@ Ttoken get_token(Tarray *token_value)
 
                 if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                 {
-                    token_load_type(&token, ERR_INTERNAL);
+                    token_set_type(&token, ERR_INTERNAL);
                     return token;
                 }
                 break;
             case FLOAT_EXP_2: //DONE
+                c = get_next_char(token_value);
                 if(type_of_char(c) != NUM)
                 {
                     next_state = FLOAT_2;
-                    arr_add_to_buffer(token_value, c);
+                    arr_set_buffer(token_value, c);
                 }
                 else //==NUM
                 {
                     if(arr_add_char(token_value,(char) c) == ERR_INTERNAL)
                     {
-                        token_load_type(&token, ERR_INTERNAL);
+                        token_set_type(&token, ERR_INTERNAL);
                         return token;
                     }
                 }
@@ -526,7 +607,7 @@ int arr_add_char(Tarray *arr, char c)
     return SUCCESS;
 }
 
-int arr_get_from_buffer(Tarray *arr)
+int arr_get_buffer(Tarray *arr)
 {
     arr->buffer_flag = false;
     return arr->buffer;
@@ -535,11 +616,11 @@ int arr_get_from_buffer(Tarray *arr)
 int get_next_char(Tarray *arr)
 {
   if(arr->buffer_flag == true)
-      return arr_get_from_buffer(arr);
+      return arr_get_buffer(arr);
   else
       return getchar();
 }
-int arr_add_to_buffer(Tarray *arr, int c)
+int arr_set_buffer(Tarray *arr, int c)
 {
     if(arr == NULL) return ERR_INTERNAL;
     arr->buffer = c;
@@ -592,7 +673,7 @@ int token_init(Ttoken *token)
     return SUCCESS;
 }
 
-char *token_get_type(Ttoken *token)
+ int token_get_type(Ttoken *token)
 {
     return token->type;
 }
@@ -614,13 +695,13 @@ char *token_get_attribute(Ttoken *token) //TODO bude to syntaktak potrebovat?
 }
 
 
-int token_load_type(Ttoken *token, int token_type)
+int token_set_type(Ttoken *token, int token_type)
 {
     token->type = token_type;
     return SUCCESS;
 }
 
-int token_load_attribute(Ttoken *token, Tarray *arr)
+int token_set_attribute(Ttoken *token, Tarray *arr)
 {
     char *attribute = arr_get_value(arr);
     if (attribute == NULL)
@@ -667,5 +748,10 @@ int type_of_char(const int c)
 
 int is_keyword(const char *str)
 {
-
+     for (int i = 0; i < NUM_OF_KEYWORDS; i++)
+    {
+        if(!strcmp(str, key_words[i])) //shoda
+            return KEY_DEF + i; //KEY_DEF je prvni z keywords, dalsi nasleduji
+    }
+    return false; //nenasel
 }
