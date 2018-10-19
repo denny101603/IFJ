@@ -15,9 +15,11 @@
  *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
  *
 */
-//TODO: Berry? by Berry: odstranit stavy pro preambuli .IFJcode18
+//TODO: Berry? by Berry: odstranit stavy pro preambuli
 #include "fsm.h"
 #include "err_codes.h"
+
+char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
 Ttoken get_token(Tarray *token_value)
 {
@@ -746,5 +748,10 @@ int type_of_char(const int c)
 
 int is_keyword(const char *str)
 {
-
+     for (int i = 0; i < NUM_OF_KEYWORDS; i++)
+    {
+        if(!strcmp(str, key_words[i])) //shoda
+            return KEY_DEF + i; //KEY_DEF je prvni z keywords, dalsi nasleduji
+    }
+    return false; //nenasel
 }
