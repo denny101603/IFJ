@@ -175,7 +175,7 @@ char *token_get_attribute(Ttoken *token);
 int token_set_type(Ttoken *token, int token_type);
 
 /**
- * @brief Funkce nahraje do tokenu jeho atribut
+ * @brief Funkce nahraje do tokenu jeho atribut.
  * @author Jan Beran
  * @param token - cilovy token
  * @paragraph arr - zdrojove pole
