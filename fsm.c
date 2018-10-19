@@ -128,7 +128,9 @@ Ttoken get_token(Tarray *token_value)
                         else
                             next_state = LEX_ERROR;
                 }
-                arr_add_char(token_value, c);
+                if(c != '"') //aby se pocatectni uvozovka nenarvala do stringu //TODO by berry mozna naopak misto ubirani prvni pridavat posledni uvozovku...
+                    arr_add_char(token_value, c);
+
                 break; //konec START
             case LEX_ERROR: //DONE
                 token_set_type(&token, LEX_ERROR);
@@ -371,6 +373,11 @@ Ttoken get_token(Tarray *token_value)
                 free(str);
                 break;
             case ID_2: //DONE
+                if(token_set_attribute(&token, token_value) == ERR_INTERNAL)
+                {
+                    token_set_type(&token, ERR_INTERNAL);
+                    return token;
+                }
                 token_set_type(&token, actual_state); //token ready
                 final_state = true;
                 break;
