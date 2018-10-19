@@ -129,7 +129,8 @@ Ttoken get_token(Tarray *token_value)
                         else
                             next_state = LEX_ERROR;
                 }
-                arr_add_char(token_value, c);
+                if(c != '"') //aby se pocatectni uvozovka nenarvala do stringu //TODO by berry mozna naopak misto ubirani prvni pridavat posledni uvozovku...
+                    arr_add_char(token_value, c);
                 break; //konec START
             case LEX_ERROR: //DONE
                 token_set_type(&token, LEX_ERROR);
@@ -434,6 +435,7 @@ Ttoken get_token(Tarray *token_value)
                         break;
                     case EOF:
                         next_state = LEX_ERROR;
+                        break;
                     default:
                         arr_add_char(token_value, c);
                         next_state = STRING_1;
@@ -637,12 +639,16 @@ int arr_get_buffer(Tarray *arr)
     return arr->buffer;
 }
 
-int get_next_char(Tarray *arr)
+int get_next_char(Tarray *arr) //TODO by Berry: problem CRLF vyresen tak, ze CR zahodim(libovolny pocet CR)
 {
+  int output;
   if(arr->buffer_flag == true)
-      return arr_get_buffer(arr);
+      output = arr_get_buffer(arr);
   else
-      return getchar();
+      output = getchar();
+  if(output == 13)
+      output = get_next_char(arr);
+  return output;
 }
 int arr_set_buffer(Tarray *arr, int c)
 {
