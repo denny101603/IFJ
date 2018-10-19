@@ -15,9 +15,11 @@
  *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
  *
 */
-//TODO: Berry? by Berry: odstranit stavy pro preambuli .IFJcode18
+
 #include "fsm.h"
 #include "err_codes.h"
+
+char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
 Ttoken get_token(Tarray *token_value)
 {
@@ -46,7 +48,7 @@ Ttoken get_token(Tarray *token_value)
                     case EOL:
                         next_state = EOL_0;
                         break;
-                    case '+': //denny neumí s githubem
+                    case '+': //denny neumí s githubem. Potvrzeno
                         next_state = OP_PLUS;
                         break;
                     case '-':
@@ -93,7 +95,7 @@ Ttoken get_token(Tarray *token_value)
                     case '#':
                         next_state = ONE_LINE_COMMENT;
                         break;
-                    case '.': //.IFJcode18 ??
+                    /*case '.': //.IFJcode18 ??
                     {
                         char ifj[] = ".IFJcode18";
                         for (int i = 0; ifj[i] != '\0'; i++)
@@ -114,7 +116,7 @@ Ttoken get_token(Tarray *token_value)
                         else
                         	next_state = LEX_ERROR; //
                         break; //break case
-                    }
+                    }*/
                     case EOF:
                         next_state = EOF_STATE;
                         break;
@@ -131,10 +133,10 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 fprintf(stderr, MESSAGE_LEX);
                 break;
-            case IFJ_CODE_PREAM: //DONE
+            /*case IFJ_CODE_PREAM: //DONE
                 token_set_type(&token, IFJ_CODE_PREAM); //token ready
                 final_state = true;
-                break;
+                break;*/
             case OP_PLUS: //DONE
                 token_set_type(&token, OP_PLUS); //token ready
                 final_state = true;
@@ -746,5 +748,10 @@ int type_of_char(const int c)
 
 int is_keyword(const char *str)
 {
-
+     for (int i = 0; i < NUM_OF_KEYWORDS; i++)
+    {
+        if(!strcmp(str, key_words[i])) //shoda
+            return KEY_DEF + i; //KEY_DEF je prvni z keywords, dalsi nasleduji
+    }
+    return false; //nenasel
 }
