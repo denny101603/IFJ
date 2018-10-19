@@ -640,7 +640,7 @@ int arr_get_buffer(Tarray *arr)
 
 int get_next_char(Tarray *arr) //TODO by Berry: problem CRLF vyresen tak, ze CR zahodim(libovolny pocet CR)
 {
-  char output;
+  int output;
   if(arr->buffer_flag == true)
       output = arr_get_buffer(arr);
   else
