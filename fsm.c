@@ -646,7 +646,7 @@ int get_next_char(Tarray *arr) //TODO by Berry: problem CRLF vyresen tak, ze CR 
   else
       output = getchar();
   if(output == 13)
-      get_next_char(arr);
+      output = get_next_char(arr);
   return output;
 }
 int arr_set_buffer(Tarray *arr, int c)
