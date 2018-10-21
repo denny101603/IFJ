@@ -20,14 +20,14 @@
 #define ERR_ZERO_DIVISION 9 //deleni nulou
 #define ERR_INTERNAL 99 //interni chyba programu nezavisla na vstupu – chyba alokace pameti, neco se nam nepovedlo atp...
 
-#define	MESSAGE_LEX "Chyba v lexikalnim analyzatoru, program bude ukoncen."
-#define	MESSAGE_SYN "Chyba syntakticke analyzy, program bude ukoncen."
-#define MESSAGE_SEM_DEF "Semanticka chyba (problem s definici). Program bude ukoncen."
-#define MESSAGE_SEM_TYPE "Semanticka chyba (typova kompatibilita). Program bude ukoncen."
-#define	MESSAGE_SEM_PARAM "Volani funkce s nespravnym poctem parametru, program bude ukoncen."
-#define MESSAGE_SEM_MISC "Doslo k neidentifikovane semanticke chybe. Program bude ukoncen."
-#define MESSAGE_ZERO_DIVISION "Doslo k deleni nulou. Vesmir bude znicen za 3,2,1..."
-#define	MESSAGE_INTERNAL_ERROR "Doslo k nespecifikovane interni chybe programu a ten bude nyni ukoncen."
-#define MESSAGE_ALLOCATION "Doslo k chybe pri alokaci pameti. Program bude nyni ukoncen."
+#define	MESSAGE_LEX "Chyba v lexikalnim analyzatoru, program bude ukoncen.\n"
+#define	MESSAGE_SYN "Chyba syntakticke analyzy, program bude ukoncen.\n"
+#define MESSAGE_SEM_DEF "Semanticka chyba (problem s definici). Program bude ukoncen.\n"
+#define MESSAGE_SEM_TYPE "Semanticka chyba (typova kompatibilita). Program bude ukoncen.\n"
+#define	MESSAGE_SEM_PARAM "Volani funkce s nespravnym poctem parametru, program bude ukoncen.\n"
+#define MESSAGE_SEM_MISC "Doslo k neidentifikovane semanticke chybe. Program bude ukoncen.\n"
+#define MESSAGE_ZERO_DIVISION "Doslo k deleni nulou. Vesmir bude znicen za 3,2,1...\n"
+#define	MESSAGE_INTERNAL_ERROR "Doslo k nespecifikovane interni chybe programu a ten bude nyni ukoncen.\n"
+#define MESSAGE_ALLOCATION "Doslo k chybe pri alokaci pameti. Program bude nyni ukoncen.\n"
 
 #endif //IFJ2018_ERR_CODES_H
