@@ -16,6 +16,7 @@
  *
 */
 
+#include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
 #include <string.h>
@@ -490,6 +491,26 @@ Ttoken get_token(Tarray *token_value)
                     break;
                 }
                 if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                {
+                    token_set_type(&token, ERR_INTERNAL);
+                    return token;
+                }
+                break;
+            case NUMBER_1:
+                c = get_next_char(token_value);
+                if(c == '.')
+                    next_state = FLOAT_0;
+                else if(c == 'e' || c == 'E')
+                    next_state = FLOAT_EXP_0;
+                else if(type_of_char(c) == NUM)
+                    ; //stav zustava
+                else
+                {
+                    next_state = INTEGER;
+                    arr_set_buffer(token_value, c);
+                    break;
+                }
+                if(arr_add_char(token_value, (char) c) == ERR_INTERNAL)
                 {
                     token_set_type(&token, ERR_INTERNAL);
                     return token;
