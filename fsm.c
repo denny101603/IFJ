@@ -131,7 +131,7 @@ Ttoken get_token(Tarray *token_value)
                         else
                             next_state = LEX_ERROR;
                 }
-                if(c != '"') //aby se pocatectni uvozovka nenarvala do stringu //TODO by berry mozna naopak misto ubirani prvni pridavat posledni uvozovku...
+                if(c != '"') //aby se pocatectni uvozovka nenarvala do stringu //TODO ALL by berry mozna naopak misto ubirani prvni pridavat posledni uvozovku...
                 {
                     if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
                     {
@@ -430,7 +430,7 @@ Ttoken get_token(Tarray *token_value)
                 token_set_attribute(&token, token_value); //token ready
                 final_state = true;
                 break;
-            case ESCAPE_0://TODO berry by berry: osetrit stavy proti padu pameti
+            case ESCAPE_0:
             //fprintf(stderr, "jsem v ESCAPE_0\n");
                 c = get_next_char(token_value);
                 switch(c)
@@ -491,7 +491,7 @@ Ttoken get_token(Tarray *token_value)
                         break;
                 }
                 break;//konec ESCAPE_0
-            case ESCAPE_1://DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
+            case ESCAPE_1://DONE
             {   c = get_next_char(token_value);
                 char hexa[2];
                 unsigned int num = 0;
@@ -785,7 +785,7 @@ int token_init(Ttoken *token)
 }
 
 
-char *token_get_attribute(Ttoken *token) //TODO bude to syntaktak potrebovat?
+char *token_get_attribute(Ttoken *token) //TODO ALL bude to syntaktak potrebovat?
 {
    /* char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
     if(output == NULL)
