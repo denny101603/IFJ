@@ -19,7 +19,6 @@
 #include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
-#include <string.h>
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
 Ttoken get_token(Tarray *token_value)
@@ -36,7 +35,7 @@ Ttoken get_token(Tarray *token_value)
     {
         switch (actual_state)
         {
-            case START: //TODO doplnit stavy pro směr ID a keyword
+            case START:
                 c = get_next_char(token_value);
                 arr_reset(token_value);
                 switch(c)
@@ -82,6 +81,9 @@ Ttoken get_token(Tarray *token_value)
                     case '8':
                     case '9':
                         next_state = NUMBER_1;
+                        break;
+                    case '!':
+                        next_state = OP_NOT_EQ_0;
                         break;
                     case '>':
                         next_state = OP_MORE_0;
@@ -130,7 +132,13 @@ Ttoken get_token(Tarray *token_value)
                             next_state = LEX_ERROR;
                 }
                 if(c != '"') //aby se pocatectni uvozovka nenarvala do stringu //TODO by berry mozna naopak misto ubirani prvni pridavat posledni uvozovku...
-                    arr_add_char(token_value, c);
+                {
+                    if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                    {
+                        token_set_type(&token, ERR_INTERNAL);
+                        return token;
+                    }
+                }
                 break; //konec START
             case LEX_ERROR: //DONE
                 token_set_type(&token, LEX_ERROR);
@@ -246,26 +254,34 @@ Ttoken get_token(Tarray *token_value)
                 }
                 break;
             case EOL_1: //DONE
+                token_set_type(&token, actual_state);
                 final_state = true;
-                token_set_type(&token, EOL_1);
                 break;
             case BLOCK_COMMENT_0: //DONE //TODO ALL by Berry: musi byt za =begin jen mezera/tabulator, nebo i EOL? ze zadání nejasné, Ruby sežere i EOL. Momentálně verze EOL
             {   c = get_next_char(token_value);
                 char comm_begin[] = "begin";
+                int begin_compared_succefully = 0;
                 for (int i = 0; comm_begin[i] != '\0'; i++)
                 {
                     if(comm_begin[i] != c)
                     {
+                        //fprintf(stderr, "znak je: '%c'.\n", c);
                         next_state = LEX_ERROR;
                         break; //break for
                     }
                     else
                     {
-                        arr_add_char(token_value, c);
+                        if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                     }
                     c = get_next_char(token_value);
+                    if(comm_begin[i] == 'n')
+                        begin_compared_succefully =1;
                 }
-                if (c == ' ' || c == '\t' || c == EOL) //c == whitespace, musi byt za =begin
+                if ((c == ' ' || c == '\t' || c == EOL) && begin_compared_succefully) //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
                     arr_set_buffer(token_value, c);
@@ -297,7 +313,11 @@ Ttoken get_token(Tarray *token_value)
                     }
                     else
                     {
-                        arr_add_char(token_value, c);
+                        if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                     }
                     c = get_next_char(token_value);
                 }
@@ -387,11 +407,15 @@ Ttoken get_token(Tarray *token_value)
                 token_set_type(&token, EOF_STATE); //token ready
                 final_state = true;
                 break;
-            case STRING_0: //DONE
+            case STRING_0: // dvojite lomitko \\ znamena ve skutecnosti jen jedno :D
                 c = get_next_char(token_value);
                 while (c != '"' && c != '\\' && c != EOF)
                 {
-                    arr_add_char(token_value, c);
+                    if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                    {
+                        token_set_type(&token, ERR_INTERNAL);
+                        return token;
+                    }
                     c = get_next_char(token_value);
                 }
                 if (c == '"')
@@ -406,28 +430,49 @@ Ttoken get_token(Tarray *token_value)
                 token_set_attribute(&token, token_value); //token ready
                 final_state = true;
                 break;
-            case ESCAPE_0://DONE
+            case ESCAPE_0://TODO berry by berry: osetrit stavy proti padu pameti
+            //fprintf(stderr, "jsem v ESCAPE_0\n");
                 c = get_next_char(token_value);
                 switch(c)
                 {
                     case '"':
-                        arr_add_char(token_value, '\"');
+                        if(arr_add_char(token_value, '\"') == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                         next_state = STRING_0;
                         break;
                     case 'n': //EOL
-                        arr_add_char(token_value, '\n');
+                        if(arr_add_char(token_value, '\n') == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                         next_state = STRING_0;
                         break;
                     case 't':
-                        arr_add_char(token_value, '\t');
+                        if(arr_add_char(token_value, '\t') == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                         next_state = STRING_0;
                         break;
                     case 's':
-                        arr_add_char(token_value, ' ');
+                        if(arr_add_char(token_value, ' ') == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                         next_state = STRING_0;
                         break;
                     case '\\':
-                        arr_add_char(token_value, '\\');
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                         next_state = STRING_0;
                         break;
                     case 'x':
@@ -437,28 +482,39 @@ Ttoken get_token(Tarray *token_value)
                         next_state = LEX_ERROR;
                         break;
                     default:
-                        arr_add_char(token_value, c);
-                        next_state = STRING_1;
+                        if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
+                        next_state = STRING_0;
                         break;
                 }
                 break;//konec ESCAPE_0
             case ESCAPE_1://DONE TODO Berry by denny zmizet slozene zavorky? pridan radek se ctenim, takze by nemely byt potreba
             {   c = get_next_char(token_value);
                 char hexa[2];
-                int num = 0;
+                unsigned int num = 0;
                 if((c >= '0' && c <= '9') ||
                    (c >= 'a' && c <= 'f') ||
                    (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                 {
-                    hexa[0] = (char)c;
+                    hexa[0] = c;
                     c = get_next_char(token_value);
                     if ((c >= '0' && c <= '9') ||
                         (c >= 'a' && c <= 'f') ||
                         (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                     {
-                        hexa[1] = (char)c;
+                        hexa[1] = c;
+                        //fprintf(stderr, "hexa0 = %c, hexa1 = %c\n", hexa[0], hexa[1]);
                         sscanf(hexa, "%x", &num);
-                        arr_add_char(token_value, (char) c);
+                        c = num;
+                        //fprintf(stderr, "c je: %d %c %c\n ", c, c, 153);
+                        if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                        {
+                            token_set_type(&token, ERR_INTERNAL);
+                            return token;
+                        }
                     }
                     else
                     {
