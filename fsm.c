@@ -12,7 +12,7 @@
 *	@file fsm.c
 *	@author Daniel Bubenicek, Jan Beran
 *	@brief implementace konecneho automatu pro lexikalni analyzator
- *	v1.1: Jan Beran: Zacala prace na KA, opraveny chyby a stabni kultura
+ *	v2.0: prvni stabilni a otestovana verze
  *
 */
 
