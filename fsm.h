@@ -15,7 +15,7 @@
  *	v1.1: opraveny chyby v komentech
 */
 
-//TODO berry (by denny) upravit popisky predelanych fci
+
 
 #ifndef IFJ2018_FSM_H
 #define IFJ2018_FSM_H
