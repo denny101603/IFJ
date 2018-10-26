@@ -27,7 +27,7 @@ Ttoken get_token(Tarray *token_value)
     int next_state = LEX_ERROR;
     bool final_state = false;
     int c; //znak ze stdin nebo bufferu
-
+    int first = 1;
     Ttoken token;
     token_init(&token);
 
@@ -66,7 +66,10 @@ Ttoken get_token(Tarray *token_value)
                         next_state = RIGHT_BRACKET;
                         break;
                     case '=':
-                        next_state = OP_EQAL_0;
+                        if (first) //kvuli komentu na prvni radce
+                            next_state = BLOCK_COMMENT_0;
+                        else
+                            next_state = OP_EQAL_0;
                         break;
                     case '0':
                         next_state = NUMBER_0;
@@ -245,7 +248,7 @@ Ttoken get_token(Tarray *token_value)
                 break;
             case EOL_0: //DONE
                 c = get_next_char(token_value);
-                if(c == '=')
+                if(c == '=') //
                     next_state = BLOCK_COMMENT_0;
                 else
                 {
@@ -258,7 +261,8 @@ Ttoken get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case BLOCK_COMMENT_0: //DONE //TODO ALL by Berry: musi byt za =begin jen mezera/tabulator, nebo i EOL? ze zadání nejasné, Ruby sežere i EOL. Momentálně verze EOL
-            {   c = get_next_char(token_value);
+            {
+                c = get_next_char(token_value);
                 char comm_begin[] = "begin";
                 int begin_compared_succefully = 0;
                 for (int i = 0; comm_begin[i] != '\0'; i++)
@@ -388,6 +392,8 @@ Ttoken get_token(Tarray *token_value)
                     token_set_type(&token, type_key); //token ready
                     final_state = true;
                 }
+                else if (!strcmp(str, "begin")) //shoda
+                    next_state = LEX_ERROR; //begin nelze pouzit jako ID
                 else
                     next_state = ID_2;
                 free(str);
@@ -493,7 +499,7 @@ Ttoken get_token(Tarray *token_value)
                 break;//konec ESCAPE_0
             case ESCAPE_1://DONE
             {   c = get_next_char(token_value);
-                char hexa[2];
+                char hexa[2]; //musí  být char, jinak to nejde převést. EOF se ale vyfiltruje do větve else a nehrozí problém
                 unsigned int num = 0;
                 if((c >= '0' && c <= '9') ||
                    (c >= 'a' && c <= 'f') ||
@@ -668,11 +674,12 @@ Ttoken get_token(Tarray *token_value)
                 break;
             default:
                 next_state = ERR_INTERNAL;
-        }
+        }//konec switch
         actual_state = next_state;
-    }
+        first = 0;
+    }//konec for
     return token;
-}
+}//konec get_token()
 
 int arr_init(Tarray *arr)
 {
