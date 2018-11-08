@@ -176,6 +176,60 @@ main.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/main.c.s
 .PHONY : main.c.s
 
+savo.obj: savo.c.obj
+
+.PHONY : savo.obj
+
+# target to build an object file
+savo.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/savo.c.obj
+.PHONY : savo.c.obj
+
+savo.i: savo.c.i
+
+.PHONY : savo.i
+
+# target to preprocess a source file
+savo.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/savo.c.i
+.PHONY : savo.c.i
+
+savo.s: savo.c.s
+
+.PHONY : savo.s
+
+# target to generate assembly for a file
+savo.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/savo.c.s
+.PHONY : savo.c.s
+
+sax.obj: sax.c.obj
+
+.PHONY : sax.obj
+
+# target to build an object file
+sax.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.obj
+.PHONY : sax.c.obj
+
+sax.i: sax.c.i
+
+.PHONY : sax.i
+
+# target to preprocess a source file
+sax.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.i
+.PHONY : sax.c.i
+
+sax.s: sax.c.s
+
+.PHONY : sax.s
+
+# target to generate assembly for a file
+sax.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.s
+.PHONY : sax.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -191,6 +245,12 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... savo.obj
+	@echo ... savo.i
+	@echo ... savo.s
+	@echo ... sax.obj
+	@echo ... sax.i
+	@echo ... sax.s
 .PHONY : help
 
 
