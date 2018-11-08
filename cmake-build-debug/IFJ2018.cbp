@@ -88,6 +88,18 @@
 		<Unit filename="C:/Users/janbe/Desktop/IFJ/main.c">
 			<Option target="IFJ2018"/>
 		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/savo.c">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/savo.h">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/sax.c">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/sax.h">
+			<Option target="IFJ2018"/>
+		</Unit>
 		<Unit filename="C:/Users/janbe/Desktop/IFJ/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
