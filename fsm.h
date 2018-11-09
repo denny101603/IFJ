@@ -277,7 +277,9 @@ enum states {
     KEY_NOT,
     KEY_NIL,
     KEY_THEN,
-    KEY_WHILE //posledni keyword
+    KEY_WHILE, //posledni keyword
+    EXPRESSION, //pro potreby SAVu
+    BOTTOM_TOKEN //pro potreby SAVu
 };
 
 
