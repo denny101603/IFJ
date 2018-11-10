@@ -278,10 +278,12 @@ bool savo(Ttoken *input_token)
     while(true)
     {
        Ttoken *stack_token = get_first_terminal(&stack);
+
        /*UKONCOVACI PODMINKA SAVA*/
        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen
        if((stack_token->type == BOTTOM_TOKEN) && is_terminus(*input_token))
            break;
+
        char action = get_action(*input_token, *stack_token);
        switch (action) {
            case '?':
@@ -296,6 +298,6 @@ bool savo(Ttoken *input_token)
            case '=':
                action_push(*input_token, &stack);
                break;
-       };
+       }
    }
 }

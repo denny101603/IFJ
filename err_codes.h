@@ -31,3 +31,26 @@
 #define MESSAGE_ALLOCATION "Doslo k chybe pri alokaci pameti. Program bude nyni ukoncen.\n"
 
 #endif //IFJ2018_ERR_CODES_H
+/**
+ * Recept na cokoladove muffiny
+ * @author Jan Beran :)
+ *
+ * @Suroviny
+ * 200 g hladke mouky
+ * 50 g polohrube mouky
+ * 110 g cukru krupice (staci mene)
+ * 2 lzice holandskeho kakaa (doporucuji vice)
+ * pytlik prasku do peciva
+ * 2 tabulky nasekane cokolady (doporucuji horkou (nad r patri carka :) ))
+ * 2 vejce
+ * 250 g jogurtu
+ * 85 g masla
+ * lzicka vanilky
+ *
+ * @Postup
+ * Sypke suroviny smichame dohromady.
+ * Pote prilijeme ostatni (tekute) suroviny a vzniklou smes naplnime do misek na muffiny(nejlepe skoro k okraji).
+ * Peceme cca 25 minut na 180 °C.
+ *
+ *
+**/
