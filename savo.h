@@ -7,7 +7,21 @@
 
 #endif //IFJ2018_SAVO_H
 #include "fsm.h"
+#include "err_codes.h"
 #define TERMINUS 666
+#define NUM_OF_RULES 53
+#define RULE_LENGTH 3
+/**
+ * @brief tabulka pravidel
+ * @author Matej Jelinek
+ */
+int rules[NUM_OF_RULES][RULE_LENGTH] = {
+        {EXPRESSION, 0,0},
+        {EXPRESSION, OP_PLUS, EXPRESSION},
+
+
+};
+
 /**
  * @brief Precedencni tbaulka pro syntaktickou analyzu vyrazu.
  * @author Jan Carba
@@ -44,8 +58,14 @@ typedef struct StackElem{
 }TStack;
 
 
+bool stack_init(TStack *stack);
 
 
+bool push(TStack *stack, Ttoken *token);
+
+Ttoken *pop(TStack *stack);
+
+void delete_stack(TStack *stack)
 /**
  * @brief Funkce pro zjisteni, co se ma provadet v dalsim kroku syntakticke analyzy vyrazu.
  * @author Jan Beran
@@ -72,4 +92,23 @@ bool is_terminus(Ttoken token);
 Ttoken *get_first_terminal(TStack *stack);
 
 
-bool stack_init(TStack *stack);
+/**
+ * @brief Akce vykona operaci push a tim simuluje akci = z precedencni tabulky
+ * @param input_token token, ktery ma byt pushnut na stack
+ * @param stack Aktualni zasobik
+ * @return Novy token typu Ttoken
+ */
+Ttoken action_push(Ttoken input_token, TStack *stack); //=
+
+/**
+ * @brief Funkce simuluje akci < z precedencni tabulky
+ * @param input_token
+ * @param stack
+ * @return
+ */
+Ttoken action_change(Ttoken input_token, TStack *stack); //<
+bool action_reduce(TStack *stack); //>
+int action_err(TStack *stack);
+
+int find_rule(TStack *stack);
+void execute_rule(int rule, TStack *stack);
