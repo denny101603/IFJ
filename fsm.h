@@ -15,7 +15,7 @@
  *	v1.1: opraveny chyby v komentech
 */
 
-//TODO berry (by denny) upravit popisky predelanych fci
+
 
 #ifndef IFJ2018_FSM_H
 #define IFJ2018_FSM_H
@@ -27,7 +27,7 @@
 #define INIT_SIZE 256 //inicializacni velikost pole
 
 #define EOL '\n'
-# define EMPTY -1
+#define EMPTY -1
 #define NUM_OF_KEYWORDS 9
 
 /**
@@ -277,7 +277,11 @@ enum states {
     KEY_NOT,
     KEY_NIL,
     KEY_THEN,
-    KEY_WHILE //posledni keyword
+    KEY_WHILE, //posledni keyword
+    EXPRESSION, //pro potreby SAVu
+    BOTTOM_TOKEN, //pro potreby SAVu
+    ACTION_MENSITKO, //pro potreby SAVu
+    ACTION_VETSITKO //pro potreby SAVu
 };
 
 
