@@ -3,7 +3,6 @@
 //
 #include "savo.h"
 
-
 char get_action(Ttoken input_token, Ttoken stack_token)
 {
     int stack_terminal =-1;
@@ -59,7 +58,7 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case TERMINUS:
             input_terminal = 14;
             break;
-    };
+    }
     switch (stack_token.type)
     {
         case OP_PLUS:
@@ -110,7 +109,7 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case TERMINUS:
             stack_terminal = 14;
             break;
-    };
+    }
     if (input_terminal == -1 || stack_terminal == -1)
         return '?'; //neni zaznam v tabulce
     return prec_table[stack_terminal][input_terminal];
@@ -187,12 +186,13 @@ Ttoken *get_first_terminal(TStack *stack)
 }
 
 void delete_stack(TStack *stack)
-{	TStackElem *temp;// = stack->top;
+{
+    TStackElem *temp = NULL;// = stack->top;
     while (stack->top != NULL)
     {
         temp = stack->top;
         stack->top = stack->top->prev;
-        free(temp);
+        if(temp != NULL) free(temp);
     }
     return;
 }
@@ -264,8 +264,38 @@ void execute_rule(int rule, TStack *stack)
             pop(stack);
     }
     pop(stack);
-    Ttoken *expr_token;
+    Ttoken *expr_token = NULL;
     token_init(expr_token);
     expr_token->type = EXPRESSION;
     push(stack, expr_token);
+}
+
+bool savo(Ttoken *input_token)
+{
+    int err = 0;
+    TStack stack;
+    stack_init(&stack);
+    while(true)
+    {
+       Ttoken *stack_token = get_first_terminal(&stack);
+       /*UKONCOVACI PODMINKA SAVA*/
+       //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen
+       if((stack_token->type == BOTTOM_TOKEN) && is_terminus(*input_token))
+           break;
+       char action = get_action(*input_token, *stack_token);
+       switch (action) {
+           case '?':
+               err = action_err(&stack);
+               break;
+           case '<':
+               action_change(*input_token, &stack);
+               break;
+           case '>':
+               action_reduce(&stack);
+               break;
+           case '=':
+               action_push(*input_token, &stack);
+               break;
+       };
+   }
 }
