@@ -5,9 +5,9 @@
 #ifndef IFJ2018_SAX_H
 #define IFJ2018_SAX_H
 
-#endif //IFJ2018_SAX_H
+#include "fsm.h"
 
-#include "savo.h"
+
 /**
  * @brief Struktura prvku v ADT Buffer
  *
@@ -95,3 +95,4 @@ bool buffer_empty(TBuffer *buffer);
  */
 Ttoken get_next_token(Tarray *arr, TBuffer *buffer);
 
+#endif //IFJ2018_SAX_H

@@ -230,6 +230,33 @@ sax.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.s
 .PHONY : sax.c.s
 
+symtable.obj: symtable.c.obj
+
+.PHONY : symtable.obj
+
+# target to build an object file
+symtable.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/symtable.c.obj
+.PHONY : symtable.c.obj
+
+symtable.i: symtable.c.i
+
+.PHONY : symtable.i
+
+# target to preprocess a source file
+symtable.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/symtable.c.i
+.PHONY : symtable.c.i
+
+symtable.s: symtable.c.s
+
+.PHONY : symtable.s
+
+# target to generate assembly for a file
+symtable.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/symtable.c.s
+.PHONY : symtable.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -251,6 +278,9 @@ help:
 	@echo ... sax.obj
 	@echo ... sax.i
 	@echo ... sax.s
+	@echo ... symtable.obj
+	@echo ... symtable.i
+	@echo ... symtable.s
 .PHONY : help
 
 

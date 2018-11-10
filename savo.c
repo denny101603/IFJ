@@ -195,6 +195,7 @@ void delete_stack(TStack *stack)
         if(temp != NULL) free(temp);
     }
     return;
+    //zmena, pri nalezeni smazat :)
 }
 
 Ttoken action_push(Ttoken input_token, TStack *stack)

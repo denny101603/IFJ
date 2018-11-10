@@ -5,12 +5,14 @@
 #ifndef IFJ2018_SAVO_H
 #define IFJ2018_SAVO_H
 
-#endif //IFJ2018_SAVO_H
+
 #include "fsm.h"
 #include "err_codes.h"
+
 #define TERMINUS 666
 #define NUM_OF_RULES 87
 #define RULE_LENGTH 3
+
 /**
  * @brief Tabulka pravidel pouzivana funkci get_action.
  * @author Matej Jelinek
@@ -127,7 +129,8 @@ char prec_table[15][15] = {
         /* == */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* $ */    {'<','<','<','<','<','?','<','<','?','?','?','?','?','?','?'}
 };
-//TODO Zkontrolovat to po Janu Carbovi :)
+//TODO ALL Zkontrolovat to po Janu Carbovi :)
+
 /**
  * @brief Struktura prvku v zasobniku TStack
  *
@@ -232,3 +235,5 @@ int find_rule(TStack *stack);
 void execute_rule(int rule, TStack *stack);
 
 bool savo(Ttoken *input_token);
+
+#endif //IFJ2018_SAVO_H
