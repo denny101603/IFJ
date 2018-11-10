@@ -27,7 +27,7 @@
 #define INIT_SIZE 256 //inicializacni velikost pole
 
 #define EOL '\n'
-# define EMPTY -1
+#define EMPTY -1
 #define NUM_OF_KEYWORDS 9
 
 /**
@@ -279,7 +279,9 @@ enum states {
     KEY_THEN,
     KEY_WHILE, //posledni keyword
     EXPRESSION, //pro potreby SAVu
-    BOTTOM_TOKEN //pro potreby SAVu
+    BOTTOM_TOKEN, //pro potreby SAVu
+    ACTION_MENSITKO, //pro potreby SAVu
+    ACTION_VETSITKO //pro potreby SAVu
 };
 
 

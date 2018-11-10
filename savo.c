@@ -3,7 +3,6 @@
 //
 #include "savo.h"
 
-
 char get_action(Ttoken input_token, Ttoken stack_token)
 {
     int stack_terminal =-1;
@@ -35,6 +34,9 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case INTEGER:
             input_terminal = 7;
             break;
+        case FLOAT_2:
+            stack_terminal = 7;
+            break;
         case OP_LESS_1:
             input_terminal = 8;
             break;
@@ -56,7 +58,7 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case TERMINUS:
             input_terminal = 14;
             break;
-    };
+    }
     switch (stack_token.type)
     {
         case OP_PLUS:
@@ -83,6 +85,9 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case INTEGER:
             stack_terminal = 7;
             break;
+        case FLOAT_2:
+            stack_terminal = 7;
+            break;
         case OP_LESS_1:
             stack_terminal = 8;
             break;
@@ -104,7 +109,7 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case TERMINUS:
             stack_terminal = 14;
             break;
-    };
+    }
     if (input_terminal == -1 || stack_terminal == -1)
         return '?'; //neni zaznam v tabulce
     return prec_table[stack_terminal][input_terminal];
@@ -160,7 +165,7 @@ bool push(TStack *stack, Ttoken *token)
 
 }
 
-Ttoken *pop(TStack *stack, Ttoken *token)
+Ttoken *pop(TStack *stack)
 {
     TStackElem *temp = stack->top;
     stack->top = stack->top->prev;
@@ -169,6 +174,7 @@ Ttoken *pop(TStack *stack, Ttoken *token)
     free(temp);
     return output;
 }
+
 Ttoken *get_first_terminal(TStack *stack)
 {
     TStackElem *temp = stack->top;
@@ -178,13 +184,118 @@ Ttoken *get_first_terminal(TStack *stack)
     }
     return temp->data;
 }
-bool delete_stack(TStack *stack)
-{	TStackElem *temp;// = stack->top;
+
+void delete_stack(TStack *stack)
+{
+    TStackElem *temp = NULL;// = stack->top;
     while (stack->top != NULL)
     {
         temp = stack->top;
         stack->top = stack->top->prev;
-        free(temp);
+        if(temp != NULL) free(temp);
     }
+    return;
+}
+
+Ttoken action_push(Ttoken input_token, TStack *stack)
+{
+    push(stack, &input_token);
+    Tarray arr;
+    arr_init(&arr); //Pole znaku
+    return get_token(&arr);
+}
+
+Ttoken action_change(Ttoken input_token, TStack *stack)
+{
+    Ttoken mensitko;
+    mensitko.type = ACTION_MENSITKO;
+    push(stack, &mensitko);
+    return action_push(input_token, stack);
+}
+
+bool action_reduce(TStack *stack)
+{
+    int rule = find_rule(stack);
+    if(rule != -1)
+        execute_rule(rule, stack);
+    else
+        return false;
     return true;
+}
+
+int action_err(TStack *stack)
+{
+    delete_stack(stack);
+    return ERR_SYN;
+}
+
+int find_rule(TStack *stack)
+{
+    int rule[3] = {0,0,0};
+    int ret = -1;
+    TStackElem *temp = stack->top;
+    for(int index = 2; index > -1 || temp->data->type != ACTION_MENSITKO; index-- )
+    {
+        rule[index] = temp->data->type;
+        temp = temp->prev;
+    }
+
+        for( int i = 0; i < NUM_OF_RULES; i++)
+        {
+            for(int j = 0; j < RULE_LENGTH; j++)
+            {
+                if (rule[j] != rules[i][j])
+                    break;
+                else if (rule[j] == rules[i][j] && j == RULE_LENGTH-1) // cele pravidlo se rovna
+                    ret = i;
+            }
+        }
+    return ret;
+
+}
+
+void execute_rule(int rule, TStack *stack)
+{
+    for (int i = 2; i  > RULE_LENGTH ; i--)
+    {
+        if(rules[rule][i] == 0) //napr 1,0,0 (jdeme odzadu)
+            continue;
+        else
+            pop(stack);
+    }
+    pop(stack);
+    Ttoken *expr_token = NULL;
+    token_init(expr_token);
+    expr_token->type = EXPRESSION;
+    push(stack, expr_token);
+}
+
+bool savo(Ttoken *input_token)
+{
+    int err = 0;
+    TStack stack;
+    stack_init(&stack);
+    while(true)
+    {
+       Ttoken *stack_token = get_first_terminal(&stack);
+       /*UKONCOVACI PODMINKA SAVA*/
+       //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen
+       if((stack_token->type == BOTTOM_TOKEN) && is_terminus(*input_token))
+           break;
+       char action = get_action(*input_token, *stack_token);
+       switch (action) {
+           case '?':
+               err = action_err(&stack);
+               break;
+           case '<':
+               action_change(*input_token, &stack);
+               break;
+           case '>':
+               action_reduce(&stack);
+               break;
+           case '=':
+               action_push(*input_token, &stack);
+               break;
+       };
+   }
 }
