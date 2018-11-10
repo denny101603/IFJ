@@ -4,9 +4,6 @@
 
 #include "sax.h"
 
-
-
-
 bool buffer_init(TBuffer *buffer_stack)
 {
     buffer_stack->top = NULL;
