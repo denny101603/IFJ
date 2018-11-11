@@ -181,3 +181,24 @@ bool progr(TSynCommon *sa_vars)
     }
 }
 
+bool nt_deffunc(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_DEF)
+        return false;
+    Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t2->type == ID_FCE || t2->type == ID_2)
+    {
+        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->tabulka main == NULL))
+        {
+            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, 0); //pohlidat spravny pocet parametru
+        }
+        Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
+        if(t3->type != LEFT_BRACKET)
+            return false;
+        if(!nt_params(sa_vars))
+            return false;
+
+    }
+}
+
