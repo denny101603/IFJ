@@ -24,7 +24,7 @@ typedef struct symbol_table_item
 {
     char *key; //nazev promenne !!dynamicky alokovano!!
     bool defined; //0 jeste nebyla definovana, 1 uz ano
-    int token_type; //typ z tokenu
+    int token_type; //todo asi smazat
     unsigned  int num_of_params; //pouze pro funkce - pocet parametru
     struct symbol_table_item *next;
 }Tsymbol_table_item;
