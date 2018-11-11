@@ -12,7 +12,7 @@
 *	@file symtable.h
 *	@author Daniel Bubenicek, kod hash tabulky prevzat a upraven z druheho projektu do predmetu IJC na FIT VUT, jehoz jsem autorem
 *	@brief knihovna pro tabulku symbolu (hash table)
- *	v1.0:
+ *	v1.1: stale neotestovano
  *
 */
 
@@ -25,6 +25,7 @@ typedef struct symbol_table_item
     char *key; //nazev promenne !!dynamicky alokovano!!
     bool defined; //0 jeste nebyla definovana, 1 uz ano
     int token_type; //typ z tokenu
+    unsigned  int num_of_params; //pouze pro funkce - pocet parametru
     struct symbol_table_item *next;
 }Tsymbol_table_item;
 
@@ -61,14 +62,14 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t);
  *	@param token_type - pro upravu/inicializaci tehoz ve strukture
 *	@return NULL pro neuspesnou alokaci jinak ukazatel na dany item (mozne dalsi upravy)
 */
-Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const int token_type);
+Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, int token_type, unsigned int num_of_params); //TODO asi upravit pro pridani celeho pripraveneho itemu
 
 /**
 *	@brief najde a vrati item v tabulce symbolu
 *	@author Daniel Bubenicek
 *	@param[in, out] t - tabulka symbolu se kterou bude pracovat
 *	@param key – vyhledavany nazev
-*	@return NULL pro neuspesnou nenalezeni jinak ukazatel na dany item (mozne dalsi upravy)
+*	@return NULL pro nenalezeni jinak ukazatel na dany item (mozne dalsi upravy)
 */
 Tsymbol_table_item *symtab_find(Tsymbol_table *t, const char *key);
 

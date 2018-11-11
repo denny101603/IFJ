@@ -10,6 +10,8 @@
 #ifndef IFJ2018_ERR_CODES_H
 #define IFJ2018_ERR_CODES_H
 
+#define IN_PROGRESS -1 //SA stale probiha
+
 #define SUCCESS 0 //program skoncil bez chyb
 #define ERR_LEX 1 // chyba lexikalni analyzy – chybná struktura aktuálního lexému
 #define ERR_SYN 2 //chyba syntaktické analýzy – chybná syntaxe

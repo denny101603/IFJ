@@ -12,7 +12,7 @@
 *	@file symtable.c
 *	@author Daniel Bubenicek, kod hash tabulky prevzat a upraven z druheho projektu do predmetu IJC na FIT VUT, jehoz jsem autorem
 *	@brief definice funkci pro tabulku symbolu (hash table)
- *	v1.0:
+ *	v1.1: stale neotestovano
  *
 */
 #include <stdio.h>
@@ -42,7 +42,7 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t)
     return t->arr_size;
 }
 
-Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const int token_type)
+Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const int token_type, const unsigned int num_of_params)
 {
     unsigned long index = symtab_hash_function(key) % symtab_get_arr_size(t);
     Tsymbol_table_item *item = symtab_find(t, key);
