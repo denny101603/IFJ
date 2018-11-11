@@ -6,7 +6,9 @@
 #define IFJ2018_SAX_H
 
 #include "fsm.h"
+#include "symtable.h"
 
+#define TS_SIZE 127ul //TODO domluvit se na nejake velikosti
 
 /**
  * @brief Struktura prvku v ADT Buffer
@@ -31,14 +33,19 @@ typedef struct Buffer{
 
 /**
  * @brief Struktura, slouzici pro komunikaci mezi scannerem, savem a saxem.
- * @param arr Dennyho megahustodemonskykrutoprisne pole, ktere vsechny jenom sere :)
+ * @authors Jan Beran, Daniel Bubenicek
+ * @param arr - pro spravnou funkci skeneru
  * @param buffer buffer (vyrovnavaci pamet) pro komunikaci mezi sax a savo
  */
 typedef struct SynCommon{
-    Tarray arr;
-    TBuffer buffer;
-   // TSYmTable table_fun;
-   //TSymTable table_local;
+
+    Tarray *arr; //TODO by denny: tohle, tablefun i buffer by měly byt ukazatele, ne? edit: potrbuju to, takze jsem to upravil
+    TBuffer *buffer;
+    Tsymbol_table *ts_fun;
+    int err_code; //pro uchovani pripadne chyby
+   //TSymTable table_local; nahrazeno stackem
+   //TODO by denny: pridat nasledujici, asi to budu potrebovat:
+    //stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;
 /**
  * @brief Funkce inicializuje zasobnik typu TBuffer.
@@ -55,6 +62,10 @@ bool buffer_init(TBuffer *buffer_buffer);
  * @return true nebo false, podle vysledku alokace.
  */
 bool buffer_push(TBuffer *buffer, Ttoken *token);
+
+
+//todo by denny Berry: potrebuju tuto fci nize:
+bool buffer_push_bottom(TBuffer *buffer, Ttoken *token);
 
 /**
  * @brief Funkce popne vrchni polozku TBufferElem ze zasobniku buffer a vrati hodnotu tokenu.
@@ -94,5 +105,134 @@ bool buffer_empty(TBuffer *buffer);
  * @return Token z prislusneho zdroje
  */
 Ttoken get_next_token(Tarray *arr, TBuffer *buffer);
+
+/**
+*	@brief provadi cely preklad
+*	@author Daniel Bubenicek
+*	@return kod chyby/uspechu prekladu
+*/
+int startSA();
+
+/**
+*	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool progr(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal deffunc (reprezentuje konstrukci definici funkce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_deffunc(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal params (reprezentuje parametry pri definici fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_params(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal nextparams (reprezentuje 2. a kazdy dalsi parametr pri definici fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_nextparams(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal bodyfce (reprezentuje telo fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_bodyfce(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal eolf (reprezentuje ukonceni konstrukci - eof nebo eol)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_eolf(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal cycl (reprezentuje konstrukci cyklu while)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_cycl(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal bodywhif (reprezentuje telo v konstrukcich if-then-else a while)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_bodywhif(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal ifthenelse (reprezentuje konstrukci if-then-else)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_ifthenelse(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal assignment (reprezentuje prikaz prirazeni)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_assignment(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal right (reprezentuje pravou stranu prikazu prirazeni)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_right(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal leftbracket (reprezentuje volitelnou levou zavorku pri volani fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_leftbracket(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal rightbracket (reprezentuje volitelnou pravou zavorku pri volani fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_rightbracket(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal args (reprezentuje argumenty pri volani fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_args(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal nextargs (reprezentuje 2. a kazdy dalsi argument pri volani fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_nextargs(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal expression (reprezentuje vyraz)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_expression(TSynCommon *sa_vars);
+
+/**
+*	@brief funkce pro neterminal callfce (reprezentuje konstrukci volani fce)
+*	@author Daniel Bubenicek
+*	@return true pro uspech jinak false
+*/
+bool nt_callfce(TSynCommon *sa_vars);
+
+
+
 
 #endif //IFJ2018_SAX_H

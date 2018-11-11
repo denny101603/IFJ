@@ -248,11 +248,12 @@ enum states {
     BLOCK_COMMENT_0,
     BLOCK_COMMENT_1,
     BLOCK_COMMENT_2,
-    BLOCK_COMMMENT_3,
+    BLOCK_COMMMENT_3, //TODO vyplati se to opravovat?
     ONE_LINE_COMMENT,
     ID_0,
     ID_1,
     ID_2,
+    ID_FCE,
     KEY_WORD,
     EOF_STATE,
     STRING_0,
