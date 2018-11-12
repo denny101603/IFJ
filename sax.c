@@ -417,6 +417,6 @@ bool nt_eolf(TSynCommon *sa_vars)
         return true;
     } else {
         token_free(t1);
-        return true;
+        return false;
     }
 }
