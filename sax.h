@@ -69,7 +69,7 @@ typedef struct SynCommon{
     int err_code; //pro uchovani pripadne chyby
    //TSymTable table_local; nahrazeno stackem
    //TODO by denny: pridat nasledujici, asi to budu potrebovat
-    //TSymtables_stack *local_tables; //TODO DONE By Berry
+    TSymtables_stack *local_tables; //TODO DONE By Berry
     //puvodně bylo psano: stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;
 
@@ -168,7 +168,7 @@ Tsymbol_table *TS_pop(TSymtables_stack *stack);
  * @param buffer buffer pro uchovavani tokenu
  * @return Token z prislusneho zdroje
  */
-Ttoken get_next_token(Tarray *arr, TBuffer *buffer);
+Ttoken *get_next_token(Tarray *arr, TBuffer *buffer);
 
 /**
 *	@brief provadi cely preklad
