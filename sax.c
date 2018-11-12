@@ -3,6 +3,7 @@
 //
 
 #include "sax.h"
+#include "savo.h"
 #include "err_codes.h"
 
 bool buffer_init(TBuffer *buffer_stack)
@@ -145,11 +146,11 @@ Tsymbol_table *TS_pop(TSymtables_stack *stack)
 }
 
 
-Ttoken get_next_token(Tarray *arr, TBuffer *buffer)
+Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
 {
-    Ttoken ret;
+    Ttoken *ret;
     if(!buffer_empty(buffer))
-        ret = *buffer_popBottom(buffer);
+        ret = buffer_popBottom(buffer);
     else
         ret = get_token(arr);
     return ret;
@@ -246,7 +247,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
     Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t2->type == ID_FCE || t2->type == ID_2)
     {
-        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->tabulka main == NULL))
+        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom) == NULL))
         {
             symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, 0); //pohlidat spravny pocet parametru
         }
