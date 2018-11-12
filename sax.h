@@ -61,10 +61,17 @@ bool buffer_init(TBuffer *buffer_buffer);
  * @param token Ukazatel na token, ktery se ma vlozit na zasobik.
  * @return true nebo false, podle vysledku alokace.
  */
-bool buffer_push(TBuffer *buffer, Ttoken *token);
+bool buffer_push_top(TBuffer *buffer, Ttoken *token);
 
 
-//todo by denny Berry: potrebuju tuto fci nize:
+
+/**
+ * @brief Funkce, ktera pridava token na dno zasobniku. Token nejprve obali do struktury TBufferElem a pote ho vlozi.
+ * @author Jan Beran
+ * @param buffer Ukazatel na zasobnik, kam se ma token vlozit.
+ * @param token Ukazatel na token, ktery se ma vlozit na zasobik.
+ * @return true nebo false, podle vysledku alokace.
+ */
 bool buffer_push_bottom(TBuffer *buffer, Ttoken *token);
 
 /**

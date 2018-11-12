@@ -12,7 +12,29 @@ bool buffer_init(TBuffer *buffer_stack)
     return true;
 }
 
-bool buffer_push(TBuffer *buffer, Ttoken *token) //pushnuti na top
+bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
+{
+    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    if (temp == NULL)
+        return false;
+    temp->data = token;
+    temp->prev = NULL;
+    if(buffer->bottom == NULL) //zasobnik prazdny
+    {
+        temp->next = NULL;
+        buffer->bottom = temp;
+        buffer->top = temp;
+    }
+    else
+    {
+        temp->next = buffer->bottom;
+        buffer->bottom->prev = temp;
+        buffer->bottom = temp;
+    }
+    return true;
+}
+
+bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 {
     TBufferElem *temp = malloc(sizeof(TBufferElem));
     if (temp == NULL)
