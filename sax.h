@@ -8,11 +8,10 @@
 #include "fsm.h"
 #include "symtable.h"
 
-#define TS_SIZE 127ul //TODO domluvit se na nejake velikosti
+#define TS_SIZE 127ul //TODO domluvit se na nejake velikosti. Musi to byt prvocislo. A stastne cislo (viz wiki).
 
 /**
  * @brief Struktura prvku v ADT Buffer
- *
  * @author Jan Beran
  */
 typedef struct BufferElem{
@@ -49,7 +48,7 @@ struct LTElem *prev;
 typedef struct local_tables{
     TLTElem *top; //ukazatel na posledni prvek = naposled vlozeny (viz obrazek :D )
     TLTElem *bottom; //ukazatel na prvni prvek = prvne vlozeny (viz obrazek :D )
-} TSymtables_stack; //TODO denny by berry jak to pojmenovat?
+} TSymtables_stack;
 //ASCII ukazka zasobniku:
 //|______|________________|___|______
 //|bottom|................|top|  ><sem se vkladaji nove prvky
@@ -67,9 +66,7 @@ typedef struct SynCommon{
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
     int err_code; //pro uchovani pripadne chyby
-   //TSymTable table_local; nahrazeno stackem
-   //TODO by denny: pridat nasledujici, asi to budu potrebovat
-    TSymtables_stack *local_tables; //TODO DONE By Berry
+    TSymtables_stack *local_tables;
     //puvodně bylo psano: stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;
 
