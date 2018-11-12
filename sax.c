@@ -110,6 +110,30 @@ bool buffer_empty(TBuffer *buffer)
     return (buffer->top == NULL);
 }
 
+//Funkce pro praci se stackem symbolek tabulů
+
+bool TS_stack_init(TSymtables_stack *stack)
+{
+
+}
+
+bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
+{
+TLTElem *temp = malloc(sizeof(TLTElem));
+if(temp == NULL)
+return false;
+
+temp->data = table;
+temp->prev = stack->top;
+if(stack->bottom == NULL) //zasobnik je prazdny
+stack->bottom = temp;
+stack->top = temp;
+return true;
+}
+
+Tsymbol_table *TS_pop(TSymtables_stack *stack); //TODO berry by berry doprcat to /\
+
+
 Ttoken get_next_token(Tarray *arr, TBuffer *buffer)
 {
     Ttoken ret;
