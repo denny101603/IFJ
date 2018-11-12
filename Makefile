@@ -8,7 +8,7 @@ CC = gcc
 all: main
 
 main: main.o fsm.o savo.o sax.o
-	$(CC) $(CFLAGS) main.o fsm.o savo.o sax.o -o main
+	$(CC) $(CFLAGS) main.o fsm.o savo.o sax.o symtable.o -o main
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c -o main.o
@@ -21,6 +21,9 @@ savo.o: savo.c savo.h
 
 sax.o: sax.c sax.h
 	$(CC) $(CFLAGS) -c sax.c -o sax.o
+
+symtable.o: symtable.c symtable.h
+	$(CC) $(CFLAGS) -c symtable.c -o symtable.o
 
 clean:
 	rm -f *.o main
