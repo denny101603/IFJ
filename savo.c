@@ -3,12 +3,12 @@
 //
 #include "savo.h"
 
-char get_action(Ttoken input_token, Ttoken stack_token)
+char get_action(Ttoken *input_token, Ttoken *stack_token)
 {
-    int stack_terminal =-1;
+    int stack_terminal = -1;
     int input_terminal = -1;
     /* + 	  -   *	  /	  (	  )	 id	 con  <   >  <=	  >=  !=  ==   $ */
-    switch(input_token.type)
+    switch(input_token->type)
     {
         case OP_PLUS:
             input_terminal = 0;
@@ -35,7 +35,7 @@ char get_action(Ttoken input_token, Ttoken stack_token)
             input_terminal = 7;
             break;
         case FLOAT_2:
-            stack_terminal = 7;
+            input_terminal = 7;
             break;
         case OP_LESS_1:
             input_terminal = 8;
@@ -58,8 +58,11 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case TERMINUS:
             input_terminal = 14;
             break;
+        default:
+            input_terminal = -1;
+            break;
     }
-    switch (stack_token.type)
+    switch (stack_token->type)
     {
         case OP_PLUS:
             stack_terminal = 0;
@@ -109,20 +112,23 @@ char get_action(Ttoken input_token, Ttoken stack_token)
         case TERMINUS:
             stack_terminal = 14;
             break;
+        default:
+            stack_terminal = -1;
+            break;
     }
     if (input_terminal == -1 || stack_terminal == -1)
         return '?'; //neni zaznam v tabulce
     return prec_table[stack_terminal][input_terminal];
 }
 
-bool is_terminus(Ttoken token)
+bool is_terminus(Ttoken *token)
 {
-    if(token.type == EOF_STATE ||
-       token.type == EOL_1 ||
-       token.type == OP_COMMA ||
-       token.type == KEY_THEN ||
-       token.type == KEY_DO ||
-       token.type == RIGHT_BRACKET
+    if(token->type == EOF_STATE ||
+       token->type == EOL_1 ||
+       token->type == OP_COMMA ||
+       token->type == KEY_THEN ||
+       token->type == KEY_DO ||
+       token->type == RIGHT_BRACKET
        )
         return true;
     return false;
@@ -194,23 +200,23 @@ void delete_stack(TStack *stack)
         stack->top = stack->top->prev;
         if(temp != NULL) free(temp);
     }
-    return;
-    //zmena, pri nalezeni smazat :)
 }
-
-Ttoken action_push(Ttoken input_token, TStack *stack)
+// TODO 18.56
+Ttoken *action_push(Ttoken *input_token, TStack *stack)
 {
-    push(stack, &input_token);
+    push(stack, input_token);
     Tarray arr;
     arr_init(&arr); //Pole znaku
     return get_token(&arr);
 }
 
-Ttoken action_change(Ttoken input_token, TStack *stack)
+Ttoken *action_change(Ttoken *input_token, TStack *stack)
 {
-    Ttoken mensitko;
-    mensitko.type = ACTION_MENSITKO;
-    push(stack, &mensitko);
+    Ttoken *mensitko = malloc(sizeof(Ttoken));
+    if(mensitko == NULL)
+        return NULL;
+    mensitko->type = ACTION_MENSITKO;
+    push(stack, mensitko);
     return action_push(input_token, stack);
 }
 
@@ -229,7 +235,7 @@ int action_err(TStack *stack)
     delete_stack(stack);
     return ERR_SYN;
 }
-
+//todo 18.58
 int find_rule(TStack *stack)
 {
     int rule[3] = {0,0,0};
@@ -265,14 +271,17 @@ void execute_rule(int rule, TStack *stack)
             pop(stack);
     }
     pop(stack);
-    Ttoken *expr_token = NULL;
+    Ttoken *expr_token = malloc(sizeof(Ttoken));
+    if (expr_token == NULL)
+        return;
     token_init(expr_token);
-    expr_token->type = EXPRESSION;
+    expr_token->type = EXPRESSION; //TODO by berry muze byt expr null?
     push(stack, expr_token);
 }
 
-bool savo(Ttoken *input_token)
+bool savo(TSynCommon *sa_vars)
 {
+    Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer);
     int err = 0;
     TStack stack;
     stack_init(&stack);
@@ -282,22 +291,23 @@ bool savo(Ttoken *input_token)
 
        /*UKONCOVACI PODMINKA SAVA*/
        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen
-       if((stack_token->type == BOTTOM_TOKEN) && is_terminus(*input_token))
+       if((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token))
            break;
 
-       char action = get_action(*input_token, *stack_token);
+       char action = get_action(input_token, stack_token);
        switch (action) {
+           default:
            case '?':
                err = action_err(&stack);
                break;
            case '<':
-               action_change(*input_token, &stack);
+               action_change(input_token, &stack);
                break;
            case '>':
                action_reduce(&stack);
                break;
            case '=':
-               action_push(*input_token, &stack);
+               action_push(input_token, &stack);
                break;
        }
    }

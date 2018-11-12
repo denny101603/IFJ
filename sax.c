@@ -3,6 +3,7 @@
 //
 
 #include "sax.h"
+#include "savo.h"
 #include "err_codes.h"
 
 bool buffer_init(TBuffer *buffer_stack)
@@ -12,7 +13,29 @@ bool buffer_init(TBuffer *buffer_stack)
     return true;
 }
 
-bool buffer_push(TBuffer *buffer, Ttoken *token) //pushnuti na top
+bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
+{
+    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    if (temp == NULL)
+        return false;
+    temp->data = token;
+    temp->prev = NULL;
+    if(buffer->bottom == NULL) //zasobnik prazdny
+    {
+        temp->next = NULL;
+        buffer->bottom = temp;
+        buffer->top = temp;
+    }
+    else
+    {
+        temp->next = buffer->bottom;
+        buffer->bottom->prev = temp;
+        buffer->bottom = temp;
+    }
+    return true;
+}
+
+bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 {
     TBufferElem *temp = malloc(sizeof(TBufferElem));
     if (temp == NULL)
@@ -80,7 +103,6 @@ void delete_buffer(TBuffer *buffer)
         if(temp != NULL) free(temp);
     }
     buffer->bottom = NULL;
-    return;
 }
 
 bool buffer_empty(TBuffer *buffer)
@@ -88,11 +110,46 @@ bool buffer_empty(TBuffer *buffer)
     return (buffer->top == NULL);
 }
 
-Ttoken get_next_token(Tarray *arr, TBuffer *buffer)
+//Funkce pro praci se stackem tabulek symbolů
+
+bool TS_stack_init(TSymtables_stack *stack)
 {
-    Ttoken ret;
+    stack->top = NULL;
+    stack->bottom = NULL;
+}
+
+bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
+{
+    TLTElem *temp = malloc(sizeof(TLTElem));
+    if(temp == NULL)
+        return false;
+    temp->data = table;
+    temp->prev = stack->top;
+    if(stack->bottom == NULL) //zasobnik je prazdny
+        stack->bottom = temp;
+    stack->top = temp;
+    return true;
+}
+
+Tsymbol_table *TS_pop(TSymtables_stack *stack)
+{
+    TLTElem *temp;
+    Tsymbol_table *ret;
+    temp = stack->top;
+    ret = temp->data;
+    if(stack->top == stack->bottom) // jeden prvek v zasobobniku
+        stack->bottom = NULL;
+    stack->top = stack->top->prev;
+    free(temp);
+    return ret;
+}
+
+
+Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
+{
+    Ttoken *ret = NULL;
     if(!buffer_empty(buffer))
-        ret = *buffer_popBottom(buffer);
+        ret = buffer_popBottom(buffer);
     else
         ret = get_token(arr);
     return ret;
@@ -105,7 +162,7 @@ int startSA()
     if(arr_init(&arr) == ERR_INTERNAL)
         return ERR_INTERNAL;
     else
-        sa_vars.arr = &arr;
+        sa_vars.arr = &arr; //todo by berry nema byt arr dynalokovane? stejne jako sa_vars?
 
     sa_vars.ts_fun = symtab_init(TS_SIZE);
     if(sa_vars.ts_fun == NULL) //chyba alokace
@@ -113,7 +170,7 @@ int startSA()
         arr_free(sa_vars.arr);
         return ERR_INTERNAL;
     }
-    //todo pridat ostatni veci do savars - buffer atd
+    //todo pridat ostatni veci do sa_vars - buffer atd
     sa_vars.err_code = IN_PROGRESS;
     while(sa_vars.err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
         progr(&sa_vars);
@@ -153,7 +210,7 @@ bool progr(TSynCommon *sa_vars)
            buffer_push_bottom(sa_vars->buffer, token);
            return nt_assignment(sa_vars);
        }
-       else if(symtab_find(sa_vars->ts_fun token->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
+       else if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
        { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
            buffer_push_bottom(sa_vars->buffer, token);
@@ -168,7 +225,7 @@ bool progr(TSynCommon *sa_vars)
     }
     else if(token->type == ID_FCE) //muze byt jen volani fce
     {
-        if(symtab_find(sa_vars->ts_fun token->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
+        if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
             buffer_push_bottom(sa_vars->buffer, token);
             return false; //TODO mozna to neni chyba
@@ -189,16 +246,177 @@ bool nt_deffunc(TSynCommon *sa_vars)
     Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t2->type == ID_FCE || t2->type == ID_2)
     {
-        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->tabulka main == NULL))
+        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t2->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
             symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, 0); //pohlidat spravny pocet parametru
+            TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
+
+            Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t3->type != LEFT_BRACKET)
+                return false;
+            if (!nt_params(sa_vars))
+                return false;
+            Ttoken *t4 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t4->type != RIGHT_BRACKET)
+                return false;
+            Ttoken *t5 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t5->type != EOL_1)
+                return false;
+            if (!nt_bodyfce(sa_vars))
+                return false;
+            Ttoken *t6 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t6->type != KEY_END)
+                return false;
+
+            if (!nt_eolf(sa_vars))
+                return false;
+
+            return true; //uz jsem na konci, vse probehlo OK
         }
-        Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
-        if(t3->type != LEFT_BRACKET)
+        else
             return false;
-        if(!nt_params(sa_vars))
-            return false;
+    }
+    else
+        return false;
+}
+
+bool nt_bodyfce(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == EOL_1) //pravidlo 8
+    {
+        if(nt_bodyfce(sa_vars))
+            return true;
+    }
+    else if(t1->type == KEY_DEF) //pravidlo 6
+    {
 
     }
 }
 
+bool nt_ifthenelse(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_IF) //IF
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!savo(sa_vars)) //EXPR
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_THEN) //THEN
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1) //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //IFBODY
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_ELSE) //ELSE
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1) //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //ELSEBODY
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_END)             //END
+    {
+        token_free(t1);
+        return false;
+    }
+    if(nt_eolf(sa_vars))                //EOLF
+    {
+        token_free(t1);
+        return true;
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+}
+
+bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif END eolf
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_WHILE)           //WHILE
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!savo(sa_vars))                       //EXPR
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_DO)              //DO
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1)               //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //bodywhif
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_END)             //END
+    {
+        token_free(t1);
+        return false;
+    }
+    if(nt_eolf(sa_vars))                //eolf
+    {
+        token_free(t1);
+        return true;
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+
+}
+
+bool nt_eolf(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if((t1->type == EOL_1) || (t1->type == EOF_STATE)) //EOF NEBO EOL
+    {
+        token_free(t1);
+        return true;
+    } else {
+        token_free(t1);
+        return false;
+    }
+}

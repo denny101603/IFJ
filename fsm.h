@@ -47,7 +47,7 @@ typedef struct{
 /**
  * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
  * @author Jan Beran
- * @note atribut je dynamicky alokovany
+ * @note atribut i samotny token jsou dynamicky alokovane
  * @warning Pro set a get hodnot z a do struktury pouzivat prosim specialni funkce
  * @warning v0.5 = funkce hotove, netestovane.
  */
@@ -66,7 +66,7 @@ typedef struct{
  *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
 *	@return Ttoken - ukazatel na token
 */
-Ttoken get_token(Tarray *arr);
+Ttoken *get_token(Tarray *arr); //TODO Berry by Berry: kompletne predelat vse tak, aby byl token dynalokovany == predavanny odkazem...
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)
@@ -141,7 +141,7 @@ char *arr_get_value(Tarray *arr);
 /**
  * @brief Inicializace tokenu
  * @author Jan Beran
- * @param token - token k inicializace
+ * @param in token Odkaz na token k inicializaci.
  * @return SUCCESS
  */
 int token_init(Ttoken *token);
@@ -149,7 +149,7 @@ int token_init(Ttoken *token);
 /**
  * @brief Funkce vraci typ tokenu
  * @author Jan Beran
- * @param token - zdrojovy token
+ * @param in token - zdrojovy token (odkaz)
  * @return tyo tokenu (int/enum)
  */
 int token_get_type(Ttoken *token);
@@ -166,7 +166,7 @@ char *token_get_attribute(Ttoken *token);
 /**
  * @brief Funkce nahraje do tokenu jeho typ
  * @author Jan Beran
- * @param token - cilovy token
+ * @param token - cilovy token (odkaz)
  * @param arr zdrojove pole
  * @warning Maximalni delka typu je INIT_SIZE-1
  * @note typy nahravat pomoci preddefinovanych maker
@@ -177,7 +177,7 @@ int token_set_type(Ttoken *token, int token_type);
 /**
  * @brief Funkce nahraje do tokenu jeho atribut.
  * @author Jan Beran
- * @param token - cilovy token
+ * @param token - cilovy token (odkaz)
  * @paragraph arr - zdrojove pole
  * @note velikost pole token.attribute je automaticky regulovana
  * @return SUCCESS nebo ERR_INTERNAL
@@ -189,6 +189,7 @@ int token_set_attribute(Ttoken *token, Tarray *arr);
  * @brief Uvolni token
  * @author Jan Beran
  * @param token - token k zabiti
+ * @note Uvolnuje jak token, tak jeho atribut
  */
 void token_free(Ttoken *token);
 

@@ -8,14 +8,15 @@
 
 #include "fsm.h"
 #include "err_codes.h"
+#include "sax.h"
 
-#define TERMINUS 666
+#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
 #define NUM_OF_RULES 87
 #define RULE_LENGTH 3
 
 /**
  * @brief Tabulka pravidel pouzivana funkci get_action.
- * @author Matej Jelinek
+ * @author Matej Jelinek, Jan Beran
  */
 int rules[NUM_OF_RULES][RULE_LENGTH] = {
         {EXPRESSION, 0,0},
@@ -109,7 +110,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = {
 
 /**
  * @brief Precedencni tbaulka pro syntaktickou analyzu vyrazu.
- * @author Jan Carba
+ * @author Jan Carba, Jan Beran
  */
 char prec_table[15][15] = {
         /*           + 	  -   *	  /	  (	  )	 id	 con  <   >  <=	  >=  !=  ==   $ */
@@ -129,11 +130,12 @@ char prec_table[15][15] = {
         /* == */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* $ */    {'<','<','<','<','<','?','<','<','?','?','?','?','?','?','?'}
 };
-//TODO ALL Zkontrolovat to po Janu Carbovi :)
+//TODO ALL Zkontrolovat to po Janu Carbovi :). By Berry: pokud bude savo naoko fungovat, ale jinak, mrknout se sem.
 
 /**
- * @brief Struktura prvku v zasobniku TStack
- *
+ * @brief Struktura prvku v zasobniku TStack.
+ * @param data Nosic informace typu *token.
+ * @param next, prev Ukazatele dopredu/dozadu.
  * @author Jan Beran
  */
 typedef struct StackElem{
@@ -143,7 +145,7 @@ typedef struct StackElem{
 }TStackElem;
 
 /**
- * @brief Struktura Zasobniku. V tomto provedeni obsahuje pouze ukazatel na vrchol zasobniku.
+ * @brief Struktura zasobniku. V tomto provedeni obsahuje pouze ukazatel na vrchol zasobniku.
  * @author Jan Beran
  */
  typedef struct Stack{
@@ -188,14 +190,14 @@ void delete_stack(TStack *stack);
  * @param stack_token prvni terminalni token na zasobniku.
  * @return Vraci znak reprezentujici akci (<, >, =, ?)
  */
-char get_action(Ttoken input_token, Ttoken stack_token);
+char get_action(Ttoken *input_token, Ttoken *stack_token);
 
 /**
  * @brief Funkce, ktera zjistuje, jestli nacteny token muze byt ukoncujici token vyrazu.
- * @param token Aktualni token.
+ * @param token Aktualni ukazatel na token.
  * @return true, pokud je token ukoncovaci, false, pokud neni.
  */
-bool is_terminus(Ttoken token);
+bool is_terminus(Ttoken *token);
 
 /**
  * @brief Funkce vraci prvni terminalni token ze zasobniku
@@ -211,29 +213,51 @@ Ttoken *get_first_terminal(TStack *stack);
  * @param stack Aktualni zasobik
  * @return Novy token typu Ttoken
  */
-Ttoken action_push(Ttoken input_token, TStack *stack); //=
+Ttoken *action_push(Ttoken *input_token, TStack *stack); //=
 
 /**
  * @brief Funkce simuluje akci < z precedencni tabulky
- * @paragraph Pravidlo <:
+ * @paragraph Pravidlo <: Zamen a za < a a udelej pravidlo =
  * @param input_token
  * @param stack
  * @return
  */
-Ttoken action_change(Ttoken input_token, TStack *stack); //<
+Ttoken *action_change(Ttoken *input_token, TStack *stack); //<
 
 /**
  * @brief Funkce simuluje akci > z precedencni tabulky
- * @paragraph
+ * @paragraph Pravidlo >:  pokud je na zasobniku < XYZ a existuje pravidlo p: A -> XYZ, proveď redukci <XYZ -> A. Jinak chyba.
  * @param stack
  * @return
  */
 bool action_reduce(TStack *stack); //>
+
+/**
+ *
+ * @param stack
+ * @return
+ */
 int action_err(TStack *stack);
 
+/**
+ *
+ * @param stack
+ * @return
+ */
 int find_rule(TStack *stack);
+
+/**
+ *
+ * @param rule
+ * @param stack
+ */
 void execute_rule(int rule, TStack *stack);
 
-bool savo(Ttoken *input_token);
+/**
+ *
+ * @param input_token
+ * @return
+ */
+bool savo(TSynCommon *sa_vars);
 
 #endif //IFJ2018_SAVO_H
