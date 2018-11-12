@@ -246,19 +246,53 @@ bool nt_deffunc(TSynCommon *sa_vars)
     Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t2->type == ID_FCE || t2->type == ID_2)
     {
-        if( symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom) == NULL)) //TODO By berry CHYBA!!!
+        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t2->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
             symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, 0); //pohlidat spravny pocet parametru
+            TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
+
+            Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t3->type != LEFT_BRACKET)
+                return false;
+            if (!nt_params(sa_vars))
+                return false;
+            Ttoken *t4 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t4->type != RIGHT_BRACKET)
+                return false;
+            Ttoken *t5 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t5->type != EOL_1)
+                return false;
+            if (!nt_bodyfce(sa_vars))
+                return false;
+            Ttoken *t6 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if (t6->type != KEY_END)
+                return false;
+
+            if (!nt_eolf(sa_vars))
+                return false;
+
+            return true; //uz jsem na konci, vse probehlo OK
         }
-        Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
-        if(t3->type != LEFT_BRACKET)
+        else
             return false;
-        if(!nt_params(sa_vars))
-            return false;
+    }
+    else
+        return false;
+}
+
+bool nt_bodyfce(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == EOL_1) //pravidlo 8
+    {
+        if(nt_bodyfce(sa_vars))
+            return true;
+    }
+    else if(t1->type == KEY_DEF) //pravidlo 6
+    {
 
     }
 }
-
 
 bool nt_ifthenelse(TSynCommon *sa_vars)
 {
@@ -374,3 +408,15 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
 
 }
 
+bool nt_eolf(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if((t1->type == EOL_1) || (t1->type == EOF_STATE)) //EOF NEBO EOL
+    {
+        token_free(t1);
+        return true;
+    } else {
+        token_free(t1);
+        return true;
+    }
+}
