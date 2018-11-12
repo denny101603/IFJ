@@ -12,7 +12,29 @@ bool buffer_init(TBuffer *buffer_stack)
     return true;
 }
 
-bool buffer_push(TBuffer *buffer, Ttoken *token) //pushnuti na top
+bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
+{
+    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    if (temp == NULL)
+        return false;
+    temp->data = token;
+    temp->prev = NULL;
+    if(buffer->bottom == NULL) //zasobnik prazdny
+    {
+        temp->next = NULL;
+        buffer->bottom = temp;
+        buffer->top = temp;
+    }
+    else
+    {
+        temp->next = buffer->bottom;
+        buffer->bottom->prev = temp;
+        buffer->bottom = temp;
+    }
+    return true;
+}
+
+bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 {
     TBufferElem *temp = malloc(sizeof(TBufferElem));
     if (temp == NULL)
@@ -87,6 +109,41 @@ bool buffer_empty(TBuffer *buffer)
 {
     return (buffer->top == NULL);
 }
+
+//Funkce pro praci se stackem symbolek tabulů
+
+bool TS_stack_init(TSymtables_stack *stack)
+{
+
+}
+
+bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
+{
+TLTElem *temp = malloc(sizeof(TLTElem));
+if(temp == NULL)
+return false;
+
+temp->data = table;
+temp->prev = stack->top;
+if(stack->bottom == NULL) //zasobnik je prazdny
+stack->bottom = temp;
+stack->top = temp;
+return true;
+}
+
+Tsymbol_table *TS_pop(TSymtables_stack *stack)
+{
+    TLTElem *temp;
+    Tsymbol_table *ret;
+    temp = stack->top;
+    ret = temp->data;
+    if(stack->top == stack->bottom) // jeden prvek v zasobobniku
+        stack->bottom = NULL;
+    stack->top = stack->top->prev;
+    free(temp);
+    return ret;
+}
+
 
 Ttoken get_next_token(Tarray *arr, TBuffer *buffer)
 {

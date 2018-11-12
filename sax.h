@@ -32,6 +32,30 @@ typedef struct Buffer{
 }TBuffer;
 
 /**
+ * @brief Struktura pro polozku zasobniku lokalnich tabulek symbolu.
+ * @author Jan Beran
+ *
+ */
+typedef struct LTElem{
+Tsymbol_table *data;
+struct LTElem *prev;
+}TLTElem; //Typ: Local Table Element
+
+/**
+ * @brief Struktura zasobniku lokalnich tabulek symbolů
+ * @author Jan Beran
+ *
+ */
+typedef struct local_tables{
+    TLTElem *top; //ukazatel na posledni prvek = naposled vlozeny (viz obrazek :D )
+    TLTElem *bottom; //ukazatel na prvni prvek = prvne vlozeny (viz obrazek :D )
+} TSymtables_stack; //TODO denny by berry jak to pojmenovat?
+//ASCII ukazka zasobniku:
+//|______|________________|___|______
+//|bottom|................|top|  ><sem se vkladaji nove prvky
+//|______|________________|___|______
+
+/**
  * @brief Struktura, slouzici pro komunikaci mezi scannerem, savem a saxem.
  * @authors Jan Beran, Daniel Bubenicek
  * @param arr - pro spravnou funkci skeneru
@@ -44,9 +68,15 @@ typedef struct SynCommon{
     Tsymbol_table *ts_fun;
     int err_code; //pro uchovani pripadne chyby
    //TSymTable table_local; nahrazeno stackem
-   //TODO by denny: pridat nasledujici, asi to budu potrebovat:
-    //stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
+   //TODO by denny: pridat nasledujici, asi to budu potrebovat
+    //TSymtables_stack *local_tables; //TODO DONE By Berry
+    //puvodně bylo psano: stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;
+
+/********************************/
+/* Funkce pro TBuffer */
+/********************************/
+
 /**
  * @brief Funkce inicializuje zasobnik typu TBuffer.
  * @author Jan Beran
@@ -61,10 +91,15 @@ bool buffer_init(TBuffer *buffer_buffer);
  * @param token Ukazatel na token, ktery se ma vlozit na zasobik.
  * @return true nebo false, podle vysledku alokace.
  */
-bool buffer_push(TBuffer *buffer, Ttoken *token);
+bool buffer_push_top(TBuffer *buffer, Ttoken *token);
 
-
-//todo by denny Berry: potrebuju tuto fci nize:
+/**
+ * @brief Funkce, ktera pridava token na dno zasobniku. Token nejprve obali do struktury TBufferElem a pote ho vlozi.
+ * @author Jan Beran
+ * @param buffer Ukazatel na zasobnik, kam se ma token vlozit.
+ * @param token Ukazatel na token, ktery se ma vlozit na zasobik.
+ * @return true nebo false, podle vysledku alokace.
+ */
 bool buffer_push_bottom(TBuffer *buffer, Ttoken *token);
 
 /**
@@ -96,6 +131,35 @@ void delete_buffer(TBuffer *buffer);
  * @return true, pokud je buffer prazdny, false, pokud neni.
  */
 bool buffer_empty(TBuffer *buffer);
+
+/**************************************/
+/*Funkce pro zasobnik tabulek symbolu (T_symbol_table...)*/
+/**************************************/
+
+/**
+ * @brief Funkce inicializuje zasobik typu TSymtables_stack
+ * @author Jan Beran
+ * @param stack zasobnik k inicializaci.
+ * @return bool true/false podle toho, zda se podari inicializace.
+ */
+bool TS_stack_init(TSymtables_stack *stack);
+
+/**
+ * @brief Funkce vlozi prvek na vrchol zasobniku.
+ * @author Jan Beran
+ * @return t/f podle vysledku
+ */
+ bool TS_push(TSymtables_stack *stack, Tsymbol_table *table);
+
+ /**
+  * @brief Funkce popuje vrchni (top) prvek stacku.
+  * @author Jan Beran
+  * @param stack zasobnik, ze ktereho ma byt popnut prvek
+  * @return popnuty prvek.
+  */
+Tsymbol_table *TS_pop(TSymtables_stack *stack);
+
+
 
 /**
  * @brief Funkce vraci dalsi token a na zaklade toho, zda se v bufferu nachazi nejake tokeny, je bere bud z nej, nebo ze stdin pomoci scanneru.
