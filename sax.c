@@ -259,4 +259,79 @@ bool nt_deffunc(TSynCommon *sa_vars)
 
     }
 }
-
+bool nt_ifthenelse(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_IF) //IF
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!savo(sa_vars)) //EXPR
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_THEN) //THEN
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1) //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //IFBODY
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_ELSE) //ELSE
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1) //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //ELSEBODY
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_END)             //END
+    {
+        token_free(t1);
+        return false;
+    }
+    if(nt_eolf(sa_vars))                //EOLF
+    {
+        token_free(t1);
+        return true;
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+}
+bool nt_eolf(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if((t1->type == EOL_1) || (t1->type == EOF_STATE)) //EOF NEBO EOL
+    {
+        token_free(t1);
+        return true;
+    } else {
+        token_free(t1);
+        return false;
+    }
+}
