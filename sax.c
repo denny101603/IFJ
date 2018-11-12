@@ -312,7 +312,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
-    if(nt_eolf(sa_vars))                //EOLF
+    if(nt_eolf(sa_vars))                //EOLFmrdat
     {
         token_free(t1);
         return true;
