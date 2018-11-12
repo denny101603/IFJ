@@ -145,27 +145,17 @@ bool buffer_empty(TBuffer *buffer);
 bool TS_stack_init(TSymtables_stack *stack);
 
 /**
- * @brief
- *
+ * @brief Funkce vlozi prvek na vrchol zasobniku.
+ * @author Jan Beran
+ * @return t/f podle vysledku
  */
  bool TS_push(TSymtables_stack *stack, Tsymbol_table *table);
- {
-    TLTElem *temp = malloc(sizeof(TLTElem));
-    if(temp == NULL)
-        return false;
-
-    temp->data = table;
-    temp->prev = stack->top;
-    if(stack->bottom == NULL) //zasobnik je prazdny
-        stack->bottom = temp;
-    stack->top = temp;
-    return true;
- }
 
  /**
-  *
-  * @param stack
-  * @return
+  * @brief Funkce popuje vrchni (top) prvek stacku.
+  * @author Jan Beran
+  * @param stack zasobnik, ze ktereho ma byt popnut prvek
+  * @return popnuty prvek.
   */
 Tsymbol_table *TS_pop(TSymtables_stack *stack);
 

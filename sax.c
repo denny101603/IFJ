@@ -131,7 +131,18 @@ stack->top = temp;
 return true;
 }
 
-Tsymbol_table *TS_pop(TSymtables_stack *stack); //TODO berry by berry doprcat to /\
+Tsymbol_table *TS_pop(TSymtables_stack *stack)
+{
+    TLTElem *temp;
+    Tsymbol_table *ret;
+    temp = stack->top;
+    ret = temp->data;
+    if(stack->top == stack->bottom) // jeden prvek v zasobobniku
+        stack->bottom = NULL;
+    stack->top = stack->top->prev;
+    free(temp);
+    return ret;
+}
 
 
 Ttoken get_next_token(Tarray *arr, TBuffer *buffer)
