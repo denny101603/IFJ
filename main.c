@@ -10,19 +10,19 @@
 *******************************/
 #include <stdio.h>
 #include "fsm.h"
-
+#include "sax.h"
 int main() {
-    printf("Hello, World!\n");
+
     //ahoj, já jsem carbik a posilam comit
     //Galantní Jelen
     //Berry was here!
 
     //z toho by se jeden posral(hlavně denny)
-
-
-    Tarray arr;
+    printf("Hell, World!\n");
+    startSA();
+/*    Tarray arr;
     arr_init(&arr); //Pole znaku
     get_token(&arr);
-    arr_free(&arr);
+    arr_free(&arr);*/
     return 0;
 }
