@@ -7,7 +7,7 @@ CC = gcc
 
 all: main
 
-main: main.o fsm.o savo.o sax.o
+main: main.o fsm.o savo.o sax.o symtable.o
 	$(CC) $(CFLAGS) main.o fsm.o savo.o sax.o symtable.o -o main
 
 main.o: main.c

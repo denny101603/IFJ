@@ -112,7 +112,7 @@ bool buffer_empty(TBuffer *buffer)
 
 //Funkce pro praci se stackem tabulek symbolů
 
-bool TS_stack_init(TSymtables_stack *stack)
+bool TS_stack_init(TSymtables_stack *stack) //todo berry by denny - predelat na void, ne?
 {
     stack->top = NULL;
     stack->bottom = NULL;
@@ -157,23 +157,61 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
 
 int startSA()
 {
-    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace
-    Tarray arr; //pole pro skener
-    if(arr_init(&arr) == ERR_INTERNAL)
+    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace //todo asi lepsi dynalokovat
+    Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
+    if(arr_init(arr) == ERR_INTERNAL) //neuspesna alokace
+    {
+        free(arr);
         return ERR_INTERNAL;
+    }
     else
-        sa_vars.arr = &arr; //todo by berry nema byt arr dynalokovane? stejne jako sa_vars?
+        sa_vars.arr = arr;
 
     sa_vars.ts_fun = symtab_init(TS_SIZE);
     if(sa_vars.ts_fun == NULL) //chyba alokace
     {
         arr_free(sa_vars.arr);
+        free(arr);
         return ERR_INTERNAL;
     }
-    //todo pridat ostatni veci do sa_vars - buffer atd
+
+    //todo denny pridat ostatni veci do sa_vars - buffer atd
+    TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer));
+    if(buffer == NULL) //neuspesna alokace
+    {
+        arr_free(sa_vars.arr);
+        free(arr);
+        symtab_free(sa_vars.ts_fun);
+        return ERR_INTERNAL;
+    }
+    else
+    {
+        buffer_init(buffer);
+        sa_vars.buffer = buffer;
+    }
+
+    TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
+    Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
+    if(local_tables == NULL || symtab_local == NULL) //neuspesna alokace
+    {
+        arr_free(sa_vars.arr);
+        free(arr);
+        symtab_free(sa_vars.ts_fun);
+        free(local_tables);
+        free(symtab_local);
+        return ERR_INTERNAL;
+    }
+    else
+    {
+        TS_stack_init(local_tables);
+        sa_vars.local_tables = local_tables;
+        TS_push(sa_vars.local_tables, symtab_local);
+    }
+
     sa_vars.err_code = IN_PROGRESS;
     while(sa_vars.err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
-        progr(&sa_vars);
+        if(!progr(&sa_vars)) //todo denny uupravit asi
+            break;
     //TODO vse dealokovat
     return sa_vars.err_code;
 }
@@ -228,7 +266,7 @@ bool progr(TSynCommon *sa_vars)
         if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
             buffer_push_bottom(sa_vars->buffer, token);
-            return false; //TODO mozna to neni chyba
+            return false; //TODO denny mozna to neni chyba
         }
         else
         {
@@ -236,6 +274,8 @@ bool progr(TSynCommon *sa_vars)
             return nt_callfce(sa_vars);
         }
     }
+    else
+        return false;
 }
 
 bool nt_deffunc(TSynCommon *sa_vars)
@@ -283,14 +323,68 @@ bool nt_deffunc(TSynCommon *sa_vars)
 bool nt_bodyfce(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(t1->type == EOL_1) //pravidlo 8
+    if(t1->type == EOL_1) //RULE 8
     {
         if(nt_bodyfce(sa_vars))
+        {
             return true;
+        }
     }
-    else if(t1->type == KEY_DEF) //pravidlo 6
+    else if(t1->type == KEY_DEF) //RULE 6
     {
-
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_deffunc(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_IF) //RULE10
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_ifthenelse(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_WHILE) //RULE9
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_cycl(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(((t1->type == ID_2) || (t1->type == ID_FCE)) && (symtab_find(sa_vars->ts_fun,t1->attribute) != NULL)) //RULE 13
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_callfce(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if((t1->type == ID_2) && (symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)) //RULE11
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_assignment(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_END)
+    {
+        return true;
+    }
+    else {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!savo(sa_vars))
+        {
+            return nt_bodyfce(sa_vars);
+        }
     }
 }
 
@@ -411,12 +505,321 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
 bool nt_eolf(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if((t1->type == EOL_1) || (t1->type == EOF_STATE)) //EOF NEBO EOL
+    if((t1->type == EOL_1)) //EOF NEBO EOL
     {
         token_free(t1);
         return true;
-    } else {
+    }
+    else if(t1->type == EOF_STATE)
+    {
+        sa_vars->err_code = 101; //todo predelat
+        return true;
+    }
+    else
+    {
         token_free(t1);
         return false;
     }
 }
+
+bool nt_expression(TSynCommon *sa_vars)
+{
+    if(!savo(sa_vars))
+    {
+        return false;
+    }
+    return nt_eolf(sa_vars);
+}
+
+bool nt_nextargs(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == OP_COMMA) //RULE33
+    {
+        if(!savo(sa_vars))
+        {
+            return false;
+        }
+        return nt_nextargs(sa_vars);
+    }
+    else if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE)) //RULE 32
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return true;
+    } else {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return false;
+    }
+}
+
+bool nt_args(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE))
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        token_free(t1);
+        return true;
+    }
+    buffer_push_bottom(sa_vars->buffer, t1);
+    if(!savo(sa_vars))
+    {
+        return false;
+    }
+    return nt_nextargs(sa_vars);
+}
+
+bool nt_right(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+    {
+        //je to id_fce
+        buffer_push_bottom(sa_vars->buffer, t1);
+        token_free(t1);
+        return  true;
+    }
+    else
+    {
+        //cekam EXPR
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(savo(sa_vars))
+        {
+            if(nt_eolf(sa_vars))                //eolf
+            {
+                token_free(t1);
+                return true;
+            }
+            else
+            {
+                token_free(t1);
+                return false;
+            }
+        }
+        else
+        {
+            token_free(t1);
+            return false;
+        }
+    }
+}
+bool nt_assignment(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == ID_2)
+    {
+        if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL && symtab_find(sa_vars->ts_fun, t1->attribute) == NULL)
+        {
+            //je uz definovana
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(t1->type != OP_EQAL_2)       //=
+            {
+                token_free(t1);
+                return false;
+            }
+            if(nt_right(sa_vars))           //right
+            {
+                token_free(t1);
+                return true;
+            }
+            else
+            {
+                token_free(t1);
+                return false;
+            }
+        }
+        else
+        {
+            token_free(t1);
+            return false;
+            //neni definovana nebo je ve func
+        }
+    }
+}
+
+bool nt_nextparams(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == RIGHT_BRACKET || t1->type == OP_COMMA)
+    {
+        if(t1->type == RIGHT_BRACKET)
+        {
+            buffer_push_bottom(sa_vars->buffer,t1);
+            token_free(t1);
+            return  true;
+        }
+        else
+        {
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(t1->type == ID_2)
+            {
+                if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)
+                {
+                    token_free(t1);
+                    return false;
+                    //je uz definovana
+                }
+                else
+                {
+                    if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+                    {
+                        token_free(t1);
+                        return false;
+                        //je to id_fce
+                    }
+                    else
+                    {
+                        symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                        if(nt_nextparams(sa_vars))
+                        {
+                            token_free(t1);
+                            return true;
+                        }
+                        else
+                        {
+                            token_free(t1);
+                            return false;
+                        }
+                        //neni definovana ani ve func --> add_id
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+}
+
+bool nt_params(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == RIGHT_BRACKET)
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        token_free(t1);
+        return  true;
+    }
+    else
+    {
+        t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+        if(t1->type == ID_2)
+        {
+            if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)
+            {
+                token_free(t1);
+                return false;
+                //je uz definovana
+            }
+            else
+            {
+                if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+                {
+                    token_free(t1);
+                    return false;
+                    //je to id_fce
+                }
+                else
+                {
+                    symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                    if(nt_nextparams(sa_vars))
+                    {
+                        token_free(t1);
+                        return true;
+                    }
+                    else
+                    {
+                        token_free(t1);
+                        return false;
+                    }
+                    //neni definovana ani ve func --> add_id
+                }
+            }
+        }
+    }
+}
+
+bool nt_callfce(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!(t1->type == ID_2 || t1->type == ID_FCE)) //neni IDFCE
+    {
+        token_free(t1);
+        return false;
+    }
+    if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci
+    {
+        token_free(t1);
+        return false;
+    }
+    //todo denny poresit volitelne zavorky
+
+    if(!nt_args(sa_vars))
+        return false;
+
+    if(!nt_eolf(sa_vars))
+        return false;
+
+    return true;
+}
+
+bool nt_bodywhif(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == EOL_1) //RULE 8
+    {
+        if(nt_bodyfce(sa_vars))
+        {
+            return true;
+        }
+    }
+    else if(t1->type == KEY_IF) //RULE10
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_ifthenelse(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_WHILE) //RULE9
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_cycl(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(((t1->type == ID_2) || (t1->type == ID_FCE)) && (symtab_find(sa_vars->ts_fun,t1->attribute) != NULL)) //RULE 13
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_callfce(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if((t1->type == ID_2) && (symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)) //RULE11
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_assignment(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_END)
+    {
+        return true;
+    } else {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!savo(sa_vars))
+        {
+            return nt_bodyfce(sa_vars);
+        }
+    }
+}
+
