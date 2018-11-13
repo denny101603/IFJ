@@ -62,7 +62,7 @@ typedef struct local_tables{
  */
 typedef struct SynCommon{
 
-    Tarray *arr; //TODO by denny: tohle, tablefun i buffer by měly byt ukazatele, ne? edit: potrbuju to, takze jsem to upravil
+    Tarray *arr;
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
     int err_code; //pro uchovani pripadne chyby
