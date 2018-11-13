@@ -112,7 +112,7 @@ bool buffer_empty(TBuffer *buffer)
 
 //Funkce pro praci se stackem tabulek symbolů
 
-bool TS_stack_init(TSymtables_stack *stack) //todo berry by denny - predelat na void, ne?
+void TS_stack_init(TSymtables_stack *stack)
 {
     stack->top = NULL;
     stack->bottom = NULL;

@@ -40,7 +40,7 @@ typedef struct StackElem{
  * @param in stack stack k inicializaci
  * @return true
  */
-bool stack_init(TStack *stack);
+TStack *stack_init();
 
 /**
  * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TStackElem a pote ho vlozi.
@@ -95,7 +95,7 @@ Ttoken *get_first_terminal(TStack *stack);
  * @param stack Aktualni zasobik
  * @return Novy token typu Ttoken
  */
-Ttoken *action_push(Ttoken *input_token, TStack *stack); //=
+Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars); //=
 
 /**
  * @brief Funkce simuluje akci < z precedencni tabulky
@@ -104,7 +104,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack); //=
  * @param stack
  * @return
  */
-Ttoken *action_change(Ttoken *input_token, TStack *stack); //<
+Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars); //<
 
 /**
  * @brief Funkce simuluje akci > z precedencni tabulky
