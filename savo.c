@@ -175,7 +175,11 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case OP_EQAL_2:
             input_terminal = 13;
             break;
-        case TERMINUS:
+        case EOF_STATE: //upravovano
+        case EOL_1:
+        case OP_COMMA:
+        case KEY_THEN:
+        case KEY_DO:
             input_terminal = 14;
             break;
         default:
@@ -229,7 +233,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case OP_EQAL_2:
             stack_terminal = 13;
             break;
-        case TERMINUS:
+        case BOTTOM_TOKEN:
             stack_terminal = 14;
             break;
         default:
@@ -254,24 +258,30 @@ bool is_terminus(Ttoken *token)
     return false;
 }
 
-bool stack_init(TStack *stack)
+TStack *stack_init()
 {
+    TStack *stack = (TStack *) malloc(sizeof(TStack));
+    if(stack == NULL)
+        return NULL;
+    fprintf(stderr,"init token");
     TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));
     if(top == NULL)
     {
-        return false;
+        return NULL;
     }
     Ttoken *first = (Ttoken *)malloc(sizeof(Ttoken));
     if(first == NULL)
     {
-        return false;
+        return NULL;
     }
     first->type = BOTTOM_TOKEN;
+    first->attribute = NULL;
     top->data = first;
     top->next = NULL;
     top->prev = NULL;
     stack->top = top;
-    return true;
+    fprintf(stderr,"token je: %d \n", stack->top->data->type);
+    return stack;
 }
 
 bool push(TStack *stack, Ttoken *token)
@@ -282,13 +292,12 @@ bool push(TStack *stack, Ttoken *token)
         return false;
     }
     top->data = token;
-
+    top->next = NULL;
     top->prev = stack->top;
     stack->top->next = top;
     stack->top = top;
     //printf("test: %d %d\n",stack->top->data->type, token->type);
     return true;
-
 }
 
 Ttoken *pop(TStack *stack)
@@ -303,11 +312,14 @@ Ttoken *pop(TStack *stack)
 
 Ttoken *get_first_terminal(TStack *stack)
 {
+
+    fprintf(stderr, "jsme ve fci get first terminal.\n");
     TStackElem *temp = stack->top;
     while (temp->data->type == EXPRESSION)
     {
         temp = temp->prev;
     }
+    fprintf(stderr, "koncim terminal\n");
     return temp->data;
 }
 
@@ -322,22 +334,20 @@ void delete_stack(TStack *stack)
     }
 }
 // TODO 18.56
-Ttoken *action_push(Ttoken *input_token, TStack *stack)
+Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
 {
     push(stack, input_token);
-    Tarray arr;
-    arr_init(&arr); //Pole znaku
-    return get_token(&arr);
+    return get_next_token(sa_vars->arr, sa_vars->buffer);
 }
 
-Ttoken *action_change(Ttoken *input_token, TStack *stack)
+Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
 {
     Ttoken *mensitko = malloc(sizeof(Ttoken));
     if(mensitko == NULL)
         return NULL;
     mensitko->type = ACTION_MENSITKO;
-    push(stack, mensitko);
-    return action_push(input_token, stack);
+    //push(stack, mensitko);
+    return action_push(input_token, stack, sa_vars);
 }
 
 bool action_reduce(TStack *stack)
@@ -403,32 +413,47 @@ bool savo(TSynCommon *sa_vars)
 {
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer);
     int err = 0;
-    TStack stack;
-    stack_init(&stack);
+    TStack *stack = stack_init();
+
+    fprintf(stderr, "savo, stack inited\n");
     while(true)
     {
-       Ttoken *stack_token = get_first_terminal(&stack);
-
+        if(stack == NULL)
+            fprintf(stderr, "stack je NULL :( \n");
+        fprintf(stderr, "na zacatku while, input_token je %d, na stacku by mel byt dolar %d \n", input_token->type, stack->top->data->type );
+        fflush(stderr);
+        Ttoken *stack_token = get_first_terminal(stack);
+        fprintf(stderr, "terminalovano\n");
        /*UKONCOVACI PODMINKA SAVA*/
-       //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen
-       if((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token))
+       //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
+       if(((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token)) || err != 0)
            break;
 
        char action = get_action(input_token, stack_token);
        switch (action) {
            default:
-           case '?':
-               err = action_err(&stack);
+           case '?': //err
+               fprintf(stderr, "err %d %d\n", input_token->type, stack->top->data->type);
+               err = action_err(stack);
                break;
-           case '<':
-               action_change(input_token, &stack);
+           case '<': //na zasobnik dej <, pushni token a vezmi si dalsi
+               fprintf(stderr, "na zasobnik dej <, pushni token a vezmi si dalsi %c \n", input_token->type);
+               input_token = action_change(input_token, stack, sa_vars);
                break;
-           case '>':
-               action_reduce(&stack);
+           case '>': //pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod >
+               fprintf(stderr, "pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod > %c \n", input_token->type);
+               action_reduce(stack);
                break;
-           case '=':
-               action_push(input_token, &stack);
+           case '=': //push token a nacti dalsi
+               fprintf(stderr, "push token a nacti dalsi %c \n", input_token->type);
+               input_token = action_push(input_token, stack, sa_vars);
                break;
        }
+   }//end while
+   if (err != 0) //TODO berry  handle error
+   {
+       return false;
    }
+   else
+       return true;
 }

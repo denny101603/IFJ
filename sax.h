@@ -137,9 +137,8 @@ bool buffer_empty(TBuffer *buffer);
  * @brief Funkce inicializuje zasobik typu TSymtables_stack
  * @author Jan Beran
  * @param stack zasobnik k inicializaci.
- * @return bool true/false podle toho, zda se podari inicializace.
  */
-bool TS_stack_init(TSymtables_stack *stack);
+void TS_stack_init(TSymtables_stack *stack);
 
 /**
  * @brief Funkce vlozi prvek na vrchol zasobniku.
