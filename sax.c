@@ -112,7 +112,7 @@ bool buffer_empty(TBuffer *buffer)
 
 //Funkce pro praci se stackem tabulek symbolů
 
-bool TS_stack_init(TSymtables_stack *stack)
+bool TS_stack_init(TSymtables_stack *stack) //todo berry by denny - predelat na void, ne?
 {
     stack->top = NULL;
     stack->bottom = NULL;
@@ -157,23 +157,61 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
 
 int startSA()
 {
-    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace
-    Tarray arr; //pole pro skener
-    if(arr_init(&arr) == ERR_INTERNAL)
+    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace //todo asi lepsi dynalokovat
+    Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
+    if(arr_init(arr) == ERR_INTERNAL) //neuspesna alokace
+    {
+        free(arr);
         return ERR_INTERNAL;
+    }
     else
-        sa_vars.arr = &arr; //todo by berry nema byt arr dynalokovane? stejne jako sa_vars?
+        sa_vars.arr = arr;
 
     sa_vars.ts_fun = symtab_init(TS_SIZE);
     if(sa_vars.ts_fun == NULL) //chyba alokace
     {
         arr_free(sa_vars.arr);
+        free(arr);
         return ERR_INTERNAL;
     }
-    //todo pridat ostatni veci do sa_vars - buffer atd
+
+    //todo denny pridat ostatni veci do sa_vars - buffer atd
+    TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer));
+    if(buffer == NULL) //neuspesna alokace
+    {
+        arr_free(sa_vars.arr);
+        free(arr);
+        symtab_free(sa_vars.ts_fun);
+        return ERR_INTERNAL;
+    }
+    else
+    {
+        buffer_init(buffer);
+        sa_vars.buffer = buffer;
+    }
+
+    TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
+    Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
+    if(local_tables == NULL || symtab_local == NULL) //neuspesna alokace
+    {
+        arr_free(sa_vars.arr);
+        free(arr);
+        symtab_free(sa_vars.ts_fun);
+        free(local_tables);
+        free(symtab_local);
+        return ERR_INTERNAL;
+    }
+    else
+    {
+        TS_stack_init(local_tables);
+        sa_vars.local_tables = local_tables;
+        TS_push(sa_vars.local_tables, symtab_local);
+    }
+
     sa_vars.err_code = IN_PROGRESS;
     while(sa_vars.err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
-        progr(&sa_vars);
+        if(!progr(&sa_vars)) //todo denny uupravit asi
+            break;
     //TODO vse dealokovat
     return sa_vars.err_code;
 }
@@ -228,7 +266,7 @@ bool progr(TSynCommon *sa_vars)
         if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
             buffer_push_bottom(sa_vars->buffer, token);
-            return false; //TODO mozna to neni chyba
+            return false; //TODO denny mozna to neni chyba
         }
         else
         {
@@ -236,6 +274,8 @@ bool progr(TSynCommon *sa_vars)
             return nt_callfce(sa_vars);
         }
     }
+    else
+        return false;
 }
 
 bool nt_deffunc(TSynCommon *sa_vars)
@@ -338,7 +378,8 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     else if(t1->type == KEY_END)
     {
         return true;
-    } else {
+    }
+    else {
         buffer_push_bottom(sa_vars->buffer, t1);
         if(!savo(sa_vars))
         {
@@ -464,11 +505,18 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
 bool nt_eolf(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if((t1->type == EOL_1) || (t1->type == EOF_STATE)) //EOF NEBO EOL
+    if((t1->type == EOL_1)) //EOF NEBO EOL
     {
         token_free(t1);
         return true;
-    } else {
+    }
+    else if(t1->type == EOF_STATE)
+    {
+        sa_vars->err_code = 101; //todo predelat
+        return true;
+    }
+    else
+    {
         token_free(t1);
         return false;
     }
