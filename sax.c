@@ -259,4 +259,247 @@ bool nt_deffunc(TSynCommon *sa_vars)
 
     }
 }
+bool nt_ifthenelse(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_IF) //IF
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!savo(sa_vars)) //EXPR
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_THEN) //THEN
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1) //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //IFBODY
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_ELSE) //ELSE
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != EOL_1) //EOL
+    {
+        token_free(t1);
+        return false;
+    }
+    if(!nt_bodywhif(sa_vars))           //ELSEBODY
+    {
+        token_free(t1);
+        return false;
+    }
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type != KEY_END)             //END
+    {
+        token_free(t1);
+        return false;
+    }
+    if(nt_eolf(sa_vars))                //EOLFmrdat
+    {
+        token_free(t1);
+        return true;
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+}
+bool nt_eolf(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if((t1->type == EOL_1) || (t1->type == EOF_STATE)) //EOF NEBO EOL
+    {
+        token_free(t1);
+        return true;
+    } else {
+        token_free(t1);
+        return false;
+    }
+}
 
+bool nt_args(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE))
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return true;
+    }
+    buffer_push_bottom(sa_vars->buffer, t1);
+    if(!savo(sa_vars))
+    {
+        return false;
+    }
+    return nt_nextargs(sa_vars);
+}
+
+bool nt_nextargs(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == OP_COMMA) //RULE33
+    {
+        if(!savo(sa_vars))
+        {
+            return false;
+        }
+        return nt_nextargs(sa_vars);
+    }
+    else if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE)) //RULE 32
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return true;
+    } else {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return false;
+    }
+}
+bool nt_expression(TSynCommon *sa_vars)
+{
+    if(!savo(sa_vars))
+    {
+        return false;
+    }
+    return nt_eolf(sa_vars);
+}
+bool nt_bodyfce(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == EOL_1) //RULE 8
+    {
+        if(nt_bodyfce(sa_vars))
+        {
+            return true;
+        }
+    }
+    else if(t1->type == KEY_DEF) //RULE 6
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_deffunc(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_IF) //RULE10
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_ifthenelse(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_WHILE) //RULE9
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_cycl(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(((t1->type == ID_2) || (t1->type == ID_FCE)) && (symtab_find(sa_vars->ts_fun,t1->attribute != NULL))) //RULE 13
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_callfce(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if((t1->type == ID_2) && (symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)) //RULE11
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_assignment(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_END)
+    {
+        return true;
+    } else {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!savo(sa_vars))
+        {
+            return nt_bodyfce(sa_vars);
+        }
+    }
+}
+bool nt_bodywhif(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == EOL_1)
+    {
+        if(nt_bodyfce(sa_vars))
+        {
+            return true;
+        }
+    }
+    else if(t1->type == KEY_IF)
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_ifthenelse(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodywhif(sa_vars);
+    }
+    else if(t1->type == KEY_WHILE)
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_cycl(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodywhif(sa_vars);
+    }
+    else if(((t1->type == ID_2) || (t1->type == ID_FCE)) && (symtab_find(sa_vars->ts_fun,t1->attribute != NULL))) //RULE 13
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_callfce(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodywhif(sa_vars);
+    }
+    else if((t1->type == ID_2) && (symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)) //RULE11
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_assignment(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodywhif(sa_vars);
+    }
+    else if(t1->type == KEY_END)
+    {
+        return true;
+    } else {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!savo(sa_vars))
+        {
+            return nt_bodywhif(sa_vars);
+        }
+    }
+}
