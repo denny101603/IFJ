@@ -865,6 +865,11 @@ bool nt_nextparams(TSynCommon *sa_vars)
                     }
                 }
             }
+            else
+            {
+                token_free(t1);
+                return false;
+            }
         }
     }
     else
@@ -917,6 +922,11 @@ bool nt_params(TSynCommon *sa_vars)
                     //neni definovana ani ve func --> add_id
                 }
             }
+        }
+        else
+        {
+            token_free(t1);
+            return false;
         }
     }
 }
