@@ -155,7 +155,7 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
     return ret;
 }
 
-int startSA()
+int startSA() //TODO DENNY by berry: Handle vestavene funkce: Nahodit do o TS
 {
     TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace //todo asi lepsi dynalokovat
     Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
@@ -210,7 +210,7 @@ int startSA()
 
     sa_vars.err_code = IN_PROGRESS;
     while(sa_vars.err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
-        if(!progr(&sa_vars)) //todo denny uupravit asi
+        if(!progr(&sa_vars)) //todo denny upravit asi
             break;
     //TODO vse dealokovat
     return sa_vars.err_code;
