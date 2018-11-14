@@ -643,7 +643,7 @@ bool nt_assignment(TSynCommon *sa_vars)
     }
     else
     {
-        token_free(t1);
+        token_free(t1); //test
         return false;
     }
 }
