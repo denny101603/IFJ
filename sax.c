@@ -5,6 +5,7 @@
 #include "sax.h"
 #include "savo.h"
 #include "err_codes.h"
+#include "savo.h"
 
 bool buffer_init(TBuffer *buffer_stack)
 {
@@ -504,6 +505,179 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false;
     }
 
+}
+
+bool nt_params(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == RIGHT_BRACKET)
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return true;
+    }
+    else
+    {
+        t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+        if(t1->type == ID_2)
+        {
+            if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)
+            {
+                token_free(t1);
+                return false;
+                //je uz definovana
+            }
+            else
+            {
+                if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+                {
+                    token_free(t1);
+                    return false;
+                    //je to id_fce
+                }
+                else
+                {
+                    symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                    if(nt_nextparams(sa_vars))
+                    {
+                        token_free(t1);
+                        return true;
+                    }
+                    else
+                    {
+                        token_free(t1);
+                        return false;
+                    }
+                    //neni definovana ani ve func --> add_id
+                }
+            }
+        }
+    }
+}
+
+bool nt_nextparams(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == RIGHT_BRACKET || t1->type == OP_COMMA)
+    {
+        if(t1->type == RIGHT_BRACKET)
+        {
+            buffer_push_bottom(sa_vars->buffer,t1);
+            return true;
+        }
+        else
+        {
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(t1->type == ID_2)
+            {
+                if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)
+                {
+                    token_free(t1);
+                    return false;
+                    //je uz definovana
+                }
+                else
+                {
+                    if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+                    {
+                        token_free(t1);
+                        return false;
+                        //je to id_fce
+                    }
+                    else
+                    {
+                        symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                        if(nt_nextparams(sa_vars))
+                        {
+                            token_free(t1);
+                            return true;
+                        }
+                        else
+                        {
+                            token_free(t1);
+                            return false;
+                        }
+                        //neni definovana ani ve func --> add_id
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+}
+
+bool nt_assignment(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(t1->type == ID_2)
+    {
+        if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL && symtab_find(sa_vars->ts_fun, t1->attribute) == NULL)
+        {
+            //je uz definovana
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(t1->type != OP_EQAL_2)       //=
+            {
+                token_free(t1);
+                return false;
+            }
+            if(nt_right(sa_vars))           //right
+            {
+                token_free(t1);
+                return true;
+            }
+            else
+            {
+                token_free(t1);
+                return false;
+            }
+        }
+        else
+        {
+            token_free(t1);
+            return false;
+            //neni definovana nebo je ve func
+        }
+    }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+}
+
+bool nt_right(TSynCommon *sa_vars)
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+    {
+        //je to id_fce
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return true;
+    }
+    else
+    {
+        //cekam EXPR
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(savo(sa_vars))
+        {
+            if(nt_eolf(sa_vars))                //eolf
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            token_free(t1);
+            return false;
+        }
+    }
 }
 
 bool nt_eolf(TSynCommon *sa_vars)
