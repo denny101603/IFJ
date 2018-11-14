@@ -11,8 +11,7 @@
 #include "sax.h"
 
 #define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
-#define NUM_OF_RULES 87
-#define RULE_LENGTH 3
+
 
 /**
  * @brief Struktura prvku v zasobniku TStack.
@@ -40,15 +39,16 @@ typedef struct StackElem{
  * @param in stack stack k inicializaci
  * @return true
  */
-bool stack_init(TStack *stack);
+TStack *stack_init();
 
 /**
  * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TStackElem a pote ho vlozi.
  * @param stack Ukazatel na zasobik, kam se ma token vlozit.
- * @param token Ukazatel na token, ktery se ma vlozit na zasobik-
+ * @param input_token Ukazatel na token, ktery se ma vlozit na zasobik.
+ * @param stack_elem ukazatel na polozku s tokenem, ZA ktery se ma prvek vlozit
  * @return true nebo false, podle vysledku alokace.
  */
-bool push(TStack *stack, Ttoken *token);
+bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token);
 
 /**
  * @brief Funkce popne vrchni polozku TSTackElem ze zasobniku stack a vrati hodnotu tokenu.
@@ -84,10 +84,16 @@ bool is_terminus(Ttoken *token);
 /**
  * @brief Funkce vraci prvni terminalni token ze zasobniku
  * @param stack Zasobnik, se kterym ma funkce pracovat
- * @return Odkaz na dany token
+ * @return Odkaz na dany polozku s danym tokenem
  */
-Ttoken *get_first_terminal(TStack *stack);
+TStackElem *get_first_terminal(TStack *stack);
 
+/**
+ *
+ * @param elem
+ * @return
+ */
+Ttoken *get_token_from_elem(TStackElem *elem);
 
 /**
  * @brief Akce vykona operaci push a tim simuluje akci = z precedencni tabulky
@@ -95,8 +101,14 @@ Ttoken *get_first_terminal(TStack *stack);
  * @param stack Aktualni zasobik
  * @return Novy token typu Ttoken
  */
-Ttoken *action_push(Ttoken *input_token, TStack *stack); //=
+Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars); //=
 
+/**
+ *
+ * @param token
+ * @return
+ */
+bool is_pseudotoken(Ttoken *token);
 /**
  * @brief Funkce simuluje akci < z precedencni tabulky
  * @paragraph Pravidlo <: Zamen a za < a a udelej pravidlo =
@@ -104,7 +116,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack); //=
  * @param stack
  * @return
  */
-Ttoken *action_change(Ttoken *input_token, TStack *stack); //<
+Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars); //<
 
 /**
  * @brief Funkce simuluje akci > z precedencni tabulky
@@ -112,14 +124,23 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack); //<
  * @param stack
  * @return
  */
-bool action_reduce(TStack *stack); //>
+bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //>
+
+/**
+ *
+ * @param src
+ * @param dst
+ * @return
+ */
+bool copy_buffer(TBuffer *src, TBuffer *dst);
 
 /**
  *
  * @param stack
+ * @param error
  * @return
  */
-int action_err(TStack *stack);
+int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer);
 
 /**
  *
@@ -133,7 +154,7 @@ int find_rule(TStack *stack);
  * @param rule
  * @param stack
  */
-void execute_rule(int rule, TStack *stack);
+void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer);
 
 /**
  *

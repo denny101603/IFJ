@@ -137,9 +137,8 @@ bool buffer_empty(TBuffer *buffer);
  * @brief Funkce inicializuje zasobik typu TSymtables_stack
  * @author Jan Beran
  * @param stack zasobnik k inicializaci.
- * @return bool true/false podle toho, zda se podari inicializace.
  */
-bool TS_stack_init(TSymtables_stack *stack);
+void TS_stack_init(TSymtables_stack *stack);
 
 /**
  * @brief Funkce vlozi prvek na vrchol zasobniku.
@@ -190,21 +189,21 @@ bool nt_deffunc(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal params (reprezentuje parametry pri definici fce)
-*	@author Daniel Bubenicek
+*	@author Matej Jelinek
 *	@return true pro uspech jinak false
 */
 bool nt_params(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal nextparams (reprezentuje 2. a kazdy dalsi parametr pri definici fce)
-*	@author Daniel Bubenicek
+*	@author Matej Jelinek
 *	@return true pro uspech jinak false
 */
 bool nt_nextparams(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal bodyfce (reprezentuje telo fce)
-*	@author Daniel Bubenicek
+*	@author Jan Carba
 *	@return true pro uspech jinak false
 */
 bool nt_bodyfce(TSynCommon *sa_vars);
@@ -218,35 +217,35 @@ bool nt_eolf(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal cycl (reprezentuje konstrukci cyklu while)
-*	@author Daniel Bubenicek
+*	@author Matej Jelinek
 *	@return true pro uspech jinak false
 */
 bool nt_cycl(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal bodywhif (reprezentuje telo v konstrukcich if-then-else a while)
-*	@author Daniel Bubenicek
+*	@author Jan Carba
 *	@return true pro uspech jinak false
 */
 bool nt_bodywhif(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal ifthenelse (reprezentuje konstrukci if-then-else)
-*	@author Daniel Bubenicek
+*	@author Jan Carba
 *	@return true pro uspech jinak false
 */
 bool nt_ifthenelse(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal assignment (reprezentuje prikaz prirazeni)
-*	@author Daniel Bubenicek
+*	@author Matej Jelinek
 *	@return true pro uspech jinak false
 */
 bool nt_assignment(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal right (reprezentuje pravou stranu prikazu prirazeni)
-*	@author Daniel Bubenicek
+*	@author Matej Jelinek
 *	@return true pro uspech jinak false
 */
 bool nt_right(TSynCommon *sa_vars);
@@ -267,21 +266,21 @@ bool nt_rightbracket(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal args (reprezentuje argumenty pri volani fce)
-*	@author Daniel Bubenicek
+*	@author Jan Carba
 *	@return true pro uspech jinak false
 */
 bool nt_args(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal nextargs (reprezentuje 2. a kazdy dalsi argument pri volani fce)
-*	@author Daniel Bubenicek
+*	@author Jan Carba
 *	@return true pro uspech jinak false
 */
 bool nt_nextargs(TSynCommon *sa_vars);
 
 /**
 *	@brief funkce pro neterminal expression (reprezentuje vyraz)
-*	@author Daniel Bubenicek
+*	@author Jan Carba
 *	@return true pro uspech jinak false
 */
 bool nt_expression(TSynCommon *sa_vars);
