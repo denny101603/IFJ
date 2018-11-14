@@ -7,6 +7,8 @@ CMakeFiles/IFJ2018.dir/fsm.c.obj: ../fsm.h
 
 CMakeFiles/IFJ2018.dir/main.c.obj: ../fsm.h
 CMakeFiles/IFJ2018.dir/main.c.obj: ../main.c
+CMakeFiles/IFJ2018.dir/main.c.obj: ../sax.h
+CMakeFiles/IFJ2018.dir/main.c.obj: ../symtable.h
 
 CMakeFiles/IFJ2018.dir/savo.c.obj: ../err_codes.h
 CMakeFiles/IFJ2018.dir/savo.c.obj: ../fsm.h

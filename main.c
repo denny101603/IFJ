@@ -19,7 +19,7 @@ int main() {
 
     //z toho by se jeden posral(hlavně denny)
     printf("Hell, World!\n");
-    printf("%i", startSA());
+    printf("navrat SA: %i", startSA());
 /*    Tarray arr;
     arr_init(&arr); //Pole znaku
     get_token(&arr);
