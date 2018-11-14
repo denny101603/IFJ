@@ -274,8 +274,11 @@ bool progr(TSynCommon *sa_vars)
             return nt_callfce(sa_vars);
         }
     }
-    else
-        return false;
+    else //zbyva snad uz jen vyraz
+    {
+        buffer_push_bottom(sa_vars->buffer, token);
+        return nt_expression(sa_vars);
+    }
 }
 
 bool nt_deffunc(TSynCommon *sa_vars)
@@ -320,6 +323,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
         return false;
 }
 
+
 bool nt_bodyfce(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -329,6 +333,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
         {
             return true;
         }
+        return false;
     }
     else if(t1->type == KEY_DEF) //RULE 6
     {
@@ -383,7 +388,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     else
     {
         buffer_push_bottom(sa_vars->buffer, t1);
-        if(savo(sa_vars))
+        if(nt_expression(sa_vars))
         {
             return nt_bodyfce(sa_vars);
         }
@@ -575,33 +580,34 @@ bool nt_args(TSynCommon *sa_vars)
 bool nt_right(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
+    if(t1->type == ID_FCE || t1->type == ID_2)
     {
-        //je to id_fce
-        buffer_push_bottom(sa_vars->buffer, t1);
-        return true;
-    }
-    else
-    {
-        //cekam EXPR
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(savo(sa_vars))
+        if (symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
         {
-            if(nt_eolf(sa_vars))                //eolf
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            //je to id_fce
+            buffer_push_bottom(sa_vars->buffer, t1);
+            return nt_callfce(sa_vars);
+        }
+    }
+    //cekam EXPR
+    buffer_push_bottom(sa_vars->buffer, t1);
+    if(savo(sa_vars))
+    {
+        if(nt_eolf(sa_vars))                //eolf
+        {
+            return true;
         }
         else
         {
-            token_free(t1);
             return false;
         }
     }
+    else
+    {
+        token_free(t1);
+        return false;
+    }
+
 }
 
 bool nt_assignment(TSynCommon *sa_vars)
@@ -691,6 +697,8 @@ bool nt_nextparams(TSynCommon *sa_vars)
                     }
                 }
             }
+            else //neni ID_2
+                return false;
         }
     }
     else
@@ -744,8 +752,11 @@ bool nt_params(TSynCommon *sa_vars)
                 }
             }
         }
+        else //neni ID_2
+            return false;
     }
 }
+
 
 bool nt_callfce(TSynCommon *sa_vars)
 {
@@ -776,10 +787,11 @@ bool nt_bodywhif(TSynCommon *sa_vars)
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t1->type == EOL_1)
     {
-        if(nt_bodyfce(sa_vars))
+        if(nt_bodywhif(sa_vars))
         {
             return true;
         }
+        return false;
     }
     else if(t1->type == KEY_IF)
     {
@@ -822,9 +834,10 @@ bool nt_bodywhif(TSynCommon *sa_vars)
         return true;
     } else {
         buffer_push_bottom(sa_vars->buffer, t1);
-        if(!savo(sa_vars))
+        if(nt_expression(sa_vars))
         {
             return nt_bodywhif(sa_vars);
         }
+        return false;
     }
 }
