@@ -3,13 +3,16 @@
 //
 #include "savo.h"
 
+#define NUM_OF_RULES 88
+#define RULE_LENGTH 3
 
 /**
  * @brief Tabulka pravidel pouzivana funkci get_action.
  * @author Matej Jelinek, Jan Beran
  */
 int rules[NUM_OF_RULES][RULE_LENGTH] = {
-        {EXPRESSION, 0,0},
+        {0,0,INTEGER},
+        {0,0,EXPRESSION},
         {EXPRESSION, OP_PLUS, EXPRESSION},
         {EXPRESSION, OP_MINUS, EXPRESSION},
         {EXPRESSION, OP_MULT, EXPRESSION},
@@ -21,7 +24,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = {
         {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},
         {EXPRESSION, OP_NOT_EQ_1, EXPRESSION},
         {LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},
-        {ID_2, 0, 0},
+        {0, 0,ID_2},
         {EXPRESSION, OP_PLUS, ID_2},
         {ID_2, OP_PLUS, EXPRESSION},
         {EXPRESSION, OP_MINUS, ID_2},
@@ -102,7 +105,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = {
  * @brief Precedencni tbaulka pro syntaktickou analyzu vyrazu.
  * @author Jan Carba, Jan Beran
  */
-char prec_table[15][15] = {
+char prec_table[15][15] = {              //in
         /*           + 	  -   *	  /	  (	  )	 id	 con  <   >  <=	  >=  !=  ==   $ */
         /* + */    {'>','>','<','<','<','>','<','<','>','>','>','>','>','>','>'},
         /* - */    {'>','>','<','<','<','>','<','<','>','>','>','>','>','>','>'},
@@ -111,7 +114,7 @@ char prec_table[15][15] = {
         /* ( */    {'<','<','<','<','<','=','<','<','<','<','<','<','<','<','?'},
         /* ) */    {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
         /* id */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-        /* cons */ {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
+/*stack    cons */ {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
         /* < */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* > */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* <= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
@@ -263,7 +266,7 @@ TStack *stack_init()
     TStack *stack = (TStack *) malloc(sizeof(TStack));
     if(stack == NULL)
         return NULL;
-    fprintf(stderr,"init token");
+    //fprintf(stderr,"init token");
     TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));
     if(top == NULL)
     {
@@ -280,22 +283,30 @@ TStack *stack_init()
     top->next = NULL;
     top->prev = NULL;
     stack->top = top;
-    fprintf(stderr,"token je: %d \n", stack->top->data->type);
+    //fprintf(stderr,"token je: %d \n", stack->top->data->type);
     return stack;
 }
 
-bool push(TStack *stack, Ttoken *token)
+bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token)
 {
-    TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));
-    if(top == NULL)
+    TStackElem *inputed = (TStackElem *) malloc(sizeof(TStackElem));
+    if(inputed == NULL)
     {
         return false;
     }
-    top->data = token;
-    top->next = NULL;
-    top->prev = stack->top;
-    stack->top->next = top;
-    stack->top = top;
+
+    inputed->data = input_token;
+    inputed->next = stack_elem->next;
+    inputed->prev = stack_elem;
+
+    if(stack->top == stack_elem)
+        stack->top = inputed;
+
+    if(stack_elem->next != NULL)
+        stack_elem->next->prev = inputed;
+    stack_elem->next = inputed;
+
+   // stack->top = inputed;
     //printf("test: %d %d\n",stack->top->data->type, token->type);
     return true;
 }
@@ -310,17 +321,38 @@ Ttoken *pop(TStack *stack)
     return output;
 }
 
-Ttoken *get_first_terminal(TStack *stack)
+bool copy_buffer(TBuffer *src, TBuffer *dst)
 {
+    if(src == NULL)
+        return true;
+    Ttoken *tempsrc = NULL;
+    while(src!=NULL) //updated via poptop
+    {
+        tempsrc = buffer_popTop(src);
+        buffer_push_bottom(dst, tempsrc);
+    }
+}
 
-    fprintf(stderr, "jsme ve fci get first terminal.\n");
+
+
+TStackElem *get_first_terminal(TStack *stack)
+{
+    if (stack == NULL)
+        return NULL;
+    //fprintf(stderr, "jsme ve fci get first terminal.\n");
     TStackElem *temp = stack->top;
-    while (temp->data->type == EXPRESSION)
+    while (temp->data->type == EXPRESSION || temp->data->type == ACTION_MENSITKO)
     {
         temp = temp->prev;
     }
-    fprintf(stderr, "koncim terminal\n");
-    return temp->data;
+    //fprintf(stderr, "koncim get_first_terminal, vystup je: %d\n",temp->data->type);
+    return temp;
+}
+
+Ttoken *get_token_from_elem(TStackElem *elem)
+{
+    //fprintf(stderr, "*********************** %d\n", elem->data->type);
+    return elem->data;
 }
 
 void delete_stack(TStack *stack)
@@ -333,11 +365,13 @@ void delete_stack(TStack *stack)
         if(temp != NULL) free(temp);
     }
 }
-// TODO 18.56
+
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
 {
-    push(stack, input_token);
-    return get_next_token(sa_vars->arr, sa_vars->buffer);
+    push(stack, get_first_terminal(stack),input_token);
+    Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
+    return ret;
 }
 
 Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
@@ -346,36 +380,46 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
     if(mensitko == NULL)
         return NULL;
     mensitko->type = ACTION_MENSITKO;
-    //push(stack, mensitko);
-    return action_push(input_token, stack, sa_vars);
+    push(stack,get_first_terminal(stack), mensitko); //pushneme mensitko za prvni terminal
+    push(stack, stack->top, input_token);
+    Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    return ret;
 }
 
-bool action_reduce(TStack *stack)
+bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     int rule = find_rule(stack);
     if(rule != -1)
-        execute_rule(rule, stack);
+        execute_rule(rule, stack, sa_vars, internal_buffer);
     else
         return false;
     return true;
 }
 
-int action_err(TStack *stack)
+int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
 {
-    delete_stack(stack);
-    return ERR_SYN;
+    if (error != ERR_SYN) //ERR_SYN je osetrovan pouhym vracenim false; sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli to je vyraz. Toto nema zpusobit pad
+        sa_vars->err_code = error;
+    if (stack != NULL)
+        delete_stack(stack);
+    copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
+
+    return error;
 }
-//todo 18.58
+
 int find_rule(TStack *stack)
 {
     int rule[3] = {0,0,0};
     int ret = -1;
+    //fprintf(stderr,"find rule, %d \n", stack->top->data->type);
     TStackElem *temp = stack->top;
-    for(int index = 2; index > -1 || temp->data->type != ACTION_MENSITKO; index-- )
+    for(int index = 2; index > -1 && temp->data->type != ACTION_MENSITKO; index-- )
     {
         rule[index] = temp->data->type;
-        temp = temp->prev;
+        if(temp->prev != NULL)
+            temp = temp->prev;
     }
+    //pop(stack); // popnuti mensitka
 
         for( int i = 0; i < NUM_OF_RULES; i++)
         {
@@ -391,62 +435,103 @@ int find_rule(TStack *stack)
 
 }
 
-void execute_rule(int rule, TStack *stack)
+bool is_pseudotoken(Ttoken *token)
 {
-    for (int i = 2; i  > RULE_LENGTH ; i--)
+    bool ret = false;
+    if((token->type == EXPRESSION) ||
+            (token->type == BOTTOM_TOKEN) ||
+            (token->type == ACTION_MENSITKO) ||
+            (token->type == ACTION_VETSITKO))
+        ret = true;
+    return ret;
+}
+void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
+{
+    for (int i = 0; i <RULE_LENGTH; i++)
     {
         if(rules[rule][i] == 0) //napr 1,0,0 (jdeme odzadu)
             continue;
         else
-            pop(stack);
+        {
+            Ttoken *temp = pop(stack);
+            if(!is_pseudotoken(temp))
+                buffer_push_top(internal_buffer, temp);
+        }
+
     }
-    pop(stack);
+    Ttoken *temp = pop(stack);
+    if(!is_pseudotoken(temp))
+        buffer_push_top(internal_buffer, temp);
     Ttoken *expr_token = malloc(sizeof(Ttoken));
     if (expr_token == NULL)
         return;
     token_init(expr_token);
     expr_token->type = EXPRESSION; //TODO by berry muze byt expr null?
-    push(stack, expr_token);
+    push(stack, get_first_terminal(stack), expr_token); //TODO berry nema tam byt stack->top misto get_first terminal?? ja ma pocit, že ano
 }
 
 bool savo(TSynCommon *sa_vars)
 {
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(input_token == NULL) //error handle
+    {
+        action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
+        return false;
+    }
+    /**///fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
     int err = 0;
-    TStack *stack = stack_init();
 
-    fprintf(stderr, "savo, stack inited\n");
+    TStack *stack = stack_init();
+    if(stack == NULL) //err handle
+    {
+        action_err(stack,sa_vars,ERR_INTERNAL, NULL);
+        return false;
+
+    }//fprintf(stderr, "savo, stack inited\n");
+    TBuffer *internal_buffer = malloc(sizeof(TBuffer));
+    if(internal_buffer == NULL)
+    {
+        action_err(stack, sa_vars, ERR_INTERNAL, NULL);
+        return false;
+    }
+    buffer_init(internal_buffer);
+
     while(true)
     {
-        if(stack == NULL)
-            fprintf(stderr, "stack je NULL :( \n");
-        fprintf(stderr, "na zacatku while, input_token je %d, na stacku by mel byt dolar %d \n", input_token->type, stack->top->data->type );
-        fflush(stderr);
-        Ttoken *stack_token = get_first_terminal(stack);
-        fprintf(stderr, "terminalovano\n");
+        if(err) break;
+        /**///fprintf(stderr, "na zacatku while, input_token je %d, na stacku %d \n", input_token->type, stack->top->data->type );
+        /**/fflush(stderr);
+        Ttoken *stack_token = get_token_from_elem(get_first_terminal(stack));
+        /**///fprintf(stderr, "terminalovano %d %d \n", input_token->type, stack_token->type);
+
        /*UKONCOVACI PODMINKA SAVA*/
        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
-       if(((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token)) || err != 0)
+       if(((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token)))
            break;
 
        char action = get_action(input_token, stack_token);
        switch (action) {
            default:
            case '?': //err
-               fprintf(stderr, "err %d %d\n", input_token->type, stack->top->data->type);
-               err = action_err(stack);
+               /**///fprintf(stderr, "err in:%d stack:%d\n", input_token->type, stack_token->type);
+               err = action_err(stack, sa_vars, ERR_SYN, internal_buffer);
                break;
            case '<': //na zasobnik dej <, pushni token a vezmi si dalsi
-               fprintf(stderr, "na zasobnik dej <, pushni token a vezmi si dalsi %c \n", input_token->type);
+               //fprintf(stderr, "na zasobnik dej <, pushni token a vezmi si dalsi %c \n", input_token->type);
                input_token = action_change(input_token, stack, sa_vars);
                break;
            case '>': //pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod >
-               fprintf(stderr, "pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod > %c \n", input_token->type);
-               action_reduce(stack);
+               //fprintf(stderr, "pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod > %c \n", input_token->type);
+               if(!action_reduce(stack, sa_vars, internal_buffer))
+               {
+                   action_err(stack, sa_vars, ERR_SYN, internal_buffer);
+                   err= ERR_SYN;
+               }
                break;
            case '=': //push token a nacti dalsi
-               fprintf(stderr, "push token a nacti dalsi %c \n", input_token->type);
+               //fprintf(stderr, "push token a nacti dalsi %c \n", input_token->type);
                input_token = action_push(input_token, stack, sa_vars);
+               //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
                break;
        }
    }//end while
