@@ -301,11 +301,11 @@ bool nt_callfce(TSynCommon *sa_vars);
 bool init_ts_fun(TSynCommon *sa_vars);
 
 /**
-*	@brief kontroluje token od skeneru, v pripade chyby ji zpropaguje do struktury sa_vars->err_code
+*	@brief kontroluje token od skeneru, v pripade chyby ji zpropaguje do struktury sa_vars->err_code a v pripade chyby dealokuje token
 *	@author Daniel Bubenicek
  *	@param sa_vars ukazatel na strukturu kde se nastavi pripadny error
- *	@param t ukazatel na kontrolovany token
-*	@return true pro token ktery je v poradku, jinak false
+ *	@param t ukazatel na kontrolovany token (pokud chyba tak se dealokuje)!!!
+*	@return true pro token ktery je v poradku, jinak false a dealokace tokenu t
 */
 bool err_check(Ttoken *t, TSynCommon *sa_vars);
 
@@ -327,7 +327,7 @@ void dealloc_sa(TSynCommon *sa_vars);
  *
  * @param ts_stack
  */
-void TS_stack_free(TSymtables_stack *ts_stack);
+void TS_stack_free(TSymtables_stack *ts_stack); //TODO berry by denny javadoc
 
 
 #endif //IFJ2018_SAX_H
