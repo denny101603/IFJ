@@ -66,7 +66,7 @@ typedef struct{
  *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
 *	@return Ttoken - ukazatel na token
 */
-Ttoken *get_token(Tarray *arr); //TODO Berry by Berry: kompletne predelat vse tak, aby byl token dynalokovany == predavanny odkazem...
+Ttoken *get_token(Tarray *arr);
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)

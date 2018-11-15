@@ -10,7 +10,6 @@
  * @brief Tabulka pravidel pouzivana funkci get_action.
  * @author Matej Jelinek, Jan Beran
  * @note V2.0 vetsina pravidel odstranena, mozna to prestane fungoovat :)
- *
  */
 int rules[NUM_OF_RULES][RULE_LENGTH] = {
         {0,0,INTEGER},
@@ -302,7 +301,7 @@ void delete_stack(TStack *stack)
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
 {
-    push(stack, get_first_terminal(stack),input_token);
+    push(stack, stack->top,input_token); //TODO!!! Kde vsude pouzivam action push?
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
     return ret;
@@ -401,7 +400,8 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         return;
     token_init(expr_token);
     expr_token->type = EXPRESSION; //TODO by berry muze byt expr null?
-    push(stack, get_first_terminal(stack), expr_token); //TODO berry nema tam byt stack->top misto get_first terminal?? ja ma pocit, že ano
+    push(stack, stack->top, expr_token);
+   // push(stack, get_first_terminal(stack), expr_token); //TODO berry nema tam byt stack->top misto get_first terminal?? ja ma pocit, že ano
 }
 
 bool savo(TSynCommon *sa_vars)
