@@ -175,7 +175,7 @@ int startSA()
     while(sa_vars->err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
         if(!progr(sa_vars)) //todo denny upravit asi
             break;
-    //TODO denny vse dealokovat
+
     int ret = sa_vars->err_code;
     dealloc_sa(sa_vars);
     return ret;
@@ -184,6 +184,9 @@ int startSA()
 bool progr(TSynCommon *sa_vars)
 {
     Ttoken *token = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(token, sa_vars))
+        return false;
+
     if(token->type == KEY_DEF)
     {
         buffer_push_bottom(sa_vars->buffer, token);
@@ -207,6 +210,11 @@ bool progr(TSynCommon *sa_vars)
     else if(token->type == ID_2) //prislo ID: hrozi expression, assignment, callfce
     {
        Ttoken *look_ahead = get_next_token(sa_vars->arr, sa_vars->buffer);
+        if(!err_check(token, sa_vars))
+        {
+            token_free(token);
+            return false;
+        }
        if(look_ahead->type == OP_EQAL_2) //prislo "=" tedy jednoznacne assignment
        {
            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
@@ -249,35 +257,66 @@ bool progr(TSynCommon *sa_vars)
 bool nt_deffunc(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
+
     if(t1->type != KEY_DEF)
         return false;
-    Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(t2->type == ID_FCE || t2->type == ID_2)
+    token_free(t1);
+    t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
+
+    if(t1->type == ID_FCE || t1->type == ID_2)
     {   //todo denny nemel bych vzdy prochazet vsechny i lokalni TS?
-        if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t2->attribute) == NULL) //pokud jeste takove ID neexistuje
+        if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t1->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
-            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, -1);
+            symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, t1->type, -1);
             TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
 
-            Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
-            if (t3->type != LEFT_BRACKET)
+            Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(!err_check(t1, sa_vars))
+            {
+                token_free(t1);
                 return false;
+            }
+
+            if (t2->type != LEFT_BRACKET)
+                return false;
+            token_free(t2);
+
             if (!nt_params(sa_vars))
                 return false;
             //uz znam pocet parametru fce
-            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, (long int) symtab_get_size(sa_vars->ts_fun));
+            symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, t1->type, (long int) symtab_get_size(sa_vars->ts_fun));
+            token_free(t1);
 
-            Ttoken *t4 = get_next_token(sa_vars->arr, sa_vars->buffer);
-            if (t4->type != RIGHT_BRACKET)
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(!err_check(t1, sa_vars))
                 return false;
-            Ttoken *t5 = get_next_token(sa_vars->arr, sa_vars->buffer);
-            if (t5->type != EOL_1)
+
+            if (t1->type != RIGHT_BRACKET)
                 return false;
-            if (!progr(sa_vars)) //todo denny !nt_bodyfce(sa_vars))
+            token_free(t1);
+
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(!err_check(t1, sa_vars))
                 return false;
-            Ttoken *t6 = get_next_token(sa_vars->arr, sa_vars->buffer);
-            if (t6->type != KEY_END)
+
+            if (t1->type != EOL_1)
                 return false;
+            token_free(t1);
+
+            if (!nt_bodyfce(sa_vars))
+                return false;
+
+            t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(!err_check(t1, sa_vars))
+                return false;
+
+            if (t1->type != KEY_END)
+                return false;
+            token_free(t1);
 
             //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
             symtab_free(TS_pop(sa_vars->local_tables));
@@ -288,83 +327,15 @@ bool nt_deffunc(TSynCommon *sa_vars)
             return true; //uz jsem na konci, vse probehlo OK
         }
         else
-            return false;
-    }
-    else
-        return false;
-}
-
-
-bool nt_bodyfce(TSynCommon *sa_vars) //todo carbik/denny opravit např a=2 to nesežere
-{
-    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(t1->type == EOL_1) //RULE 8
-    {
-        if(nt_bodyfce(sa_vars))
         {
-            return true;
-        }
-        return false;
-    }
-    else if(t1->type == KEY_DEF) //RULE 6
-    {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_deffunc(sa_vars))
-        {
+            token_free(t1);
             return false;
         }
-        return nt_bodyfce(sa_vars);
-    }
-    else if(t1->type == KEY_IF) //RULE10
-    {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_ifthenelse(sa_vars))
-        {
-            return false;
-        }
-        return nt_bodyfce(sa_vars);
-    }
-    else if(t1->type == KEY_WHILE) //RULE9
-    {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_cycl(sa_vars))
-        {
-            return false;
-        }
-        return nt_bodyfce(sa_vars);
-    }
-    else if(((t1->type == ID_2) || (t1->type == ID_FCE)) && (symtab_find(sa_vars->ts_fun,t1->attribute) != NULL)) //RULE 13
-    {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_callfce(sa_vars))
-        {
-            return false;
-        }
-        return nt_bodyfce(sa_vars);
-    }
-    else if((t1->type == ID_2) && (symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)) //RULE11
-    {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_assignment(sa_vars))
-        {
-            return false;
-        }
-        return nt_bodyfce(sa_vars);
-    }
-    else if(t1->type == KEY_END)
-    {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        return true;
     }
     else
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(nt_expression(sa_vars))
-        {
-            return nt_bodyfce(sa_vars);
-        }
-        else
-            return false;
+        token_free(t1);
+        return false;
     }
 }
 
@@ -436,6 +407,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
 bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif END eolf
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type != KEY_WHILE)           //WHILE
     {
         token_free(t1);
@@ -447,12 +420,16 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type != KEY_DO)              //DO
     {
         token_free(t1);
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type != EOL_1)               //EOL
     {
         token_free(t1);
@@ -464,6 +441,8 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type != KEY_END)             //END
     {
         token_free(t1);
@@ -479,7 +458,6 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         token_free(t1);
         return false;
     }
-
 }
 
 bool nt_eolf(TSynCommon *sa_vars)
@@ -551,6 +529,8 @@ bool nt_args(TSynCommon *sa_vars)
 bool nt_right(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type == ID_FCE || t1->type == ID_2)
     {
         if (symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
@@ -584,6 +564,8 @@ bool nt_right(TSynCommon *sa_vars)
 bool nt_assignment(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type == ID_2)
     {
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni to funkce
@@ -593,6 +575,8 @@ bool nt_assignment(TSynCommon *sa_vars)
 
             //uz je definovana
             t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+            if(!err_check(t1, sa_vars))
+                return false;
             if(t1->type != OP_EQAL_2)       //=
             {
                 token_free(t1);
@@ -625,6 +609,8 @@ bool nt_assignment(TSynCommon *sa_vars)
 bool nt_nextparams(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type == RIGHT_BRACKET || t1->type == OP_COMMA)
     {
         if(t1->type == RIGHT_BRACKET)
@@ -679,9 +665,12 @@ bool nt_nextparams(TSynCommon *sa_vars)
     }
 }
 
+
 bool nt_params(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
     if(t1->type == RIGHT_BRACKET)
     {
         buffer_push_bottom(sa_vars->buffer, t1);
@@ -728,10 +717,12 @@ bool nt_params(TSynCommon *sa_vars)
     }
 }
 
-
 bool nt_callfce(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
+
     if(!(t1->type == ID_2 || t1->type == ID_FCE)) //neni IDFCE
     {
         token_free(t1);
@@ -742,8 +733,9 @@ bool nt_callfce(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
+    token_free(t1);
     //todo denny poresit volitelne zavorky
-
+    /*zacatek verze podporujici verzi jen bez zavorek
     if(!nt_args(sa_vars))
         return false;
 
@@ -751,20 +743,135 @@ bool nt_callfce(TSynCommon *sa_vars)
         return false;
 
     return true;
+            konec verze podporujici jen bezzavrkove volani*/
+
+    if(!nt_args(sa_vars))
+    {
+        return false;
+    }
+
+    if(!nt_eolf(sa_vars))
+        return false;
+
+    return true;
+}
+
+bool nt_bodyfce(TSynCommon *sa_vars) //todo carbik/denny opravit např a=2 to nesežere
+{
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(!err_check(t1, sa_vars))
+        return false;
+    if(t1->type == EOL_1) //RULE 8
+    {
+        if(nt_bodyfce(sa_vars))
+        {
+            token_free(t1);
+            return true;
+        }
+        token_free(t1);
+        return false;
+    }
+    else if(t1->type == KEY_DEF) //RULE 6
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_deffunc(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_IF) //RULE10
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_ifthenelse(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == KEY_WHILE) //RULE9
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        if(!nt_cycl(sa_vars))
+        {
+            return false;
+        }
+        return nt_bodyfce(sa_vars);
+    }
+    else if(t1->type == ID_2) //prislo ID: hrozi expression, assignment, callfce
+    {
+        Ttoken *look_ahead = get_next_token(sa_vars->arr, sa_vars->buffer);
+        if(!err_check(look_ahead, sa_vars))
+            return false;
+        if(look_ahead->type == OP_EQAL_2) //prislo "=" tedy jednoznacne assignment
+        {
+            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1);
+            if(!nt_assignment(sa_vars))
+            {
+                return false;
+            }
+            return nt_bodyfce(sa_vars);
+        }
+        else if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
+        { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
+            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1);
+            if(nt_expression(sa_vars))
+            {
+                return nt_bodyfce(sa_vars);
+            }
+            return false;
+        }
+        else //ostatni jsem vyloucil, takze zbyva moznost volani fce
+        {
+            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1);
+            if(nt_callfce(sa_vars))
+            {
+                return nt_bodyfce(sa_vars);
+            }
+            return false;
+        }
+    }
+    else if(t1->type == ID_FCE) //muze byt jen volani fce
+    {
+        if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
+        {
+            buffer_push_bottom(sa_vars->buffer, t1);
+            return false; //TODO denny mozna to neni chyba
+        }
+        else
+        {
+            buffer_push_bottom(sa_vars->buffer, t1);
+            return nt_callfce(sa_vars);
+        }
+    }
+    else if(t1->type == KEY_END)
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return true;
+    } else{
+        return false;
+    }
 }
 
 bool nt_bodywhif(TSynCommon *sa_vars) //todo carbik/denny opravit, např pro a=2 nefaka
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(t1->type == EOL_1)
+    if(!err_check(t1, sa_vars))
+        return false;
+    if(t1->type == EOL_1) //RULE 8
     {
         if(nt_bodywhif(sa_vars))
         {
+            token_free(t1);
             return true;
         }
+        token_free(t1);
         return false;
     }
-    else if(t1->type == KEY_IF)
+    else if(t1->type == KEY_IF) //RULE10
     {
         buffer_push_bottom(sa_vars->buffer, t1);
         if(!nt_ifthenelse(sa_vars))
@@ -773,7 +880,7 @@ bool nt_bodywhif(TSynCommon *sa_vars) //todo carbik/denny opravit, např pro a=2
         }
         return nt_bodywhif(sa_vars);
     }
-    else if(t1->type == KEY_WHILE)
+    else if(t1->type == KEY_WHILE) //RULE9
     {
         buffer_push_bottom(sa_vars->buffer, t1);
         if(!nt_cycl(sa_vars))
@@ -782,36 +889,64 @@ bool nt_bodywhif(TSynCommon *sa_vars) //todo carbik/denny opravit, např pro a=2
         }
         return nt_bodywhif(sa_vars);
     }
-    else if(((t1->type == ID_2) || (t1->type == ID_FCE)) && (symtab_find(sa_vars->ts_fun,t1->attribute) != NULL)) //RULE 13
+    else if(t1->type == ID_2) //prislo ID: hrozi expression, assignment, callfce
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_callfce(sa_vars))
+        Ttoken *look_ahead = get_next_token(sa_vars->arr, sa_vars->buffer);
+        if(!err_check(look_ahead, sa_vars))
+            return false;
+        if(look_ahead->type == OP_EQAL_2) //prislo "=" tedy jednoznacne assignment
         {
+            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1);
+            if(!nt_assignment(sa_vars))
+            {
+                return false;
+            }
+            return nt_bodywhif(sa_vars);
+        }
+        else if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
+        { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
+            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1);
+            if(nt_expression(sa_vars))
+            {
+                return nt_bodywhif(sa_vars);
+            }
             return false;
         }
-        return nt_bodywhif(sa_vars);
+        else //ostatni jsem vyloucil, takze zbyva moznost volani fce
+        {
+            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1);
+            if(nt_callfce(sa_vars))
+            {
+                return nt_bodywhif(sa_vars);
+            }
+            return false;
+        }
     }
-    else if((t1->type == ID_2) && (symtab_find(sa_vars->local_tables->top->data, t1->attribute) != NULL)) //RULE11
+    else if(t1->type == ID_FCE) //muze byt jen volani fce
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
-        if(!nt_assignment(sa_vars))
+        if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
-            return false;
+            buffer_push_bottom(sa_vars->buffer, t1);
+            return false; //TODO denny mozna to neni chyba
         }
-        return nt_bodywhif(sa_vars);
+        else
+        {
+            buffer_push_bottom(sa_vars->buffer, t1);
+            return nt_callfce(sa_vars);
+        }
     }
     else if(t1->type == KEY_END)
     {
-        return true;
-    } else {
         buffer_push_bottom(sa_vars->buffer, t1);
-        if(nt_expression(sa_vars))
-        {
-            return nt_bodywhif(sa_vars);
-        }
+        return true;
+    } else{
         return false;
     }
 }
+
 
 bool init_ts_fun(TSynCommon *sa_vars)
 {
@@ -896,6 +1031,8 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
     else
         return true; //neni problem
+
+    token_free(t);
     return false; //chyba
 }
 
@@ -944,7 +1081,7 @@ void dealloc_sa(TSynCommon *sa_vars)
     arr_free(sa_vars->arr);
     free(sa_vars->arr);
 
-    //todo denny az berry dopise TS_stack_free
+    TS_stack_free(sa_vars->local_tables);
     free(sa_vars->local_tables);
 
     delete_buffer(sa_vars->buffer);
@@ -957,9 +1094,8 @@ void dealloc_sa(TSynCommon *sa_vars)
 
 void TS_stack_free(TSymtables_stack *ts_stack)
 {
-    while (ts_stack != NULL)
+    while (ts_stack->top != NULL)
     {
-        Tsymbol_table *elem = TS_pop(ts_stack);
-        symtab_free(elem);
+        symtab_free(TS_pop(ts_stack));
     }
 }
