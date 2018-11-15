@@ -288,10 +288,10 @@ bool nt_deffunc(TSynCommon *sa_vars)
         return false;
     Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t2->type == ID_FCE || t2->type == ID_2)
-    {
+    {   //todo denny nemel bych vzdy prochazet vsechny i lokalni TS?
         if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t2->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
-            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, 0); //pohlidat spravny pocet parametru
+            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, -1);
             TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
 
             Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -299,6 +299,9 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
             if (!nt_params(sa_vars))
                 return false;
+            //uz znam pocet parametru fce
+            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, (long int) symtab_get_size(sa_vars->ts_fun));
+
             Ttoken *t4 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if (t4->type != RIGHT_BRACKET)
                 return false;
@@ -310,6 +313,9 @@ bool nt_deffunc(TSynCommon *sa_vars)
             Ttoken *t6 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if (t6->type != KEY_END)
                 return false;
+
+            //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
+            symtab_free(TS_pop(sa_vars->local_tables));
 
             if (!nt_eolf(sa_vars))
                 return false;
@@ -868,7 +874,7 @@ bool init_ts_fun(TSynCommon *sa_vars)
         free(substr);
         free(ord);
         free(chr);
-        free(sa_vars->ts_fun);
+        symtab_free(sa_vars->ts_fun);
         return false;
     }
 
@@ -914,3 +920,17 @@ bool init_ts_fun(TSynCommon *sa_vars)
 
     return true;
 }
+
+bool err_check(Ttoken *t, TSynCommon *sa_vars)
+{
+    if(t == NULL) //chyba alokace
+        sa_vars->err_code = ERR_INTERNAL;
+    else if(t->type == LEX_ERROR) //lexikalni chyba
+        sa_vars->err_code = ERR_LEX;
+    else if(t->type == ERR_INTERNAL) //chyba alokace
+        sa_vars->err_code = ERR_INTERNAL;
+    else
+        return true; //neni problem
+    return false; //chyba
+}
+

@@ -62,7 +62,7 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t);
  *	@param token_type - pro upravu/inicializaci tehoz ve strukture
 *	@return NULL pro neuspesnou alokaci jinak ukazatel na dany item (mozne dalsi upravy)
 */
-Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, int token_type, unsigned int num_of_params); //TODO asi upravit pro pridani celeho pripraveneho itemu
+Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, int token_type, long int num_of_params); //TODO asi upravit pro pridani celeho pripraveneho itemu
 
 /**
 *	@brief najde a vrati item v tabulce symbolu
@@ -87,6 +87,15 @@ void symtab_clear(Tsymbol_table *t);
  *	@note vola fci symtab_clear
 */
 void symtab_free(Tsymbol_table *t);
+
+
+/**
+*	@brief vraci aktualni pocet zaznamu v TS
+*	@author Daniel Bubenicek
+*	@param t - ukazatel na tabulku symbolu
+ *	@return aktualni pocet zaznamu v TS
+*/
+unsigned long symtab_get_size(Tsymbol_table *t);
 
 unsigned int symtab_hash_function(const char *str);
 

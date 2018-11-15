@@ -302,4 +302,15 @@ bool nt_callfce(TSynCommon *sa_vars);
 bool init_ts_fun(TSynCommon *sa_vars);
 
 
+/**
+*	@brief kontroluje token od skeneru, v pripade chyby ji zpropaguje do struktury sa_vars->err_code
+*	@author Daniel Bubenicek
+ *	@param sa_vars ukazatel na strukturu kde se nastavi pripadny error
+ *	@param t ukazatel na kontrolovany token
+*	@return true pro token ktery je v poradku, jinak false
+*/
+bool err_check(Ttoken *t, TSynCommon *sa_vars);
+
+TSynCommon *alloc_SA();
+
 #endif //IFJ2018_SAX_H
