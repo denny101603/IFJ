@@ -469,10 +469,14 @@ bool savo(TSynCommon *sa_vars)
                break;
        }
    }//end while
+
    if (err != 0) //TODO berry  handle error
    {
        return false;
    }
    else
+   {
+       buffer_push_bottom(sa_vars->buffer, input_token);
        return true;
+   }
 }
