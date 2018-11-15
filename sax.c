@@ -101,7 +101,7 @@ void delete_buffer(TBuffer *buffer)
     {
         temp = buffer->top;
         buffer->top = buffer->top->prev;
-        if(temp != NULL) free(temp);
+        if(temp != NULL) free(temp); //todo berry by denny - upravit, aby dealokoval i primo ty tokeny (pomoci fce token_free()), nejen tu obalovaci strukturu
     }
     buffer->bottom = NULL;
 }
@@ -167,7 +167,9 @@ int startSA()
         if(!progr(sa_vars)) //todo denny upravit asi
             break;
     //TODO denny vse dealokovat
-    return sa_vars->err_code;
+    int ret = sa_vars->err_code;
+    dealloc_sa(sa_vars);
+    return ret;
 }
 
 bool progr(TSynCommon *sa_vars)
@@ -262,7 +264,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
             Ttoken *t5 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if (t5->type != EOL_1)
                 return false;
-            if (!nt_bodyfce(sa_vars))
+            if (!progr(sa_vars)) //todo denny !nt_bodyfce(sa_vars))
                 return false;
             Ttoken *t6 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if (t6->type != KEY_END)
@@ -926,4 +928,20 @@ TSynCommon *alloc_sa()
 
     TS_push(sa_vars->local_tables, symtab_local);
     return sa_vars;
+}
+
+void dealloc_sa(TSynCommon *sa_vars)
+{
+    arr_free(sa_vars->arr);
+    free(sa_vars->arr);
+
+    //todo denny az berry dopise TS_stack_free
+    free(sa_vars->local_tables);
+
+    delete_buffer(sa_vars->buffer);
+    free(sa_vars->buffer);
+
+    symtab_free(sa_vars->ts_fun);
+
+    free(sa_vars);
 }
