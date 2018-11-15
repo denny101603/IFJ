@@ -301,7 +301,6 @@ bool nt_callfce(TSynCommon *sa_vars);
 */
 bool init_ts_fun(TSynCommon *sa_vars);
 
-
 /**
 *	@brief kontroluje token od skeneru, v pripade chyby ji zpropaguje do struktury sa_vars->err_code
 *	@author Daniel Bubenicek
@@ -311,6 +310,11 @@ bool init_ts_fun(TSynCommon *sa_vars);
 */
 bool err_check(Ttoken *t, TSynCommon *sa_vars);
 
-TSynCommon *alloc_SA();
+/**
+*	@brief alokuje vse potrebne pro syn. analyzator a vraci to ve strukture
+*	@author Daniel Bubenicek
+*	@return strukturu pripravenou k pouziti nebo NULL pri chybe alokace
+*/
+TSynCommon *alloc_sa();
 
 #endif //IFJ2018_SAX_H

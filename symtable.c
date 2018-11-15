@@ -62,6 +62,7 @@ Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool def
     //nasleduje nastaveni/uprava hodnot ve strukture
     item->defined = defined;
     item->token_type = token_type;
+    item->num_of_params;
     return item;
 
 }
@@ -98,6 +99,8 @@ void symtab_clear(Tsymbol_table *t)
 
 void symtab_free(Tsymbol_table *t)
 {
+    if(t == NULL)
+        return;
     symtab_clear(t);
     free(t);
     t = NULL;

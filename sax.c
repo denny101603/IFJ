@@ -7,7 +7,7 @@
 #include "err_codes.h"
 #include <string.h>
 
-bool buffer_init(TBuffer *buffer_stack)
+bool buffer_init(TBuffer *buffer_stack) //todo berry by denny zmenit na void
 {
     buffer_stack->top = NULL;
     buffer_stack->bottom = NULL;
@@ -158,62 +158,16 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
 
 int startSA()
 {
-    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace //todo denny asi lepsi dynalokovat
-    Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
-    if(arr_init(arr) == ERR_INTERNAL) //neuspesna alokace
-    {
-        free(arr);
+    TSynCommon *sa_vars = alloc_sa();
+    if(sa_vars == NULL)
         return ERR_INTERNAL;
-    }
-    else
-        sa_vars.arr = arr;
 
-    if(!init_ts_fun(&sa_vars)) //chyba alokace
-    {
-        arr_free(sa_vars.arr);
-        free(arr);
-        return ERR_INTERNAL;
-    }
-
-    //todo denny pridat ostatni veci do sa_vars - buffer atd
-    TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer));
-    if(buffer == NULL) //neuspesna alokace
-    {
-        arr_free(sa_vars.arr);
-        free(arr);
-        symtab_free(sa_vars.ts_fun);
-        return ERR_INTERNAL;
-    }
-    else
-    {
-        buffer_init(buffer);
-        sa_vars.buffer = buffer;
-    }
-
-    TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
-    Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
-    if(local_tables == NULL || symtab_local == NULL) //neuspesna alokace
-    {
-        arr_free(sa_vars.arr);
-        free(arr);
-        symtab_free(sa_vars.ts_fun);
-        free(local_tables);
-        free(symtab_local);
-        return ERR_INTERNAL;
-    }
-    else
-    {
-        TS_stack_init(local_tables);
-        sa_vars.local_tables = local_tables;
-        TS_push(sa_vars.local_tables, symtab_local);
-    }
-
-    sa_vars.err_code = IN_PROGRESS;
-    while(sa_vars.err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
-        if(!progr(&sa_vars)) //todo denny upravit asi
+    sa_vars->err_code = IN_PROGRESS;
+    while(sa_vars->err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
+        if(!progr(sa_vars)) //todo denny upravit asi
             break;
     //TODO denny vse dealokovat
-    return sa_vars.err_code;
+    return sa_vars->err_code;
 }
 
 bool progr(TSynCommon *sa_vars)
@@ -934,3 +888,42 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars)
     return false; //chyba
 }
 
+TSynCommon *alloc_sa()
+{
+    TSynCommon *sa_vars = (TSynCommon *) malloc(sizeof(TSynCommon)); //struktura s promennymi pro komunikaci mezi castmi prekladace
+    Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
+    TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
+    TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
+    Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
+
+    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
+    { //dealokace
+        free(sa_vars);
+        free(arr);
+        free(buffer);
+        free(local_tables);
+        symtab_free(symtab_local);
+        return NULL;
+    }
+
+    if(arr_init(arr) == ERR_INTERNAL || !init_ts_fun(sa_vars)) //neuspesna alokace
+    { //dealokace
+        if(arr_init(arr) != ERR_INTERNAL)
+            arr_free(arr);
+        free(sa_vars);
+        free(arr);
+        free(buffer);
+        free(local_tables);
+        symtab_free(symtab_local);
+        return NULL;
+    }
+    buffer_init(buffer);
+    TS_stack_init(local_tables);
+
+    sa_vars->local_tables = local_tables;
+    sa_vars->buffer = buffer;
+    sa_vars->arr = arr;
+
+    TS_push(sa_vars->local_tables, symtab_local);
+    return sa_vars;
+}
