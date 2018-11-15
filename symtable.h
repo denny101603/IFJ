@@ -81,7 +81,7 @@ Tsymbol_table_item *symtab_find(Tsymbol_table *t, const char *key);
 void symtab_clear(Tsymbol_table *t);
 
 /**
-*	@brief dealokuje celou tabulku
+*	@brief dealokuje celou tabulku vcetne t
 *	@author Daniel Bubenicek
 *	@param[in, out] t - rusena tabulka
  *	@note vola fci symtab_clear
