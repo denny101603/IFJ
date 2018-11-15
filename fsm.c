@@ -28,7 +28,9 @@ Ttoken *get_token(Tarray *token_value)
     bool final_state = false;
     int c; //znak ze stdin nebo bufferu
     static int first = 1; //prvni token
-    Ttoken *token = (Ttoken *) malloc(sizeof(Ttoken)); //todo berry by denny, co takhle kontrolovat uspech?
+    Ttoken *token = (Ttoken *) malloc(sizeof(Ttoken));
+    if(token == NULL)
+        return  NULL;
     token_init(token);
 
     while(!final_state)

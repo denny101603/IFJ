@@ -48,8 +48,7 @@ typedef struct{
  * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
  * @author Jan Beran
  * @note atribut i samotny token jsou dynamicky alokovane
- * @warning Pro set a get hodnot z a do struktury pouzivat prosim specialni funkce
- * @warning v0.5 = funkce hotove, netestovane. //todo berry by denny asi smazat tento radek, dale dat warning aby atribut byl nastaven na null pokkud neni pouzivan(kvuli dealokaci)
+ * @warning Pro set a get hodnot z a do struktury pouzivat specialni funkce
  */
 typedef struct{
     int type; //pole pro typ tokenu
