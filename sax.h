@@ -317,4 +317,11 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars);
 */
 TSynCommon *alloc_sa();
 
+/**
+*	@brief dealokuje vse ze struktury sa_vars vcetne ni samotne
+*	@author Daniel Bubenicek
+ *	@param sa_vars dealokovana struktura
+*/
+void dealloc_sa(TSynCommon *sa_vars);
+
 #endif //IFJ2018_SAX_H
