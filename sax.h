@@ -78,9 +78,8 @@ typedef struct SynCommon{
  * @brief Funkce inicializuje zasobnik typu TBuffer.
  * @author Jan Beran
  * @param in buffer buffer k inicializaci
- * @return true
  */
-bool buffer_init(TBuffer *buffer_buffer);
+void buffer_init(TBuffer *buffer_buffer);
 
 /**
  * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TBufferElem a pote ho vlozi.
@@ -323,5 +322,12 @@ TSynCommon *alloc_sa();
  *	@param sa_vars dealokovana struktura
 */
 void dealloc_sa(TSynCommon *sa_vars);
+
+/**
+ *
+ * @param ts_stack
+ */
+void TS_stack_free(TSymtables_stack *ts_stack);
+
 
 #endif //IFJ2018_SAX_H

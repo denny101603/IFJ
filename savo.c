@@ -246,6 +246,8 @@ bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token)
 
 Ttoken *pop(TStack *stack)
 {
+    if (stack == NULL)
+        return NULL;
     TStackElem *temp = stack->top;
     stack->top = stack->top->prev;
     stack->top->next = NULL;
@@ -399,9 +401,9 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     if (expr_token == NULL)
         return;
     token_init(expr_token);
-    expr_token->type = EXPRESSION; //TODO by berry muze byt expr null?
+    expr_token->type = EXPRESSION;
     push(stack, stack->top, expr_token);
-   // push(stack, get_first_terminal(stack), expr_token); //TODO berry nema tam byt stack->top misto get_first terminal?? ja ma pocit, že ano
+   // push(stack, get_first_terminal(stack), expr_token); //puvodni verze, spravna by mela byt horni
 }
 
 bool savo(TSynCommon *sa_vars)
@@ -476,6 +478,7 @@ bool savo(TSynCommon *sa_vars)
    }
    else
    {
+       delete_buffer(internal_buffer);
        buffer_push_bottom(sa_vars->buffer, input_token);
        return true;
    }
