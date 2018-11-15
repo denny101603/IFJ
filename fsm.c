@@ -28,7 +28,7 @@ Ttoken *get_token(Tarray *token_value)
     bool final_state = false;
     int c; //znak ze stdin nebo bufferu
     static int first = 1; //prvni token
-    Ttoken *token = malloc(sizeof(Ttoken));
+    Ttoken *token = (Ttoken *) malloc(sizeof(Ttoken)); //todo berry by denny, co takhle kontrolovat uspech?
     token_init(token);
 
     while(!final_state)
@@ -786,7 +786,7 @@ int token_init(Ttoken *token)
     return SUCCESS;
 }
 
- int token_get_type(Ttoken *token)
+ int token_get_type(Ttoken *token) //todo berry/denny by denny: zapomnel jsem to pouzivat, zatim bych se na predelani vysral a pak pripadne tohle smazal
 {
     return token->type;
 }
