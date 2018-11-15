@@ -7,11 +7,10 @@
 #include "err_codes.h"
 #include <string.h>
 
-bool buffer_init(TBuffer *buffer_stack) //todo berry by denny zmenit na void
+void buffer_init(TBuffer *buffer_stack)
 {
     buffer_stack->top = NULL;
     buffer_stack->bottom = NULL;
-    return true;
 }
 
 bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
@@ -60,6 +59,8 @@ bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 
 Ttoken *buffer_popTop(TBuffer *buffer) //pro savo
 {
+    if(buffer == NULL)
+        return  NULL;
     TBufferElem *temp = buffer->top;
     Ttoken *ret = temp->data;
     if(buffer->top != buffer->bottom) // neni jediny prvek
@@ -78,6 +79,8 @@ Ttoken *buffer_popTop(TBuffer *buffer) //pro savo
 
 Ttoken *buffer_popBottom(TBuffer *buffer) //rpo sax
 {
+    if(buffer == NULL)
+        return NULL;
     TBufferElem *temp = buffer->bottom;
     Ttoken *ret = temp->data;
     if(buffer->top == buffer->bottom) //zasobnik ma jediny prvek
@@ -101,7 +104,11 @@ void delete_buffer(TBuffer *buffer)
     {
         temp = buffer->top;
         buffer->top = buffer->top->prev;
-        if(temp != NULL) free(temp); //todo berry by denny - upravit, aby dealokoval i primo ty tokeny (pomoci fce token_free()), nejen tu obalovaci strukturu
+        if(temp != NULL)
+        {
+            if(temp->data != NULL) token_free(temp->data);
+            free(temp);
+        }
     }
     buffer->bottom = NULL;
 }
@@ -134,6 +141,8 @@ bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
 
 Tsymbol_table *TS_pop(TSymtables_stack *stack)
 {
+    if(stack == NULL)
+        return NULL;
     TLTElem *temp;
     Tsymbol_table *ret;
     temp = stack->top;
@@ -944,4 +953,14 @@ void dealloc_sa(TSynCommon *sa_vars)
     symtab_free(sa_vars->ts_fun);
 
     free(sa_vars);
+}
+
+void TS_stack_free(TSymtables_stack *ts_stack)
+{
+    while (ts_stack != NULL)
+    {
+        TLTElem *elem = TS_pop(ts_stack);
+        symtab_free(elem->data);
+        free(elem);
+    }
 }
