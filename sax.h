@@ -293,6 +293,13 @@ bool nt_expression(TSynCommon *sa_vars);
 bool nt_callfce(TSynCommon *sa_vars);
 
 
+/**
+*	@brief alokuje TS pro funkce a naplni ji integrovanymi funkcemi
+*	@author Daniel Bubenicek
+ *	@param sa_vars ukazatel na strukturu kam se prida TS funkci
+*	@return true pro uspech jinak false
+*/
+bool init_ts_fun(TSynCommon *sa_vars);
 
 
 #endif //IFJ2018_SAX_H

@@ -25,7 +25,7 @@ typedef struct symbol_table_item
     char *key; //nazev promenne !!dynamicky alokovano!!
     bool defined; //0 jeste nebyla definovana, 1 uz ano
     int token_type; //todo asi smazat
-    unsigned  int num_of_params; //pouze pro funkce - pocet parametru
+    long int num_of_params; //pouze pro funkce - pocet parametru
     struct symbol_table_item *next;
 }Tsymbol_table_item;
 
@@ -33,7 +33,7 @@ typedef struct symbol_table
 {
     unsigned long size; //aktualni pocet zaznamu
     unsigned long arr_size; //velikost pole ukazatelu
-    struct symbol_table_item *ptr[];
+    struct symbol_table_item *ptr[]; //pole ukazatelu na zaznamy
 }Tsymbol_table;
 
 

@@ -254,7 +254,7 @@ enum states {
     ID_0,
     ID_1,
     ID_2,
-    ID_FCE,
+    ID_FCE, //todo denny udelat ve skeneru (zatim vzdy vraci id_2)
     KEY_WORD,
     EOF_STATE,
     STRING_0,
