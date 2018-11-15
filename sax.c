@@ -959,8 +959,7 @@ void TS_stack_free(TSymtables_stack *ts_stack)
 {
     while (ts_stack != NULL)
     {
-        TLTElem *elem = TS_pop(ts_stack);
-        symtab_free(elem->data);
-        free(elem);
+        Tsymbol_table *elem = TS_pop(ts_stack);
+        symtab_free(elem);
     }
 }
