@@ -49,7 +49,7 @@ typedef struct{
  * @author Jan Beran
  * @note atribut i samotny token jsou dynamicky alokovane
  * @warning Pro set a get hodnot z a do struktury pouzivat prosim specialni funkce
- * @warning v0.5 = funkce hotove, netestovane.
+ * @warning v0.5 = funkce hotove, netestovane. //todo berry by denny asi smazat tento radek, dale dat warning aby atribut byl nastaven na null pokkud neni pouzivan(kvuli dealokaci)
  */
 typedef struct{
     int type; //pole pro typ tokenu
@@ -254,7 +254,7 @@ enum states {
     ID_0,
     ID_1,
     ID_2,
-    ID_FCE,
+    ID_FCE, //todo denny udelat ve skeneru (zatim vzdy vraci id_2)
     KEY_WORD,
     EOF_STATE,
     STRING_0,

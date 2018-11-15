@@ -25,7 +25,7 @@ typedef struct symbol_table_item
     char *key; //nazev promenne !!dynamicky alokovano!!
     bool defined; //0 jeste nebyla definovana, 1 uz ano
     int token_type; //todo asi smazat
-    unsigned  int num_of_params; //pouze pro funkce - pocet parametru
+    long int num_of_params; //pouze pro funkce - pocet parametru
     struct symbol_table_item *next;
 }Tsymbol_table_item;
 
@@ -33,7 +33,7 @@ typedef struct symbol_table
 {
     unsigned long size; //aktualni pocet zaznamu
     unsigned long arr_size; //velikost pole ukazatelu
-    struct symbol_table_item *ptr[];
+    struct symbol_table_item *ptr[]; //pole ukazatelu na zaznamy
 }Tsymbol_table;
 
 
@@ -62,7 +62,7 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t);
  *	@param token_type - pro upravu/inicializaci tehoz ve strukture
 *	@return NULL pro neuspesnou alokaci jinak ukazatel na dany item (mozne dalsi upravy)
 */
-Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, int token_type, unsigned int num_of_params); //TODO asi upravit pro pridani celeho pripraveneho itemu
+Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, int token_type, long int num_of_params); //TODO asi upravit pro pridani celeho pripraveneho itemu
 
 /**
 *	@brief najde a vrati item v tabulce symbolu
@@ -87,6 +87,15 @@ void symtab_clear(Tsymbol_table *t);
  *	@note vola fci symtab_clear
 */
 void symtab_free(Tsymbol_table *t);
+
+
+/**
+*	@brief vraci aktualni pocet zaznamu v TS
+*	@author Daniel Bubenicek
+*	@param t - ukazatel na tabulku symbolu
+ *	@return aktualni pocet zaznamu v TS
+*/
+unsigned long symtab_get_size(Tsymbol_table *t);
 
 unsigned int symtab_hash_function(const char *str);
 

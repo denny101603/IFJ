@@ -5,6 +5,7 @@
 #include "sax.h"
 #include "savo.h"
 #include "err_codes.h"
+#include <string.h>
 
 bool buffer_init(TBuffer *buffer_stack)
 {
@@ -155,9 +156,9 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
     return ret;
 }
 
-int startSA() //TODO DENNY by berry: Handle vestavene funkce: Nahodit do o TS
+int startSA()
 {
-    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace //todo asi lepsi dynalokovat
+    TSynCommon sa_vars; //struktura s promennymi pro komunikacemi mezi castmi prekladace //todo denny asi lepsi dynalokovat
     Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
     if(arr_init(arr) == ERR_INTERNAL) //neuspesna alokace
     {
@@ -167,8 +168,7 @@ int startSA() //TODO DENNY by berry: Handle vestavene funkce: Nahodit do o TS
     else
         sa_vars.arr = arr;
 
-    sa_vars.ts_fun = symtab_init(TS_SIZE);
-    if(sa_vars.ts_fun == NULL) //chyba alokace
+    if(!init_ts_fun(&sa_vars)) //chyba alokace
     {
         arr_free(sa_vars.arr);
         free(arr);
@@ -212,7 +212,7 @@ int startSA() //TODO DENNY by berry: Handle vestavene funkce: Nahodit do o TS
     while(sa_vars.err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
         if(!progr(&sa_vars)) //todo denny upravit asi
             break;
-    //TODO vse dealokovat
+    //TODO denny vse dealokovat
     return sa_vars.err_code;
 }
 
@@ -288,10 +288,10 @@ bool nt_deffunc(TSynCommon *sa_vars)
         return false;
     Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t2->type == ID_FCE || t2->type == ID_2)
-    {
+    {   //todo denny nemel bych vzdy prochazet vsechny i lokalni TS?
         if(symtab_find(sa_vars->ts_fun, t2->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t2->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
-            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, 0); //pohlidat spravny pocet parametru
+            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, -1);
             TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
 
             Ttoken *t3 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -299,6 +299,9 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
             if (!nt_params(sa_vars))
                 return false;
+            //uz znam pocet parametru fce
+            symtab_edit_add(sa_vars->ts_fun, t2->attribute, true, t2->type, (long int) symtab_get_size(sa_vars->ts_fun));
+
             Ttoken *t4 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if (t4->type != RIGHT_BRACKET)
                 return false;
@@ -310,6 +313,9 @@ bool nt_deffunc(TSynCommon *sa_vars)
             Ttoken *t6 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if (t6->type != KEY_END)
                 return false;
+
+            //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
+            symtab_free(TS_pop(sa_vars->local_tables));
 
             if (!nt_eolf(sa_vars))
                 return false;
@@ -324,7 +330,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
 }
 
 
-bool nt_bodyfce(TSynCommon *sa_vars)
+bool nt_bodyfce(TSynCommon *sa_vars) //todo carbik/denny opravit např a=2 to nesežere
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t1->type == EOL_1) //RULE 8
@@ -521,7 +527,7 @@ bool nt_eolf(TSynCommon *sa_vars)
     }
     else if(t1->type == EOF_STATE)
     {
-        sa_vars->err_code = 101; //todo predelat
+        sa_vars->err_code = 101; //todo denny/carbik predelat
         return true;
     }
     else
@@ -782,7 +788,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     return true;
 }
 
-bool nt_bodywhif(TSynCommon *sa_vars)
+bool nt_bodywhif(TSynCommon *sa_vars) //todo carbik/denny opravit, např pro a=2 nefaka
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(t1->type == EOL_1)
@@ -841,3 +847,90 @@ bool nt_bodywhif(TSynCommon *sa_vars)
         return false;
     }
 }
+
+bool init_ts_fun(TSynCommon *sa_vars)
+{
+    sa_vars->ts_fun = symtab_init(TS_SIZE);
+    if(sa_vars->ts_fun == NULL) //chyba alokace
+        return false;
+
+    char *inputs = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *inputi = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *inputf = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *print = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *lenght = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *substr = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *ord = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *chr = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+
+    if(inputs == NULL || inputi == NULL || inputf == NULL || print == NULL
+        || lenght == NULL || substr == NULL || ord == NULL || chr == NULL) //nepovedena alokace
+    {
+        free(inputs);
+        free(inputi);
+        free(inputf);
+        free(print);
+        free(lenght);
+        free(substr);
+        free(ord);
+        free(chr);
+        symtab_free(sa_vars->ts_fun);
+        return false;
+    }
+
+    strcpy(inputs, "inputs");
+    strcpy(inputi, "inputi");
+    strcpy(inputf, "inputf");
+    strcpy(print, "print");
+    strcpy(lenght, "lenght");
+    strcpy(substr, "substr");
+    strcpy(ord, "ord");
+    strcpy(chr, "chr");
+
+    Tsymbol_table_item *a = symtab_edit_add(sa_vars->ts_fun, inputs, true, ID_2, 0);
+    Tsymbol_table_item *b = symtab_edit_add(sa_vars->ts_fun, inputi, true, ID_2, 0);
+    Tsymbol_table_item *c = symtab_edit_add(sa_vars->ts_fun, inputf, true, ID_2, 0);
+    Tsymbol_table_item *d = symtab_edit_add(sa_vars->ts_fun, print, true, ID_2, -10); //todo denny upravit -10
+    Tsymbol_table_item *e = symtab_edit_add(sa_vars->ts_fun, lenght, true, ID_2, 1);
+    Tsymbol_table_item *f = symtab_edit_add(sa_vars->ts_fun, substr, true, ID_2, 3);
+    Tsymbol_table_item *g = symtab_edit_add(sa_vars->ts_fun, ord, true, ID_2, 2);
+    Tsymbol_table_item *h = symtab_edit_add(sa_vars->ts_fun, chr, true, ID_2, 1);
+
+    if(a == NULL || b == NULL || c == NULL || d == NULL || e == NULL || f == NULL || g == NULL || h == NULL) //neuspesna alokace
+    {
+        free(inputs);
+        free(inputi);
+        free(inputf);
+        free(print);
+        free(lenght);
+        free(substr);
+        free(ord);
+        free(chr);
+        free(a);
+        free(b);
+        free(c);
+        free(e);
+        free(d);
+        free(f);
+        free(g);
+        free(h);
+        free(sa_vars->ts_fun);
+        return false;
+    }
+
+    return true;
+}
+
+bool err_check(Ttoken *t, TSynCommon *sa_vars)
+{
+    if(t == NULL) //chyba alokace
+        sa_vars->err_code = ERR_INTERNAL;
+    else if(t->type == LEX_ERROR) //lexikalni chyba
+        sa_vars->err_code = ERR_LEX;
+    else if(t->type == ERR_INTERNAL) //chyba alokace
+        sa_vars->err_code = ERR_INTERNAL;
+    else
+        return true; //neni problem
+    return false; //chyba
+}
+

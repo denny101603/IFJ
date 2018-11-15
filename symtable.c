@@ -42,7 +42,7 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t)
     return t->arr_size;
 }
 
-Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const int token_type, const unsigned int num_of_params)
+Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const int token_type, const long int num_of_params)
 {
     unsigned long index = symtab_hash_function(key) % symtab_get_arr_size(t);
     Tsymbol_table_item *item = symtab_find(t, key);
@@ -101,6 +101,11 @@ void symtab_free(Tsymbol_table *t)
     symtab_clear(t);
     free(t);
     t = NULL;
+}
+
+unsigned long symtab_get_size(Tsymbol_table *t)
+{
+    return t->size;
 }
 
 unsigned int symtab_hash_function(const char *str)
