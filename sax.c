@@ -460,7 +460,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
 
 bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif END eolf
 {
-    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
+    Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer); //zmena pro commit
     if(t1->type != KEY_WHILE)           //WHILE
     {
         token_free(t1);
