@@ -59,7 +59,7 @@ bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 
 Ttoken *buffer_popTop(TBuffer *buffer) //pro savo
 {
-    if(buffer == NULL)
+    if(buffer == NULL || buffer->top == NULL) //err handle: bud predan ukazatel na neexistujici buffer, nebo na prazdny buffer
         return  NULL;
     TBufferElem *temp = buffer->top;
     Ttoken *ret = temp->data;
