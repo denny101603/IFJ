@@ -392,7 +392,7 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         else
         {
             //todo berry, pokud zle tokeny, problem tady
-            //Ttoken *temp = pop(stack);
+            Ttoken *temp = pop(stack);
            /*if(!is_pseudotoken(temp))
                 buffer_push_top(internal_buffer, temp);*/
         }
