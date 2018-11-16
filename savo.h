@@ -101,7 +101,7 @@ Ttoken *get_token_from_elem(TStackElem *elem);
  * @param stack Aktualni zasobik
  * @return Novy token typu Ttoken
  */
-Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars); //=
+Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //=
 
 /**
  *
@@ -116,7 +116,7 @@ bool is_pseudotoken(Ttoken *token);
  * @param stack
  * @return
  */
-Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars); //<
+Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //<
 
 /**
  * @brief Funkce simuluje akci > z precedencni tabulky

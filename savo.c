@@ -260,11 +260,11 @@ bool copy_buffer(TBuffer *src, TBuffer *dst)
 {
     if(src == NULL)
         return true;
-    Ttoken *tempsrc = NULL;
-    while(src!=NULL) //updated via poptop
+    Ttoken *tempsrc = buffer_popTop(src);
+    while(src->top != NULL) //updated via poptop
     {
-        tempsrc = buffer_popTop(src);
         buffer_push_bottom(dst, tempsrc);
+        tempsrc = buffer_popTop(src);
     }
 }
 
@@ -301,15 +301,16 @@ void delete_stack(TStack *stack)
     }
 }
 
-Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
+Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     push(stack, stack->top,input_token); //TODO!!! Kde vsude pouzivam action push?
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    buffer_push_top(internal_buffer, ret);
     //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
     return ret;
 }
 
-Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
+Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     Ttoken *mensitko = malloc(sizeof(Ttoken));
     if(mensitko == NULL)
@@ -318,6 +319,7 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars)
     push(stack,get_first_terminal(stack), mensitko); //pushneme mensitko za prvni terminal
     push(stack, stack->top, input_token);
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    buffer_push_top(internal_buffer, ret);
     return ret;
 }
 
@@ -389,8 +391,8 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         else
         {
             Ttoken *temp = pop(stack);
-            if(!is_pseudotoken(temp))
-                buffer_push_top(internal_buffer, temp);
+           /*if(!is_pseudotoken(temp))
+                buffer_push_top(internal_buffer, temp);*/
         }
 
     }
@@ -408,7 +410,7 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
 bool savo(TSynCommon *sa_vars)
 {
-    Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer);
+    Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
     {
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
@@ -431,7 +433,7 @@ bool savo(TSynCommon *sa_vars)
         return false;
     }
     buffer_init(internal_buffer);
-
+    buffer_push_top(internal_buffer, input_token);
     while(true)
     {
         if(err) break;
@@ -454,7 +456,7 @@ bool savo(TSynCommon *sa_vars)
                break;
            case '<': //na zasobnik dej <, pushni token a vezmi si dalsi
                //fprintf(stderr, "na zasobnik dej <, pushni token a vezmi si dalsi %c \n", input_token->type);
-               input_token = action_change(input_token, stack, sa_vars);
+               input_token = action_change(input_token, stack, sa_vars, internal_buffer);
                break;
            case '>': //pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod >
                //fprintf(stderr, "pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod > %c \n", input_token->type);
@@ -466,7 +468,7 @@ bool savo(TSynCommon *sa_vars)
                break;
            case '=': //push token a nacti dalsi
                //fprintf(stderr, "push token a nacti dalsi %c \n", input_token->type);
-               input_token = action_push(input_token, stack, sa_vars);
+               input_token = action_push(input_token, stack, sa_vars, internal_buffer);
                //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
                break;
        }
