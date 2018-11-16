@@ -266,6 +266,7 @@ bool copy_buffer(TBuffer *src, TBuffer *dst)
         buffer_push_bottom(dst, tempsrc);
         tempsrc = buffer_popTop(src);
     }
+    return true;
 }
 
 
@@ -390,7 +391,8 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             continue;
         else
         {
-            Ttoken *temp = pop(stack);
+            //todo berry, pokud zle tokeny, problem tady
+            //Ttoken *temp = pop(stack);
            /*if(!is_pseudotoken(temp))
                 buffer_push_top(internal_buffer, temp);*/
         }
