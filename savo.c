@@ -480,8 +480,9 @@ bool savo(TSynCommon *sa_vars)
    }
    else
    {
+
+       buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
        delete_buffer(internal_buffer);
-       buffer_push_bottom(sa_vars->buffer, input_token);
        return true;
    }
 }
