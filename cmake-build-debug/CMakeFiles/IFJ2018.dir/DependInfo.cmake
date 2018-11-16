@@ -4,11 +4,11 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "C:/Users/danbu/CLionProjects/ifjprojektspravny/fsm.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/fsm.c.obj"
-  "C:/Users/danbu/CLionProjects/ifjprojektspravny/main.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
-  "C:/Users/danbu/CLionProjects/ifjprojektspravny/savo.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/savo.c.obj"
-  "C:/Users/danbu/CLionProjects/ifjprojektspravny/sax.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/sax.c.obj"
-  "C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.obj"
+  "C:/Users/janbe/Desktop/IFJ/fsm.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/fsm.c.obj"
+  "C:/Users/janbe/Desktop/IFJ/main.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
+  "C:/Users/janbe/Desktop/IFJ/savo.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/savo.c.obj"
+  "C:/Users/janbe/Desktop/IFJ/sax.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/sax.c.obj"
+  "C:/Users/janbe/Desktop/IFJ/symtable.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
