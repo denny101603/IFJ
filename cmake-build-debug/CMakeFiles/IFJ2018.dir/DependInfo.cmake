@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "C:/Users/janbe/Desktop/IFJ/main.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
   "C:/Users/janbe/Desktop/IFJ/savo.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/savo.c.obj"
   "C:/Users/janbe/Desktop/IFJ/sax.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/sax.c.obj"
+  "C:/Users/janbe/Desktop/IFJ/seman.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/seman.c.obj"
   "C:/Users/janbe/Desktop/IFJ/symtable.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

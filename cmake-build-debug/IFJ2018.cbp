@@ -100,6 +100,12 @@
 		<Unit filename="C:/Users/janbe/Desktop/IFJ/sax.h">
 			<Option target="IFJ2018"/>
 		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/seman.c">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/seman.h">
+			<Option target="IFJ2018"/>
+		</Unit>
 		<Unit filename="C:/Users/janbe/Desktop/IFJ/symtable.c">
 			<Option target="IFJ2018"/>
 		</Unit>
