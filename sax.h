@@ -9,6 +9,7 @@
 #include "symtable.h"
 
 #define TS_SIZE 127ul //TODO domluvit se na nejake velikosti. Musi to byt prvocislo. A stastne cislo (viz wiki).
+#define ZERO_TO_INF -10 //specialni hodnota znacici pocet parametru pro fci print - tedy libovolny nezaporny
 
 /**
  * @brief Struktura prvku v ADT Buffer

@@ -355,10 +355,9 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         token_free(t1);
         return false;
     }
-
+    token_free(t1);
     if(!savo(sa_vars))                       //EXPR
     {
-        token_free(t1);
         return false;
     }
 
@@ -370,6 +369,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         token_free(t1);
         return false;
     }
+    token_free(t1);
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
         return false;
@@ -378,9 +378,9 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         token_free(t1);
         return false;
     }
+    token_free(t1);
     if(!nt_bodywhif(sa_vars))           //bodywhif
     {
-        token_free(t1);
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -413,6 +413,7 @@ bool nt_eolf(TSynCommon *sa_vars)
     }
     else if(t1->type == EOF_STATE)
     {
+        token_free(t1);
         sa_vars->err_code = 101; //todo denny/carbik predelat
         return true;
     }
@@ -442,9 +443,10 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
+    token_free(t1);
+
     if(!savo(sa_vars)) //EXPR
     {
-        token_free(t1);
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -455,6 +457,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
+    token_free(t1);
+
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
         return false;
@@ -463,9 +467,10 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
+    token_free(t1);
+
     if(!nt_bodywhif(sa_vars))           //IFBODY
     {
-        token_free(t1);
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -476,6 +481,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
+    token_free(t1);
+
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
         return false;
@@ -484,9 +491,10 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
+    token_free(t1);
+
     if(!nt_bodywhif(sa_vars))           //ELSEBODY
     {
-        token_free(t1);
         return false;
     }
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -497,14 +505,14 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
-    if(nt_eolf(sa_vars))                //EOLFmrdat
+    token_free(t1);
+
+    if(nt_eolf(sa_vars))                //EOLF
     {
-        token_free(t1);
         return true;
     }
     else
     {
-        token_free(t1);
         return false;
     }
 }
@@ -536,17 +544,28 @@ bool nt_nextargs(TSynCommon *sa_vars)
     {
         if(!savo(sa_vars))
         {
-            token_free(t1);
+            buffer_push_bottom(sa_vars->buffer, t1);
             return false;
         }
-        token_free(t1);
-        return nt_nextargs(sa_vars);
+
+        if(nt_nextargs(sa_vars))
+        {
+            token_free(t1); //povedlo se, muzu uvolnit
+            return true;
+        }
+        else
+        {
+            buffer_push_bottom(sa_vars->buffer, t1); //nepovedlo se, musim vratit pro pripadny dalsi pokus
+            return false;
+        }
     }
     else if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE)) //RULE 32
     {
         buffer_push_bottom(sa_vars->buffer, t1);
         return true;
-    } else {
+    }
+    else
+    {
         buffer_push_bottom(sa_vars->buffer, t1);
         return false;
     }
@@ -597,7 +616,12 @@ bool nt_assignment(TSynCommon *sa_vars)
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni to funkce
         {
             if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) == NULL) //jeste neni definovana
+            {
                 symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, 1, t1->type, 0); //pridani promenne do lokalni TS
+                free(t1);
+            }
+            else
+                token_free(t1);
 
             //uz je definovana
             t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -608,14 +632,14 @@ bool nt_assignment(TSynCommon *sa_vars)
                 token_free(t1);
                 return false;
             }
+            token_free(t1);
+
             if(nt_right(sa_vars))           //right
             {
-                token_free(t1);
                 return true;
             }
             else
             {
-                token_free(t1);
                 return false;
             }
         }
@@ -729,14 +753,14 @@ bool nt_params(TSynCommon *sa_vars)
                 else
                 {
                     symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                    free(t1);
+
                     if(nt_nextparams(sa_vars))
                     {
-                        free(t1);
                         return true;
                     }
                     else
                     {
-                        free(t1);
                         return false;
                     }
                     //neni definovana ani ve func --> add_id
@@ -744,7 +768,10 @@ bool nt_params(TSynCommon *sa_vars)
             }
         }
         else //neni ID_2
+        {
+            token_free(t1);
             return false;
+        }
     }
 }
 
@@ -1021,7 +1048,7 @@ bool init_ts_fun(TSynCommon *sa_vars)
     Tsymbol_table_item *a = symtab_edit_add(sa_vars->ts_fun, inputs, true, ID_2, 0);
     Tsymbol_table_item *b = symtab_edit_add(sa_vars->ts_fun, inputi, true, ID_2, 0);
     Tsymbol_table_item *c = symtab_edit_add(sa_vars->ts_fun, inputf, true, ID_2, 0);
-    Tsymbol_table_item *d = symtab_edit_add(sa_vars->ts_fun, print, true, ID_2, -10); //todo denny upravit -10
+    Tsymbol_table_item *d = symtab_edit_add(sa_vars->ts_fun, print, true, ID_2, ZERO_TO_INF);
     Tsymbol_table_item *e = symtab_edit_add(sa_vars->ts_fun, lenght, true, ID_2, 1);
     Tsymbol_table_item *f = symtab_edit_add(sa_vars->ts_fun, substr, true, ID_2, 3);
     Tsymbol_table_item *g = symtab_edit_add(sa_vars->ts_fun, ord, true, ID_2, 2);
