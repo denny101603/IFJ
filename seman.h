@@ -11,8 +11,9 @@
 /**
 *	@file seman.h
 *	@author Matěj Jelínek, Jan Beran
-*	@brief knihovna pro potreby konecneho automatu pro lexikalni analyzator
- *	v1.1: opraveny chyby v komentech
+*	@brief knihovna pro potreby semantickeho generatoru
+ *	v1.2: Vsechny funkce vytvorene Janem Beranem otestovane v simulaci (nemam semanticky generator, ktery by je otestoval naostro).
+ *	      V simulovanych testech vsechno fungovalo dobre.
 */
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
@@ -33,6 +34,15 @@ typedef struct operand{
 }TOperand;
 
 /**
+ * @brief Struktura pro buffer
+ * @warning 0.1 pouze vytvorena, aby nebyl problem pri prekladu
+ *
+ */
+typedef struct tac_buffer{
+    int abytunecobylo; // :)
+} TAC_buffer;
+
+/**
  * @brief Struktura pro jednu triadresnou instrukci.
  * @authors Jan Beran, Matej Jelinek
  * @warning Buffer pouzivat jen pro funkce print a substr
@@ -42,10 +52,12 @@ typedef struct three_ac{
     struct operand destination;
     struct operand op_1;
     struct operand op_2;
-    struct TAC_buffer; //Todo udelat buffer pro parametry fci print a substr
+    struct tac_buffer buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;
+
+
 
 
 /**

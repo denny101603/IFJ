@@ -1,5 +1,21 @@
 
-
+/***************************************
+* 	IFJ projekt 2018                   *
+* 						               *
+*	Autori:			                   *
+*	Jan Beran (xberan43)	           *
+*	Daniel Bubenicek (xbuben05)	       *
+*	Jan Carba (xcarba00)		       *
+*	Matej Jelinek (xjelen49)	       *
+*                                      *
+***************************************/
+/**
+*	@file seman.c
+*	@author Matěj Jelínek, Jan Beran
+*	@brief soubor s definicemi funkci ze seman.h
+ *	v1.2: Vsechny funkce vytvorene Janem Beranem otestovane v simulaci (nemam semanticky generator, ktery by je otestoval naostro).
+ *	      V simulovanych testech vsechno fungovalo dobre.
+*/
 #include "seman.h"
 
 /**
@@ -101,6 +117,8 @@ TThreeAC *TAC_remove(TTacList *list)
     if(list->last == list->first) //jediny prvek => last se do NULL hodi sam, firstu je treba pomoci :)
         list->first = NULL;
     list->last = list->last->prev; // if list->last->prev == NULL, neni problem, stale OK
+    if(list->last != NULL) //pokud NULL neni, korektne zaslepim
+        list->last->next = NULL;
     ret->prev = NULL; //odpojeni od listu
     ret->next = NULL; //jistota, neni nutne
     return ret;
@@ -136,6 +154,7 @@ TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
     if(elem->next->next == NULL) //odstranuji posledni prvek
     {
         list->last = elem;
+        list->last->next = NULL;
         ret->next = NULL;
         ret->prev = NULL;
     }
@@ -152,5 +171,17 @@ TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
 void TAC_delete_list(TTacList *list)
 {
     while(list->first != NULL)
+    {
+        /**Ladici vypisy, pred pouzitim zakomentovat**/
+       /* TThreeAC *item = list->first;
+        while(item != NULL)
+        {
+            printf("%d\n", item->name);
+            item = item->next;
+        }
+        printf("_________________________\n");*/
+        /**konec ladiciho vypisu**/
         free(TAC_remove(list));
+    }
+
 }
