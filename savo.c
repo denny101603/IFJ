@@ -54,7 +54,7 @@ char prec_table[15][15] = {              //in
         /* >= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* != */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* == */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* $ */    {'<','<','<','<','<','?','<','<','?','?','?','?','?','?','?'}
+        /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','?'}
 };
 //TODO ALL Zkontrolovat to po Janu Carbovi :). By Berry: pokud bude savo naoko fungovat, ale jinak, mrknout se sem.
 
@@ -88,8 +88,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
             input_terminal = 6;
             break;
         case INTEGER:
-            input_terminal = 7;
-            break;
+        case STRING_1:
         case FLOAT_2:
             input_terminal = 7;
             break;
@@ -146,8 +145,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
             stack_terminal = 6;
             break;
         case INTEGER:
-            stack_terminal = 7;
-            break;
+        case STRING_1:
         case FLOAT_2:
             stack_terminal = 7;
             break;
@@ -266,6 +264,7 @@ bool copy_buffer(TBuffer *src, TBuffer *dst)
         buffer_push_bottom(dst, tempsrc);
         tempsrc = buffer_popTop(src);
     }
+    buffer_push_bottom(dst, tempsrc);
     return true;
 }
 
@@ -412,14 +411,21 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
 bool savo(TSynCommon *sa_vars)
 {
+    int err = 0;
+
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
     {
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
         return false;
     }
+    if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky
+    {
+        action_err(NULL, sa_vars,ERR_SYN, NULL );
+        return  false;
+    }
     /**///fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
-    int err = 0;
+
 
     TStack *stack = stack_init();
     if(stack == NULL) //err handle
@@ -436,18 +442,22 @@ bool savo(TSynCommon *sa_vars)
     }
     buffer_init(internal_buffer);
     buffer_push_top(internal_buffer, input_token);
+    Ttoken *stack_token = NULL;
     while(true)
     {
         if(err) break;
         /**///fprintf(stderr, "na zacatku while, input_token je %d, na stacku %d \n", input_token->type, stack->top->data->type );
         /**/fflush(stderr);
-        Ttoken *stack_token = get_token_from_elem(get_first_terminal(stack));
+        stack_token = get_token_from_elem(get_first_terminal(stack));
         /**///fprintf(stderr, "terminalovano %d %d \n", input_token->type, stack_token->type);
 
        /*UKONCOVACI PODMINKA SAVA*/
        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
        if(((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token)))
+       {
            break;
+       }
+
 
        char action = get_action(input_token, stack_token);
        switch (action) {
@@ -482,7 +492,6 @@ bool savo(TSynCommon *sa_vars)
    }
    else
    {
-
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
        delete_buffer(internal_buffer);
        return true;
