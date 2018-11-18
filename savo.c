@@ -344,12 +344,7 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     int rule = find_rule(stack);
 
-    //overeni, ze nevytvarim bool vyraz v situaci, kdy neni povolen
-    if(sa_vars->boolean == 0 && rule > 13)
-    {
-        action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
-        return false;
-    }
+
     if(rule != -1)
         execute_rule(rule, stack, sa_vars, internal_buffer);
     else
@@ -367,6 +362,7 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
         delete_stack(stack);
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
+    //todo berry by berry doplnit vypisovani chyb krome err syn
 
     return error;
 }
@@ -444,8 +440,6 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
 bool savo(TSynCommon *sa_vars)
 {
-    //todo berry smazat nasledujici radek potom, co to denny dodela
-    sa_vars->boolean = 0;
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
 
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
@@ -489,10 +483,21 @@ bool savo(TSynCommon *sa_vars)
 
     while(true)
     {
-
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
         /*Konec l.v.*/
+
+        //pomoc pro sax: osetreni, abych vracel boolean vyrazy jen v situaci, kdy mam
+        if(sa_vars->boolean == false)
+        {
+            if(input_token->type == OP_MORE_1 ||
+               input_token->type == OP_LESS_1 ||
+               input_token->type == OP_EQAL_2 ||
+               input_token->type == OP_LESS_EQUAL ||
+               input_token->type == OP_MORE_EQUAL ||
+               input_token->type == OP_NOT_EQ_1)
+                err = action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+        }
 
         /*UKONCOVACI PODMINKA SAVA*/
         //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
