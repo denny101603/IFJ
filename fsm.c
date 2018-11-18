@@ -27,7 +27,7 @@ Ttoken *get_token(Tarray *token_value)
     int next_state = LEX_ERROR;
     bool final_state = false;
     int c; //znak ze stdin nebo bufferu
-    static int first = 1; //prvni token
+    static int first = 1; //pokud ==1, tak se jedna o prvni vstupni token
     Ttoken *token = (Ttoken *) malloc(sizeof(Ttoken));
     if(token == NULL)
         return  NULL;
