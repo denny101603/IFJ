@@ -4,6 +4,7 @@
 
 #include "sax.h"
 #include "savo.h"
+#include "seman.h"
 #include "err_codes.h"
 #include <string.h>
 
@@ -290,6 +291,8 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
             token_free(t2);
 
+            //todo seman: DEFFUNC(op1: t1->attribute)
+
             if (!nt_params(sa_vars))
                 return false;
 
@@ -534,12 +537,21 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
         return true;
     }
     buffer_push_bottom(sa_vars->buffer, t1);
-    if(!savo(sa_vars))
+
+    //todo seman: defvar(op1: vygeneruju nejakou docasnou promennou_#42)
+
+    if(!savo(sa_vars)) //todo seman: reknu savu aby mi to dal do tte docasne promenne_#42
     {
         return false;
     }
     (*num_of_args)++; //pribyl argument
-    return nt_nextargs(sa_vars, num_of_args);
+    if(nt_nextargs(sa_vars, num_of_args))
+    {
+        //todo seman: PUSH(op1: ta docasna promenna_#42)
+        return true;
+    }
+    else
+        return false;
 }
 
 bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
@@ -549,7 +561,9 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         return false;
     if(t1->type == OP_COMMA) //RULE33
     {
-        if(!savo(sa_vars))
+        //todo seman: defvar(op1: vygeneruju nejakou docasnou promennou_#41)
+
+        if(!savo(sa_vars)) //todo seman: reknu savu aby mi to dal do tte docasne promenne_#41
         {
             buffer_push_bottom(sa_vars->buffer, t1);
             return false;
@@ -557,6 +571,8 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         (*num_of_args)++; //pribyl argument
         if(nt_nextargs(sa_vars, num_of_args))
         {
+            //todo seman: PUSH(op1: ta docasna promenna_#41)
+
             token_free(t1); //povedlo se, muzu uvolnit
             return true;
         }
@@ -589,12 +605,19 @@ bool nt_right(TSynCommon *sa_vars)
         {
             //je to id_fce
             buffer_push_bottom(sa_vars->buffer, t1);
-            return nt_callfce(sa_vars);
+            if(nt_callfce(sa_vars)) //todo seman: predam destinaci fci callfce, ta to tam ulozi
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
     //cekam EXPR
     buffer_push_bottom(sa_vars->buffer, t1);
-    if(savo(sa_vars))
+    if(savo(sa_vars)) //todo seman: predam destinaci kam ma vyraz ulozit
     {
         if(nt_eolf(sa_vars))                //eolf
         {
@@ -625,6 +648,7 @@ bool nt_assignment(TSynCommon *sa_vars)
             if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) == NULL) //jeste neni definovana
             {
                 symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, 1, NOBODY_CARES); //pridani promenne do lokalni TS
+                //todo seman: defvar(op1: t1->attribute)
                 free(t1);
             }
             else
@@ -700,6 +724,8 @@ bool nt_nextparams(TSynCommon *sa_vars)
                     else
                     {
                         symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
+                        //todo seman: loadparam(dest: t1->attribute)
+
                         free(t1);
                         if(nt_nextparams(sa_vars))
                         {
@@ -760,6 +786,9 @@ bool nt_params(TSynCommon *sa_vars)
                 else
                 {
                     symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
+
+                    //todo seman: loadparam(dest. t1->attribute)
+
                     free(t1);
 
                     if(nt_nextparams(sa_vars))
@@ -816,8 +845,10 @@ bool nt_callfce(TSynCommon *sa_vars)
         fprintf(stderr, MESSAGE_SEM_PARAM);
         return false;
     }
-    token_free(t1);
 
+    //todo seman: call(dest: to bychom tu meli vedet, op1: t1->attribute (LABEL))
+
+    token_free(t1);
     if(!nt_eolf(sa_vars))
         return false;
 
