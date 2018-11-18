@@ -68,7 +68,7 @@ typedef struct SynCommon{
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
     int err_code; //pro uchovani pripadne chyby
-    bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool)
+    bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
     TSymtables_stack *local_tables;
     //puvodně bylo psano: stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;

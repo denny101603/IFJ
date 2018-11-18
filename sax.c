@@ -356,10 +356,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false;
     }
     token_free(t1);
+
+    sa_vars->boolean = true; //muze to byt typ boolean
     if(!savo(sa_vars))                       //EXPR
     {
         return false;
     }
+    sa_vars->boolean = false; //vracim do vychoziho stavu
 
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
@@ -445,10 +448,13 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
     token_free(t1);
 
+    sa_vars->boolean = true; //muze byt typu bool
     if(!savo(sa_vars)) //EXPR
     {
         return false;
     }
+    sa_vars->boolean = false; //vracim do vychoziho stavu
+
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
         return false;
@@ -1133,6 +1139,7 @@ TSynCommon *alloc_sa()
     sa_vars->local_tables = local_tables;
     sa_vars->buffer = buffer;
     sa_vars->arr = arr;
+    sa_vars->boolean = false; //vychozi stav
 
     TS_push(sa_vars->local_tables, symtab_local);
     return sa_vars;
