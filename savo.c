@@ -1,6 +1,19 @@
-//
-// Created by janbe on 08.11.2018.
-//
+/***************************************
+* 	IFJ projekt 2018                   *
+* 						               *
+*	Autori:			                   *
+*	Jan Beran (xberan43)	           *
+*	Daniel Bubenicek (xbuben05)	       *
+*	Jan Carba (xcarba00)		       *
+*	Matej Jelinek (xjelen49)	       *
+*                                      *
+***************************************/
+/**
+*	@file savo.c
+*	@author Jan Beran
+*	@brief Soubor se syntaktickym analyzatorem vyrazu
+ *	v1.7: Savo funkcni v 99 % pripadu. V nalsedujicim commitu bude refaktorovano.
+*/
 #include "savo.h"
 
 #define NUM_OF_RULES 20

@@ -1,7 +1,19 @@
-//
-// Created by janbe on 08.11.2018.
-//
-
+/***************************************
+* 	IFJ projekt 2018                   *
+* 						               *
+*	Autori:			                   *
+*	Jan Beran (xberan43)	           *
+*	Daniel Bubenicek (xbuben05)	       *
+*	Jan Carba (xcarba00)		       *
+*	Matej Jelinek (xjelen49)	       *
+*                                      *
+***************************************/
+/**
+*	@file savo.h
+*	@author Jan Beran
+*	@brief knihovna pro potreby Syntaktickeho AnalyzatOru Vyrazu (SAVO)
+ *	v1.2: Vsechny funkce deklarovany, behem refaktorizace sava.c budou doplneny komentare a dalsi dokumentace. 
+*/
 #ifndef IFJ2018_SAVO_H
 #define IFJ2018_SAVO_H
 
