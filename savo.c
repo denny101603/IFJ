@@ -346,7 +346,10 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
     //overeni, ze nevytvarim bool vyraz v situaci, kdy neni povolen
     if(sa_vars->boolean == 0 && rule > 13)
+    {
         action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+        return false;
+    }
     if(rule != -1)
         execute_rule(rule, stack, sa_vars, internal_buffer);
     else
@@ -441,6 +444,8 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
 bool savo(TSynCommon *sa_vars)
 {
+    //todo berry smazat nasledujici radek potom, co to denny dodela
+    sa_vars->boolean = 0;
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
 
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
@@ -484,6 +489,7 @@ bool savo(TSynCommon *sa_vars)
 
     while(true)
     {
+
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
         /*Konec l.v.*/
@@ -515,7 +521,7 @@ bool savo(TSynCommon *sa_vars)
        char action = get_action(input_token, stack_token);
 
        //kontrola, zda, pokud prisel token s ID_2, je ID_2 v tabulce symbolu. pokud symtab_find == NULL, pak neni => err
-        if (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL)
+        if (input_token->type== ID_2 && (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL))
         {
             err = ERR_SEM_DEF;
             action = '?';
