@@ -278,7 +278,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
     {   //todo denny nemel bych vzdy prochazet vsechny i lokalni TS?
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t1->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
-            symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, t1->type, -1);
+            symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, NOBODY_CARES);
             TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
             Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
             if(!err_check(t1, sa_vars))
@@ -294,7 +294,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
 
             //uz znam pocet parametru fce
-            symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, t1->type, (long int) symtab_get_size(sa_vars->ts_fun));
+            symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, (long int) symtab_get_size(sa_vars->local_tables->top->data));
             free(t1);
 
             t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -414,7 +414,7 @@ bool nt_eolf(TSynCommon *sa_vars)
     else if(t1->type == EOF_STATE)
     {
         token_free(t1);
-        sa_vars->err_code = 101; //todo denny/carbik predelat
+        sa_vars->err_code = SUCCESS;
         return true;
     }
     else
@@ -517,7 +517,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
 }
 
-bool nt_args(TSynCommon *sa_vars)
+bool nt_args(TSynCommon *sa_vars, long *num_of_args)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
@@ -532,10 +532,11 @@ bool nt_args(TSynCommon *sa_vars)
     {
         return false;
     }
-    return nt_nextargs(sa_vars);
+    (*num_of_args)++; //pribyl argument
+    return nt_nextargs(sa_vars, num_of_args);
 }
 
-bool nt_nextargs(TSynCommon *sa_vars)
+bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
@@ -547,8 +548,8 @@ bool nt_nextargs(TSynCommon *sa_vars)
             buffer_push_bottom(sa_vars->buffer, t1);
             return false;
         }
-
-        if(nt_nextargs(sa_vars))
+        (*num_of_args)++; //pribyl argument
+        if(nt_nextargs(sa_vars, num_of_args))
         {
             token_free(t1); //povedlo se, muzu uvolnit
             return true;
@@ -617,7 +618,7 @@ bool nt_assignment(TSynCommon *sa_vars)
         {
             if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) == NULL) //jeste neni definovana
             {
-                symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, 1, t1->type, 0); //pridani promenne do lokalni TS
+                symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, 1, NOBODY_CARES); //pridani promenne do lokalni TS
                 free(t1);
             }
             else
@@ -692,7 +693,7 @@ bool nt_nextparams(TSynCommon *sa_vars)
                     }
                     else
                     {
-                        symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                        symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
                         free(t1);
                         if(nt_nextparams(sa_vars))
                         {
@@ -752,7 +753,7 @@ bool nt_params(TSynCommon *sa_vars)
                 }
                 else
                 {
-                    symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, 0, t1->type);
+                    symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
                     free(t1);
 
                     if(nt_nextparams(sa_vars))
@@ -791,22 +792,25 @@ bool nt_callfce(TSynCommon *sa_vars)
         token_free(t1);
         return false;
     }
-    token_free(t1);
     //todo denny poresit volitelne zavorky
-    /*zacatek verze podporujici verzi jen bez zavorek
-    if(!nt_args(sa_vars))
-        return false;
 
-    if(!nt_eolf(sa_vars))
-        return false;
-
-    return true;
-            konec verze podporujici jen bezzavrkove volani*/
-
-    if(!nt_args(sa_vars))
+    long num_of_args = 0; //pocitadlo argumentu pro overeni s TS
+    if(!nt_args(sa_vars, &num_of_args)) //nepovedlo se, zkusim tedy jestli nebyla zavorka, pokud ano, zkusim to znovu
     {
+        Ttoken *t2 = get_next_token(sa_vars->arr, sa_vars->buffer);
+        //if(err_check())
+        token_free(t1);
         return false;
     }
+
+    if(!check_num_of_params(sa_vars->ts_fun, t1, num_of_args)) //nesedi pocet parametru s definici
+    {
+        token_free(t1);
+        sa_vars->err_code = ERR_SEM_PARAM;
+        fprintf(stderr, MESSAGE_SEM_PARAM);
+        return false;
+    }
+    token_free(t1);
 
     if(!nt_eolf(sa_vars))
         return false;
@@ -814,7 +818,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     return true;
 }
 
-bool nt_bodyfce(TSynCommon *sa_vars) //todo carbik/denny opravit např a=2 to nesežere
+bool nt_bodyfce(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
@@ -914,7 +918,7 @@ bool nt_bodyfce(TSynCommon *sa_vars) //todo carbik/denny opravit např a=2 to ne
     }
 }
 
-bool nt_bodywhif(TSynCommon *sa_vars) //todo carbik/denny opravit, např pro a=2 nefaka
+bool nt_bodywhif(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
@@ -1045,14 +1049,14 @@ bool init_ts_fun(TSynCommon *sa_vars)
     strcpy(ord, "ord");
     strcpy(chr, "chr");
 
-    Tsymbol_table_item *a = symtab_edit_add(sa_vars->ts_fun, inputs, true, ID_2, 0);
-    Tsymbol_table_item *b = symtab_edit_add(sa_vars->ts_fun, inputi, true, ID_2, 0);
-    Tsymbol_table_item *c = symtab_edit_add(sa_vars->ts_fun, inputf, true, ID_2, 0);
-    Tsymbol_table_item *d = symtab_edit_add(sa_vars->ts_fun, print, true, ID_2, ZERO_TO_INF);
-    Tsymbol_table_item *e = symtab_edit_add(sa_vars->ts_fun, lenght, true, ID_2, 1);
-    Tsymbol_table_item *f = symtab_edit_add(sa_vars->ts_fun, substr, true, ID_2, 3);
-    Tsymbol_table_item *g = symtab_edit_add(sa_vars->ts_fun, ord, true, ID_2, 2);
-    Tsymbol_table_item *h = symtab_edit_add(sa_vars->ts_fun, chr, true, ID_2, 1);
+    Tsymbol_table_item *a = symtab_edit_add(sa_vars->ts_fun, inputs, true, 0);
+    Tsymbol_table_item *b = symtab_edit_add(sa_vars->ts_fun, inputi, true, 0);
+    Tsymbol_table_item *c = symtab_edit_add(sa_vars->ts_fun, inputf, true, 0);
+    Tsymbol_table_item *d = symtab_edit_add(sa_vars->ts_fun, print, true, ZERO_TO_INF);
+    Tsymbol_table_item *e = symtab_edit_add(sa_vars->ts_fun, lenght, true, 1);
+    Tsymbol_table_item *f = symtab_edit_add(sa_vars->ts_fun, substr, true, 3);
+    Tsymbol_table_item *g = symtab_edit_add(sa_vars->ts_fun, ord, true, 2);
+    Tsymbol_table_item *h = symtab_edit_add(sa_vars->ts_fun, chr, true, 1);
 
     if(a == NULL || b == NULL || c == NULL || d == NULL || e == NULL || f == NULL || g == NULL || h == NULL) //neuspesna alokace
     {
@@ -1156,4 +1160,18 @@ void TS_stack_free(TSymtables_stack *ts_stack)
     {
         symtab_free(TS_pop(ts_stack));
     }
+}
+
+bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params)
+{
+    Tsymbol_table_item *item = symtab_find(ts, t->attribute);
+    if(item == NULL) //nenalezeno
+        return false;
+
+    if(item->num_of_params == num_of_params)
+        return true;
+    else if(item->num_of_params == ZERO_TO_INF && num_of_params >= 0) //specialni pripad pro fci print
+        return true;
+    else
+        return false;
 }
