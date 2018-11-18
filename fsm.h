@@ -282,7 +282,9 @@ enum states {
     EXPRESSION, //pro potreby SAVu
     BOTTOM_TOKEN, //pro potreby SAVu
     ACTION_MENSITKO, //pro potreby SAVu
-    ACTION_VETSITKO //pro potreby SAVu
+    ACTION_VETSITKO, //pro potreby SAVu
+    NOBODY_KNOWS, //univerzalni typ
+    UNI_NUMBER //spolecny typ int float
 };
 
 
