@@ -322,6 +322,11 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
     push(stack, stack->top,input_token); //TODO!!! Kde vsude pouzivam action push?
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     buffer_push_top(internal_buffer, ret);
+    if ((ret->type == KEY_NIL)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    {
+        action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+        return NULL;
+    }
     //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
     return ret;
 }
@@ -340,6 +345,11 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
     //nacteme dalsi token a okamzite ukladame do interniho bufferu
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     buffer_push_top(internal_buffer, ret);
+    if ((ret->type == KEY_NIL)|| ( stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    {
+        action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+        return NULL;
+    }
     return ret;
 }
 
@@ -470,7 +480,6 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 bool savo(TSynCommon *sa_vars)
 {
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
-
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
     {
@@ -482,7 +491,10 @@ bool savo(TSynCommon *sa_vars)
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
     }
-
+    if(input_token->type == KEY_NIL)
+    {
+        nil = 1;
+    }
     /*Ladici vypis*/
     //fprintf(stderr,"INPUT TOKEN JE: %d\n\n", input_token->type);
     /*Konec ladiciho vypisu*/
@@ -516,17 +528,6 @@ bool savo(TSynCommon *sa_vars)
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
         /*Konec l.v.*/
 
-        //pomoc pro sax: osetreni, abych vracel boolean vyrazy jen v situaci, kdy mam
-        if(sa_vars->boolean == false)
-        {
-            if(input_token->type == OP_MORE_1 ||
-               input_token->type == OP_LESS_1 ||
-               input_token->type == OP_EQAL_2 ||
-               input_token->type == OP_LESS_EQUAL ||
-               input_token->type == OP_MORE_EQUAL ||
-               input_token->type == OP_NOT_EQ_1)
-                err = action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
-        }
 
         /*UKONCOVACI PODMINKA SAVA*/
         //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
@@ -539,6 +540,17 @@ bool savo(TSynCommon *sa_vars)
        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
        if(((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token)))
             break;
+        //pomoc pro sax: osetreni, abych vracel boolean vyrazy jen v situaci, kdy mam
+        if(sa_vars->boolean == false)
+        {
+            if(input_token->type == OP_MORE_1 ||
+               input_token->type == OP_LESS_1 ||
+               input_token->type == OP_EQAL_2 ||
+               input_token->type == OP_LESS_EQUAL ||
+               input_token->type == OP_MORE_EQUAL ||
+               input_token->type == OP_NOT_EQ_1)
+                err = action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+        }
 
         /*
          * Popis akci:
@@ -571,6 +583,8 @@ bool savo(TSynCommon *sa_vars)
                break;
            case '<':
                input_token = action_change(input_token, stack, sa_vars, internal_buffer);
+               if(input_token == NULL)
+                   err = 1;
                break;
            case '>':
                if(!action_reduce(stack, sa_vars, internal_buffer))//todo refaktorovano
@@ -580,9 +594,9 @@ bool savo(TSynCommon *sa_vars)
                }
                break;
            case '=':
-               //fprintf(stderr, "push token a nacti dalsi %c \n", input_token->type);
                input_token = action_push(input_token, stack, sa_vars, internal_buffer);
-               //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
+               if(input_token == NULL)
+                   err = 1;
                break;
        }
    }//end while
