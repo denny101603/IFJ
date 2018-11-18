@@ -39,12 +39,12 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = {
         {EXPRESSION, OP_MINUS, EXPRESSION},
         {EXPRESSION, OP_MULT, EXPRESSION},
         {EXPRESSION, OP_DIV, EXPRESSION},
-        {EXPRESSION, OP_MORE_1, EXPRESSION},
+        {EXPRESSION, OP_MORE_1, EXPRESSION}, //14
         {EXPRESSION, OP_LESS_1, EXPRESSION},
         {EXPRESSION, OP_EQAL_2, EXPRESSION},
         {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},
         {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},
-        {EXPRESSION, OP_NOT_EQ_1, EXPRESSION}
+        {EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //19
 };
 
 /**
@@ -60,7 +60,7 @@ char prec_table[15][15] = {              //in
         /* ( */    {'<','<','<','<','<','=','<','<','<','<','<','<','<','<','?'},
         /* ) */    {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
         /* id */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-/*stack    cons */ {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
+/*stack  cons */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
         /* < */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* > */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
         /* <= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
@@ -323,14 +323,18 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
     return ret;
 }
 
+//action change = akce <
 Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     Ttoken *mensitko = malloc(sizeof(Ttoken));
     if(mensitko == NULL)
         return NULL;
     mensitko->type = ACTION_MENSITKO;
+
     push(stack,get_first_terminal(stack), mensitko); //pushneme mensitko za prvni terminal
-    push(stack, stack->top, input_token);
+    push(stack, stack->top, input_token); //push input tokenu na top
+
+    //nacteme dalsi token a okamzite ukladame do interniho bufferu
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     buffer_push_top(internal_buffer, ret);
     return ret;
@@ -339,6 +343,10 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
 bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     int rule = find_rule(stack);
+
+    //overeni, ze nevytvarim bool vyraz v situaci, kdy neni povolen
+    if(sa_vars->boolean == 0 && rule > 13)
+        action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
     if(rule != -1)
         execute_rule(rule, stack, sa_vars, internal_buffer);
     else
@@ -348,10 +356,13 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
 {
-    if (error != ERR_SYN) //ERR_SYN je osetrovan pouhym vracenim false; sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli to je vyraz. Toto nema zpusobit pad
+    //ERR_SYN je osetrovan pouhym vracenim false:
+    // sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli je to vyraz. Toto nema zpusobit pad.
+    if (error != ERR_SYN)
         sa_vars->err_code = error;
     if (stack != NULL)
         delete_stack(stack);
+
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
 
     return error;
@@ -361,22 +372,28 @@ int find_rule(TStack *stack)
 {
     int rule[3] = {0,0,0};
     int ret = -1;
-    //fprintf(stderr,"find rule, %d \n", stack->top->data->type);
+
     TStackElem *temp = stack->top;
+    //dokud neprojdu vrchni tri tokeny nebo nenarazim na ACTION_MENSITKO
     for(int index = 2; index > -1 && temp->data->type != ACTION_MENSITKO; index-- )
     {
         rule[index] = temp->data->type;
         if(temp->prev != NULL)
             temp = temp->prev;
     }
-    //pop(stack); // popnuti mensitka
-
         for( int i = 0; i < NUM_OF_RULES; i++)
         {
             for(int j = 0; j < RULE_LENGTH; j++)
             {
-                if (rule[j] != rules[i][j])
+                if (rule[j] != rules[i][j]) //pravidlo se nerovna
+                {
+                    /*mozna delete
+                    rule[0] = 0;
+                    rule[1] = 0;
+                    rule[2] = 0; //vynulovani pole pravidel
+                     */
                     break;
+                }
                 else if (rule[j] == rules[i][j] && j == RULE_LENGTH-1) // cele pravidlo se rovna
                     ret = i;
             }
@@ -403,7 +420,7 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             continue;
         else
         {
-            //todo berry, pokud zle tokeny, problem tady
+            //todo berry CO TO KURVA JE?!
             Ttoken *temp = pop(stack);
            /*if(!is_pseudotoken(temp))
                 buffer_push_top(internal_buffer, temp);*/
@@ -424,7 +441,7 @@ void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
 bool savo(TSynCommon *sa_vars)
 {
-    int err = 0;
+    int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
 
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
@@ -432,13 +449,15 @@ bool savo(TSynCommon *sa_vars)
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
         return false;
     }
-    if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky
+    if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky kvuli a = EOL
     {
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
     }
-    /**///fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
 
+    /*Ladici vypis*/
+    //fprintf(stderr,"INPUT TOKEN JE: %d\n\n", input_token->type);
+    /*Konec ladiciho vypisu*/
 
     TStack *stack = stack_init();
     if(stack == NULL) //err handle
@@ -446,7 +465,11 @@ bool savo(TSynCommon *sa_vars)
         action_err(stack,sa_vars,ERR_INTERNAL, NULL);
         return false;
 
-    }//fprintf(stderr, "savo, stack inited\n");
+    }
+    /*Ladici vypis*/
+    //fprintf(stderr, "Stack vytvoren\n");
+    /*Konec l.v.*/
+
     TBuffer *internal_buffer = malloc(sizeof(TBuffer));
     if(internal_buffer == NULL)
     {
@@ -454,44 +477,69 @@ bool savo(TSynCommon *sa_vars)
         return false;
     }
     buffer_init(internal_buffer);
-    buffer_push_top(internal_buffer, input_token);
+
+    buffer_push_top(internal_buffer, input_token);//pushnuti input_token pro jeho nasledne ulozeni.
+
     Ttoken *stack_token = NULL;
+
     while(true)
     {
-        if(err) break;
-        /**///fprintf(stderr, "na zacatku while, input_token je %d, na stacku %d \n", input_token->type, stack->top->data->type );
-        /**/fflush(stderr);
-        stack_token = get_token_from_elem(get_first_terminal(stack));
-        /**///fprintf(stderr, "terminalovano %d %d \n", input_token->type, stack_token->type);
+        /*Ladici vypis*/
+        //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
+        /*Konec l.v.*/
+
+        /*UKONCOVACI PODMINKA SAVA*/
+        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
+        if(err)
+            break;
+
+        stack_token = get_token_from_elem(get_first_terminal(stack)); //stack_token = prvni terminal ze zasobniku
 
        /*UKONCOVACI PODMINKA SAVA*/
        //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
        if(((stack_token->type == BOTTOM_TOKEN) && is_terminus(input_token)))
-       {
-           break;
-       }
+            break;
 
-
+        /*
+         * Popis akci:
+         * >: pokud je na zasobniku <XYZ && existuje pravidlo A -> XYZ,
+         * zamen XYZ za A. Jinak se jedna o chybu
+         *
+         * =: input_token push na zasobnik a vezmi dalsi token ze vstupu
+         *
+         * <: za prvni terminal od topu zasobniku pushni <, pote pushni input token na vrchol a vezmi dalsi ze vstupu
+         *
+         * ?: error. Vse dealokuj, interni buffer nahraj do sa_vars a ukonci se s return false,
+         *  a mozna err_code
+         */
        char action = get_action(input_token, stack_token);
+
+       //kontrola, zda, pokud prisel token s ID_2, je ID_2 v tabulce symbolu. pokud symtab_find == NULL, pak neni => err
+        if (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL)
+        {
+            err = ERR_SEM_DEF;
+            action = '?';
+        }
+
        switch (action) {
+           /*Ladici vypis*/
+           //fprintf(stderr, "Rozhodnuti, jaka se provede akce. Momentalne se jedna o: %c \n", action);
+           /*Konec l.v.*/
            default:
            case '?': //err
-               /**///fprintf(stderr, "err in:%d stack:%d\n", input_token->type, stack_token->type);
                err = action_err(stack, sa_vars, ERR_SYN, internal_buffer);
                break;
-           case '<': //na zasobnik dej <, pushni token a vezmi si dalsi
-               //fprintf(stderr, "na zasobnik dej <, pushni token a vezmi si dalsi %c \n", input_token->type);
+           case '<':
                input_token = action_change(input_token, stack, sa_vars, internal_buffer);
                break;
-           case '>': //pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod >
-               //fprintf(stderr, "pokud je na vrcholu zasobniku <XYZ, tak to popni a zahod > %c \n", input_token->type);
-               if(!action_reduce(stack, sa_vars, internal_buffer))
+           case '>':
+               if(!action_reduce(stack, sa_vars, internal_buffer))//todo refaktorovano
                {
                    action_err(stack, sa_vars, ERR_SYN, internal_buffer);
                    err= ERR_SYN;
                }
                break;
-           case '=': //push token a nacti dalsi
+           case '=':
                //fprintf(stderr, "push token a nacti dalsi %c \n", input_token->type);
                input_token = action_push(input_token, stack, sa_vars, internal_buffer);
                //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", input_token->type);
@@ -499,7 +547,7 @@ bool savo(TSynCommon *sa_vars)
        }
    }//end while
 
-   if (err != 0) //TODO berry  handle error
+   if (err != 0)
    {
        return false;
    }

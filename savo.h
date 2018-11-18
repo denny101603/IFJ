@@ -12,7 +12,7 @@
 *	@file savo.h
 *	@author Jan Beran
 *	@brief knihovna pro potreby Syntaktickeho AnalyzatOru Vyrazu (SAVO)
- *	v1.2: Vsechny funkce deklarovany, behem refaktorizace sava.c budou doplneny komentare a dalsi dokumentace. 
+ *	v1.2: Vsechny funkce deklarovany, behem refaktorizace sava.c budou doplneny komentare a dalsi dokumentace.
 */
 #ifndef IFJ2018_SAVO_H
 #define IFJ2018_SAVO_H
@@ -123,18 +123,25 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
 bool is_pseudotoken(Ttoken *token);
 /**
  * @brief Funkce simuluje akci < z precedencni tabulky
- * @paragraph Pravidlo <: Zamen a za < a a udelej pravidlo =
- * @param input_token
- * @param stack
- * @return
+ * @paragraph Pravidlo <: za prvni terminal od topu zasobniku pushni <, pote pushni input token na vrchol a vezmi dalsi ze vstupu
+ * @author Jan Beran
+ * @param input_token token, ktery ma byt pushnut na zasobnik
+ * @param stack zasobnik, se kterym ma fce pracovat
+ * @param sa_vars spolecne promenne syn. analyzatoru
+ * @param internal_buffer interni buffer pro ukladani prichozich tokenu
+ * @return novy vstupni token
  */
 Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //<
 
 /**
  * @brief Funkce simuluje akci > z precedencni tabulky
- * @paragraph Pravidlo >:  pokud je na zasobniku < XYZ a existuje pravidlo p: A -> XYZ, proveď redukci <XYZ -> A. Jinak chyba.
- * @param stack
- * @return
+ * @paragraph Pravidlo >:  pokud je na zasobniku <XYZ && existuje pravidlo A -> XYZ,
+ * zamen XYZ za A. Jinak se jedna o chybu
+ * @author Jan Beran
+ * @param stack zasobnik, se kterym ma fce pracovat
+ * @param sa_vars spolecne promenne syn. analyzatoru
+ * @param internal_buffer interni buffer pro ukladani prichozich tokenu
+ * @return T/F podle toho, zda se akce podarila (naslo se pravidlo) nebo ne.
  */
 bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //>
 
@@ -147,17 +154,23 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 bool copy_buffer(TBuffer *src, TBuffer *dst);
 
 /**
- *
- * @param stack
- * @param error
- * @return
+ *@brief Funkce, ktera resi error v savu. Funkce dealokuje lokalni zasobnik,
+ * do sa_vars nastavi hodnotu error a zkopiruje interni buffer do spolecneho
+ * @author Jan Beran
+ * @param stack interni zasobnik pro SA vyrazu
+ * @param sa_vars spolecne promenne sava a saxu
+ * @param error typ erroru
+ * @param internal_buffer interni buffer pro uchovavani tokenu v pripade erroru
+ * @note ERR_SYN se vraci pouze jako navrat false z funkce savo(), pres action_err se nepropaguje. Vysvetleni u definice
+ * @return ciselna hodnota erroru
  */
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer);
 
 /**
- *
- * @param stack
- * @return
+ * @brief Funkce hleda pravidlo v tabulce pravidel na zaklade posloupnosti XYZ z pravidla <
+ * @author Jan Beran
+ * @param stack zasobnik, se kterym se ma pracovat
+ * @return cislo pravidla v tabulce pravidel, -1 pokud nenalezeno
  */
 int find_rule(TStack *stack);
 
