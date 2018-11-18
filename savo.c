@@ -16,7 +16,7 @@
 */
 #include "savo.h"
 
-#define NUM_OF_RULES 20
+#define NUM_OF_RULES 21
 #define RULE_LENGTH 3
 
 /**
@@ -30,6 +30,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = {
         {0,0,FLOAT_2},
         {0,0,STRING_1},
         {0, 0,ID_2},
+        {0,0,KEY_NIL},
         {LEFT_BRACKET, INTEGER, RIGHT_BRACKET},
         {LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},
         {LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},
@@ -103,6 +104,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case INTEGER:
         case STRING_1:
         case FLOAT_2:
+        case KEY_NIL:
             input_terminal = 7;
             break;
         case OP_LESS_1:
@@ -160,6 +162,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case INTEGER:
         case STRING_1:
         case FLOAT_2:
+        case KEY_NIL:
             stack_terminal = 7;
             break;
         case OP_LESS_1:
@@ -362,7 +365,33 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
         delete_stack(stack);
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
-    //todo berry by berry doplnit vypisovani chyb krome err syn
+
+    switch (error) // err_sem_param nenastane
+    {
+        case ERR_LEX:
+            fprintf(stderr, MESSAGE_LEX);
+            break;
+        case ERR_SYN:
+            fprintf(stderr, MESSAGE_SYN);
+            break;
+        case ERR_SEM_DEF:
+            fprintf(stderr, MESSAGE_SEM_DEF);
+            break;
+        case ERR_SEM_TYPE:
+            fprintf(stderr, MESSAGE_SEM_TYPE);
+            break;
+        case ERR_SEM_MISC:
+            fprintf(stderr, MESSAGE_SEM_MISC);
+            break;
+        case ERR_ZERO_DIVISION:
+            fprintf(stderr, MESSAGE_ZERO_DIVISION);
+            break;
+        case ERR_INTERNAL:
+            fprintf(stderr, MESSAGE_INTERNAL_ERROR);
+            break;
+        default:
+            break;
+    }
 
     return error;
 }
@@ -405,9 +434,9 @@ bool is_pseudotoken(Ttoken *token)
 {
     bool ret = false;
     if((token->type == EXPRESSION) ||
-            (token->type == BOTTOM_TOKEN) ||
-            (token->type == ACTION_MENSITKO) ||
-            (token->type == ACTION_VETSITKO))
+        (token->type == BOTTOM_TOKEN) ||
+        (token->type == ACTION_MENSITKO) ||
+        (token->type == ACTION_VETSITKO))
         ret = true;
     return ret;
 }
