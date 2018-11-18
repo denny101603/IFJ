@@ -42,7 +42,7 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t)
     return t->arr_size;
 }
 
-Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const int token_type, const long int num_of_params)
+Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool defined, const long int num_of_params)
 {
     unsigned long index = symtab_hash_function(key) % symtab_get_arr_size(t);
     Tsymbol_table_item *item = symtab_find(t, key);
@@ -61,8 +61,7 @@ Tsymbol_table_item * symtab_edit_add(Tsymbol_table *t, char *key, const bool def
     }
     //nasleduje nastaveni/uprava hodnot ve strukture
     item->defined = defined;
-    item->token_type = token_type;
-    item->num_of_params;
+    item->num_of_params = num_of_params;
     return item;
 
 }
