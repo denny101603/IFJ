@@ -344,9 +344,7 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     int rule = find_rule(stack);
 
-    //overeni, ze nevytvarim bool vyraz v situaci, kdy neni povolen
-    if(sa_vars->boolean == 0 && rule > 13)
-        action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+
     if(rule != -1)
         execute_rule(rule, stack, sa_vars, internal_buffer);
     else
@@ -364,6 +362,7 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
         delete_stack(stack);
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
+    //todo berry by berry doplnit vypisovani chyb krome err syn
 
     return error;
 }
@@ -488,6 +487,18 @@ bool savo(TSynCommon *sa_vars)
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
         /*Konec l.v.*/
 
+        //pomoc pro sax: osetreni, abych vracel boolean vyrazy jen v situaci, kdy mam
+        if(sa_vars->boolean == false)
+        {
+            if(input_token->type == OP_MORE_1 ||
+               input_token->type == OP_LESS_1 ||
+               input_token->type == OP_EQAL_2 ||
+               input_token->type == OP_LESS_EQUAL ||
+               input_token->type == OP_MORE_EQUAL ||
+               input_token->type == OP_NOT_EQ_1)
+                err = action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
+        }
+
         /*UKONCOVACI PODMINKA SAVA*/
         //Pokud jsou oba tokeny(input i stack) vyhodnoceny jako terminus, je cyklus ukoncen. Dale je ukoncen, pokud err != 0
         if(err)
@@ -515,7 +526,7 @@ bool savo(TSynCommon *sa_vars)
        char action = get_action(input_token, stack_token);
 
        //kontrola, zda, pokud prisel token s ID_2, je ID_2 v tabulce symbolu. pokud symtab_find == NULL, pak neni => err
-        if (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL)
+        if (input_token->type== ID_2 && (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL))
         {
             err = ERR_SEM_DEF;
             action = '?';

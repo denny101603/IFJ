@@ -22,7 +22,7 @@
 #include "err_codes.h"
 #include "sax.h"
 
-#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
+//#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
 
 
 /**
