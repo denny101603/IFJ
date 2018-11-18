@@ -25,27 +25,27 @@
  * @note V2.0 vetsina pravidel odstranena, mozna to prestane fungoovat :)
  */
 int rules[NUM_OF_RULES][RULE_LENGTH] = {
-        {0,0,INTEGER},
-        {0,0,EXPRESSION},
-        {0,0,FLOAT_2},
-        {0,0,STRING_1},
-        {0, 0,ID_2},
-        {0,0,KEY_NIL},
-        {LEFT_BRACKET, INTEGER, RIGHT_BRACKET},
-        {LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},
-        {LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},
-        {LEFT_BRACKET, STRING_1, RIGHT_BRACKET},
-        {LEFT_BRACKET, ID_2, RIGHT_BRACKET},
-        {EXPRESSION, OP_PLUS, EXPRESSION},
-        {EXPRESSION, OP_MINUS, EXPRESSION},
-        {EXPRESSION, OP_MULT, EXPRESSION},
-        {EXPRESSION, OP_DIV, EXPRESSION},
-        {EXPRESSION, OP_MORE_1, EXPRESSION}, //14
-        {EXPRESSION, OP_LESS_1, EXPRESSION},
-        {EXPRESSION, OP_EQAL_2, EXPRESSION},
-        {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},
-        {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},
-        {EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //19
+        {0,0,INTEGER}, //0
+        {0,0,EXPRESSION}, //1
+        {0,0,FLOAT_2}, //2
+        {0,0,STRING_1}, //3
+        {0, 0,ID_2},//4
+        {0,0,KEY_NIL},//5
+        {LEFT_BRACKET, INTEGER, RIGHT_BRACKET},//6
+        {LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},//7
+        {LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},//8
+        {LEFT_BRACKET, STRING_1, RIGHT_BRACKET},//9
+        {LEFT_BRACKET, ID_2, RIGHT_BRACKET},//10
+        {EXPRESSION, OP_PLUS, EXPRESSION},//11
+        {EXPRESSION, OP_MINUS, EXPRESSION},//12
+        {EXPRESSION, OP_MULT, EXPRESSION},//13
+        {EXPRESSION, OP_DIV, EXPRESSION}, //14 osetruju deleni nulou
+        {EXPRESSION, OP_MORE_1, EXPRESSION}, //15
+        {EXPRESSION, OP_LESS_1, EXPRESSION},//16
+        {EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+        {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
+        {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
+        {EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //20
 };
 
 /**
@@ -359,10 +359,9 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
 
     if(rule != -1)
-        execute_rule(rule, stack, sa_vars, internal_buffer);
+        return execute_rule(rule, stack, sa_vars, internal_buffer);
     else
         return false;
-    return true;
 }
 
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
@@ -450,31 +449,26 @@ bool is_pseudotoken(Ttoken *token)
         ret = true;
     return ret;
 }
-void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
+bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
+    //for je zde od toho, aby vyhodil ze zasobniku znaky, kterych se tyka pravidlo (ulozeny do internal bufferu davno pred tim)
     for (int i = 0; i <RULE_LENGTH; i++)
     {
-        if(rules[rule][i] == 0) //napr 1,0,0 (jdeme odzadu)
+        if(rules[rule][i] == 0)
             continue;
         else
         {
-            //todo berry CO TO KURVA JE?!
             Ttoken *temp = pop(stack);
-           /*if(!is_pseudotoken(temp))
-                buffer_push_top(internal_buffer, temp);*/
         }
-
     }
     Ttoken *temp = pop(stack);
-    if(!is_pseudotoken(temp))
-        buffer_push_top(internal_buffer, temp);
     Ttoken *expr_token = malloc(sizeof(Ttoken));
     if (expr_token == NULL)
-        return;
+        return false;
     token_init(expr_token);
     expr_token->type = EXPRESSION;
     push(stack, stack->top, expr_token);
-   // push(stack, get_first_terminal(stack), expr_token); //puvodni verze, spravna by mela byt horni
+    return true;
 }
 
 bool savo(TSynCommon *sa_vars)
@@ -491,10 +485,7 @@ bool savo(TSynCommon *sa_vars)
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
     }
-    if(input_token->type == KEY_NIL)
-    {
-        nil = 1;
-    }
+
     /*Ladici vypis*/
     //fprintf(stderr,"INPUT TOKEN JE: %d\n\n", input_token->type);
     /*Konec ladiciho vypisu*/
