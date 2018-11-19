@@ -21,6 +21,7 @@
 #include "fsm.h"
 #include "err_codes.h"
 #include "sax.h"
+#include "seman.h"
 
 //#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
 
@@ -33,6 +34,7 @@
  */
 typedef struct StackElem{
     Ttoken *data; //data == *token
+    Toperand *operand; //operand, ktery
     struct StackElem *next; //ukazatel na nasledujici prvek
     struct StackElem *prev; //ukazatel na predchozi prvek
 }TStackElem;
