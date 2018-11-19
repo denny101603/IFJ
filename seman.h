@@ -31,6 +31,14 @@ typedef struct operand{
 }Toperand;
 
 /**
+ *
+ */
+typedef struct TAC_elem{
+    Toperand *operand;
+    struct TAC_elem *prev;
+} TTAC_Elem;
+
+/**
  * @brief Struktura pro buffer
  * @warning 0.1 pouze vytvorena, aby nebyl problem pri prekladu
  *
@@ -54,7 +62,20 @@ typedef struct three_ac{
     struct three_ac *prev;
 }TThreeAC;
 
+/**
+ *
+ * @return
+ */
+Ttac_buffer *Op_buffer_init();
 
+void Op_push(Ttac_buffer *buffer, Toperand *operand);
+
+Toperand *Op_pop(Ttac_buffer *buffer);
+
+void Op_delete_buffer(Ttac_buffer *buffer);
+
+
+Toperand *Op_init(int type, char *name);
 
 
 /**

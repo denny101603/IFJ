@@ -39,7 +39,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = {
         {EXPRESSION, OP_PLUS, EXPRESSION},//11
         {EXPRESSION, OP_MINUS, EXPRESSION},//12
         {EXPRESSION, OP_MULT, EXPRESSION},//13
-        {EXPRESSION, OP_DIV, EXPRESSION}, //14 osetruju deleni nulou
+        {EXPRESSION, OP_DIV, EXPRESSION}, //14
         {EXPRESSION, OP_MORE_1, EXPRESSION}, //15
         {EXPRESSION, OP_LESS_1, EXPRESSION},//16
         {EXPRESSION, OP_EQAL_2, EXPRESSION},//17
@@ -320,13 +320,15 @@ void delete_stack(TStack *stack)
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     push(stack, stack->top,input_token); //TODO!!! Kde vsude pouzivam action push?
+
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     buffer_push_top(internal_buffer, ret);
-    if ((ret->type == KEY_NIL)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    if ((ret->type == KEY_NIL)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret))) //handle nil error
     {
         action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
         return NULL;
     }
+
     //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
     return ret;
 }
@@ -451,6 +453,78 @@ bool is_pseudotoken(Ttoken *token)
 }
 bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
+    /*
+     {0,0,INTEGER}, //0
+     {0,0,EXPRESSION}, //1
+     {0,0,FLOAT_2}, //2
+     {0,0,STRING_1}, //3
+     {0, 0,ID_2},//4
+     {0,0,KEY_NIL},//5
+     {LEFT_BRACKET, INTEGER, RIGHT_BRACKET},//6
+    {LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},//7
+    {LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},//8
+    {LEFT_BRACKET, STRING_1, RIGHT_BRACKET},//9
+    {LEFT_BRACKET, ID_2, RIGHT_BRACKET},//10
+    {EXPRESSION, OP_PLUS, EXPRESSION},//11
+    {EXPRESSION, OP_MINUS, EXPRESSION},//12
+    {EXPRESSION, OP_MULT, EXPRESSION},//13
+    {EXPRESSION, OP_DIV, EXPRESSION}, //14
+    {EXPRESSION, OP_MORE_1, EXPRESSION}, //15
+    {EXPRESSION, OP_LESS_1, EXPRESSION},//16
+    {EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+    {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
+    {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
+    {EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //20
+     */
+
+    switch (rule)
+    {
+        //pravidla ve tvaru E->cosi
+        case 1:
+            //DEFVAR(
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        //triadresna pravidla
+        case 6:
+            break;
+        case 7:
+            break;
+        case 8:
+            break;
+        case 9:
+            break;
+        case 10:
+            break;
+        case 11:
+            break;
+        case 12:
+            break;
+        case 13:
+            break;
+        case 14:
+            break;
+        case 15:
+            break;
+        case 16:
+            break;
+        case 17:
+            break;
+        case 18:
+            break;
+        case 19:
+            break;
+        case 20:
+            break;
+        default:
+            break;//rule == -1
+    }
     //for je zde od toho, aby vyhodil ze zasobniku znaky, kterych se tyka pravidlo (ulozeny do internal bufferu davno pred tim)
     for (int i = 0; i <RULE_LENGTH; i++)
     {

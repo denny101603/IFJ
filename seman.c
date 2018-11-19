@@ -26,6 +26,7 @@ TTacList *TAC_init()
         return NULL; //err
     new->first = NULL;
     new->last = NULL;
+    return new;
 }
 
 
