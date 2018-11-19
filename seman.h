@@ -126,13 +126,15 @@ void TAC_delete_list(TTacList *list);
 
 
 /**
+ * @brief
  * @author Matej Jelinek
- * @param instruct
- * @return
+ * @param name - nazev instrukce
+ * @param destination
+ * @param op1
+ * @param op2
+ * @return tf
  */
-bool ns_defvar(TThreeAC *instruct);
-
-
+bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2);
 
 /**
  * @brief do seznamu list vlozi triadresnou instrukci defvar s operandem op1
@@ -141,29 +143,96 @@ bool ns_defvar(TThreeAC *instruct);
  * @param op1 - tenhle operand se tam prida
  * @return true pokud se vse povede (alokace apod.), jinak false
  */
-bool tac_defvar(TTacList *list, Toperand *op1);
+        bool tac_defvar(TTacList *list, Toperand *op1);
 
-bool tac_move(TTacList *list, Toperand *dest, Toperand *op1);
+        bool tac_move(TTacList *list, Toperand *dest, Toperand *op1);
 
-bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_createframe(TTacList *list);
 
-bool tac_gt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_pushframe(TTacList *list);
 
-bool tac_lt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_popframe(TTacList *list);
 
-bool tac_gteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_loadparam(TTacList *list, Toperand *dest);
 
-bool tac_lteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_push(TTacList *list, Toperand *op1);
 
-bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_pop(TTacList *list, Toperand *dest);
 
-bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
 
-bool tac_sub(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_sub(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
 
-bool tac_mul(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_mul(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
 
-bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+        bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_inputi(TTacList *list, Toperand *dest);
+
+        bool tac_inputs(TTacList *list, Toperand *dest);
+
+        bool tac_inputf(TTacList *list, Toperand *dest);
+
+//TODO print
+
+        bool tac_length(TTacList *list, Toperand *dest, Toperand *op1);
+
+//TODO substr
+
+        bool tac_ord(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_chr(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_call(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_return(TTacList *list, Toperand *op1);
+
+        bool tac_int2float(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_float2int(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_int2char(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_concat(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_setchar(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_isint(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_isfloat(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_isstring(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_isbool(TTacList *list, Toperand *dest, Toperand *op1);
+
+        bool tac_lable(TTacList *list, Toperand *op1);
+
+        bool tac_deffunc(TTacList *list, Toperand *op1);
+
+        bool tac_jump(TTacList *list, Toperand *op1);
+
+        bool tac_jumpifeq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_jumpifneq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_jumpifgt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_jumpiflt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_dprint(TTacList *list, Toperand *op1);
+
+        bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_gt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_lt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_gteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_lteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+        bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
 
 
 
@@ -219,7 +288,15 @@ enum instructions{
     JUMPIFNEQ,
     JUMPIFGT,
     JUMPIFLT,
-    DPRINT
+    DPRINT,
+    DEFFUNC,
+    EQ,
+    GT,
+    LT,
+    GTEQ,
+    LTEQ,
+    NEQ,
+    LOADPARAM
 };
 
 
