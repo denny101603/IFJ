@@ -31,7 +31,7 @@ typedef struct operand{
     bool variable_flag;
     int type;
     char *value;
-}TOperand;
+}Toperand;
 
 /**
  * @brief Struktura pro buffer
@@ -49,9 +49,9 @@ typedef struct tac_buffer{
  **/
 typedef struct three_ac{
     int name;
-    struct operand destination;
-    struct operand op_1;
-    struct operand op_2;
+    Toperand *destination;
+    Toperand *op_1;
+    Toperand *op_2;
     struct tac_buffer buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
     struct three_ac *next;
     struct three_ac *prev;
@@ -131,5 +131,97 @@ void TAC_delete_list(TTacList *list);
  * @return
  */
 bool ns_defvar(TThreeAC *instruct);
+
+
+
+/**
+ * @brief do seznamu list vlozi triadresnou instrukci defvar s operandem op1
+ * @author Matej Jelinek
+ * @param list - do nej se prida ta instrukce
+ * @param op1 - tenhle operand se tam prida
+ * @return true pokud se vse povede (alokace apod.), jinak false
+ */
+bool tac_defvar(TTacList *list, Toperand *op1);
+
+bool tac_move(TTacList *list, Toperand *dest, Toperand *op1);
+
+bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_gt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_lt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_gteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_lteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_sub(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_mul(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+
+
+
+/**
+ *  @brief Vycet vsech datovych typu
+*   @author Matej Jelinek
+ */
+enum data_type{
+    INT,
+    FLOAT,
+    CHAR,
+    STRING
+};
+
+/**
+ *  @brief Vycet vsech triadresnych instrukci
+*   @author Matej Jelinek
+ */
+enum instructions{
+    DEFVAR,
+    MOVE,
+    CREATEFRAME,
+    PUSHFRAME,
+    POPFRAME,
+    PUSH,
+    POP,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    INPUTI,
+    INPUTS,
+    INPUTF,
+    PRINT,
+    LENGTH,
+    SUBSTR,
+    ORD,
+    CHR,
+    CALL,
+    RETURN,
+    INT2FLOAT,
+    FLOAT2INT,
+    INT2CHAR,
+    CONCAT,
+    SETCHAR,
+    ISINT,
+    ISFLOAT,
+    ISSTRING,
+    ISBOOL,
+    LABLE,
+    JUMP,
+    JUMPIFEQ,
+    JUMPIFNEQ,
+    JUMPIFGT,
+    JUMPIFLT,
+    DPRINT
+};
+
+
 
 #endif //IFJ2018_SEMAN_H

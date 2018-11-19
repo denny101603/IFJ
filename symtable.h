@@ -25,6 +25,8 @@ typedef struct symbol_table_item
     char *key; //nazev promenne !!dynamicky alokovano!!
     bool defined; //0 jeste nebyla definovana, 1 uz ano
     long int num_of_params; //pouze pro funkce - pocet parametru
+    int type; //datovy typ promenne/navratovy typ fce
+
     struct symbol_table_item *next;
 }Tsymbol_table_item;
 
