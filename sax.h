@@ -71,7 +71,7 @@ typedef struct SynCommon{
     TTacList *tac_list; //list pro triadresny kod
     int err_code; //pro uchovani pripadne chyby
     bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
-    char *dest; //nazev promenne kam se ma ulozit soucasne reseny vyraz
+    Toperand dest; //operand kam se ma ulozit soucasne reseny vyraz
     TSymtables_stack *local_tables;
 } TSynCommon;
 
@@ -343,5 +343,12 @@ void TS_stack_free(TSymtables_stack *ts_stack); //TODO berry by denny javadoc
  *	@return true pokud je to v poradku, jinak false
 */
 bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params);
+
+/**
+*	@brief generator nazvu pro docasne promenne pro sax
+*	@author Daniel Bubenicek
+ *	@return true pokud je to v poradku, jinak
+*/
+char *sax_temp_id_generator();
 
 #endif //IFJ2018_SAX_H

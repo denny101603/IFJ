@@ -290,7 +290,8 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
             token_free(t2);
 
-            //todo seman: DEFFUNC(op1: t1->attribute)
+            //todo seman:
+            tac_deffunc(sa_vars->tac_list, op_init(t1->type, t1->attribute));
 
             if (!nt_params(sa_vars))
                 return false;
@@ -537,7 +538,8 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     }
     buffer_push_bottom(sa_vars->buffer, t1);
 
-    //todo seman: defvar(op1: vygeneruju nejakou docasnou promennou_#42)
+    //todo seman:
+    defvar(op1: vygeneruju nejakou docasnou promennou_#42)
 
     if(!savo(sa_vars)) //todo seman: reknu savu aby mi to dal do tte docasne promenne_#42
     {
@@ -1211,4 +1213,9 @@ bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params)
         return true;
     else
         return false;
+}
+
+char *sax_temp_id_generator()
+{
+    return NULL;
 }
