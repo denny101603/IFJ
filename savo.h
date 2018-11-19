@@ -22,7 +22,7 @@
 #include "err_codes.h"
 #include "sax.h"
 
-#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
+//#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
 
 
 /**
@@ -179,7 +179,7 @@ int find_rule(TStack *stack);
  * @param rule
  * @param stack
  */
-void execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer);
+bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer);
 
 /**
  *

@@ -22,7 +22,7 @@ int main() {
     printf("Hell, World!\n");
     printf("navrat SA: %i", startSA());
 /*    Tarray arr;
-    arr_init(&arr); //Pole znaku
+    arr_init(&arr); //Pole znak
     get_token(&arr);
     arr_free(&arr);*/
     return 0;
