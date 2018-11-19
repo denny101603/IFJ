@@ -76,6 +76,7 @@ Toperand *op_pop(Ttac_buffer *buffer);
 void op_delete_buffer(Ttac_buffer *buffer);
 
 
+
 Toperand *op_init(int type, char *name);
 
 
