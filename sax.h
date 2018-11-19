@@ -7,6 +7,7 @@
 
 #include "fsm.h"
 #include "symtable.h"
+#include "seman.h"
 
 #define TS_SIZE 127ul //TODO domluvit se na nejake velikosti. Musi to byt prvocislo. A stastne cislo (viz wiki).
 #define ZERO_TO_INF -10 //specialni hodnota znacici pocet parametru pro fci print - tedy libovolny nezaporny
@@ -67,11 +68,11 @@ typedef struct SynCommon{
     Tarray *arr;
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
+    TTacList tac_list; //list pro triadresny kod
     int err_code; //pro uchovani pripadne chyby
     bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
     char *dest; //nazev promenne kam se ma ulozit soucasne reseny vyraz
     TSymtables_stack *local_tables;
-    //puvodně bylo psano: stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;
 
 /********************************/
