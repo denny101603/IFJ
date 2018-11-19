@@ -76,7 +76,12 @@ Toperand *op_pop(Ttac_buffer *buffer);
 void op_delete_buffer(Ttac_buffer *buffer);
 
 
-
+/**
+ *
+ * @param type
+ * @param name
+ * @return operand, pokud se nepovede alokace, NULL
+ */
 Toperand *op_init(int type, char *name);
 
 
@@ -167,6 +172,8 @@ bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1
 
         bool tac_move(TTacList *list, Toperand *dest, Toperand *op1);
 
+        bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1);
+
         bool tac_createframe(TTacList *list);
 
         bool tac_pushframe(TTacList *list);
@@ -255,17 +262,6 @@ bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1
 
 
 
-
-/**
- *  @brief Vycet vsech datovych typu
-*   @author Matej Jelinek
- */
-enum data_type{
-    INT,
-    FLOAT,
-    CHAR,
-    STRING
-};
 
 /**
  *  @brief Vycet vsech triadresnych instrukci
