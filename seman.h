@@ -62,20 +62,22 @@ typedef struct three_ac{
     struct three_ac *prev;
 }TThreeAC;
 
+//todo berry udelat tyhle funkce
 /**
  *
  * @return
  */
-Ttac_buffer *Op_buffer_init();
+Ttac_buffer *op_buffer_init();
 
-void Op_push(Ttac_buffer *buffer, Toperand *operand);
+void op_push(Ttac_buffer *buffer, Toperand *operand);
 
-Toperand *Op_pop(Ttac_buffer *buffer);
+Toperand *op_pop(Ttac_buffer *buffer);
 
-void Op_delete_buffer(Ttac_buffer *buffer);
+void op_delete_buffer(Ttac_buffer *buffer);
 
 
-Toperand *Op_init(int type, char *name);
+
+Toperand *op_init(int type, char *name);
 
 
 /**
