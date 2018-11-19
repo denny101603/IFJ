@@ -18,19 +18,16 @@
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
 
-#include "fsm.h"
-#include "symtable.h"
-#include "sax.h"
-
+#include <stdlib.h>
+#include <stdbool.h>
 
 /**
 *	@brief struktura operandu
  *	@author Matej Jelinek
 */
 typedef struct operand{
-    bool variable_flag;
-    int type;
-    char *value;
+    int type; //datovy typ
+    char *name; //nazev promenne
 }Toperand;
 
 /**
@@ -39,8 +36,8 @@ typedef struct operand{
  *
  */
 typedef struct tac_buffer{
-    int abytunecobylo; // :)
-} TAC_buffer;
+    Toperand top;
+} Ttac_buffer;
 
 /**
  * @brief Struktura pro jednu triadresnou instrukci.
@@ -52,7 +49,7 @@ typedef struct three_ac{
     Toperand *destination;
     Toperand *op_1;
     Toperand *op_2;
-    struct tac_buffer buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
+    Ttac_buffer *buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;
@@ -173,11 +170,11 @@ bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1
 
         bool tac_inputf(TTacList *list, Toperand *dest);
 
-//TODO print
+        bool tac_print(TTacList *list, Ttac_buffer *buffer);
 
         bool tac_length(TTacList *list, Toperand *dest, Toperand *op1);
 
-//TODO substr
+        bool tac_substr(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Ttac_buffer *buffer);
 
         bool tac_ord(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
 

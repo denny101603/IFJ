@@ -4,7 +4,6 @@
 
 #include "sax.h"
 #include "savo.h"
-#include "seman.h"
 #include "err_codes.h"
 #include <string.h>
 
