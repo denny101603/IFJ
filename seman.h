@@ -18,10 +18,8 @@
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
 
-#include "fsm.h"
-#include "symtable.h"
-#include "sax.h"
-
+#include <stdlib.h>
+#include <stdbool.h>
 
 /**
 *	@brief struktura operandu
@@ -51,7 +49,7 @@ typedef struct three_ac{
     Toperand *destination;
     Toperand *op_1;
     Toperand *op_2;
-    struct Ttac_buffer buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
+    Ttac_buffer *buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;

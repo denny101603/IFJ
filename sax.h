@@ -68,7 +68,7 @@ typedef struct SynCommon{
     Tarray *arr;
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
-    TTacList tac_list; //list pro triadresny kod
+    TTacList *tac_list; //list pro triadresny kod
     int err_code; //pro uchovani pripadne chyby
     bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
     char *dest; //nazev promenne kam se ma ulozit soucasne reseny vyraz
