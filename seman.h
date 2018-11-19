@@ -62,6 +62,7 @@ typedef struct three_ac{
     struct three_ac *prev;
 }TThreeAC;
 
+//todo berry udelat tyhle funkce 
 /**
  *
  * @return
