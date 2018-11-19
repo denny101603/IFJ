@@ -9,6 +9,8 @@
 #include "symtable.h"
 
 #define TS_SIZE 127ul //TODO domluvit se na nejake velikosti. Musi to byt prvocislo. A stastne cislo (viz wiki).
+#define ZERO_TO_INF -10 //specialni hodnota znacici pocet parametru pro fci print - tedy libovolny nezaporny
+#define NOBODY_CARES -1 //znaci pocet parametru u promennych - tedy nesmysl, ale je potreba tam neco nastavit
 
 /**
  * @brief Struktura prvku v ADT Buffer
@@ -66,6 +68,8 @@ typedef struct SynCommon{
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
     int err_code; //pro uchovani pripadne chyby
+    bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
+    char *dest; //nazev promenne kam se ma ulozit soucasne reseny vyraz
     TSymtables_stack *local_tables;
     //puvodně bylo psano: stack *local_tables -nahrada za table_local, myslim ze jedna nestaci
 } TSynCommon;
@@ -78,9 +82,8 @@ typedef struct SynCommon{
  * @brief Funkce inicializuje zasobnik typu TBuffer.
  * @author Jan Beran
  * @param in buffer buffer k inicializaci
- * @return true
  */
-bool buffer_init(TBuffer *buffer_buffer);
+void buffer_init(TBuffer *buffer_buffer);
 
 /**
  * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TBufferElem a pote ho vlozi.
@@ -269,14 +272,14 @@ bool nt_rightbracket(TSynCommon *sa_vars);
 *	@author Jan Carba
 *	@return true pro uspech jinak false
 */
-bool nt_args(TSynCommon *sa_vars);
+bool nt_args(TSynCommon *sa_vars, long *num_of_args);
 
 /**
 *	@brief funkce pro neterminal nextargs (reprezentuje 2. a kazdy dalsi argument pri volani fce)
 *	@author Jan Carba
 *	@return true pro uspech jinak false
 */
-bool nt_nextargs(TSynCommon *sa_vars);
+bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args);
 
 /**
 *	@brief funkce pro neterminal expression (reprezentuje vyraz)
@@ -293,6 +296,51 @@ bool nt_expression(TSynCommon *sa_vars);
 bool nt_callfce(TSynCommon *sa_vars);
 
 
+/**
+*	@brief alokuje TS pro funkce a naplni ji integrovanymi funkcemi
+*	@author Daniel Bubenicek
+ *	@param sa_vars ukazatel na strukturu kam se prida TS funkci
+*	@return true pro uspech jinak false
+*/
+bool init_ts_fun(TSynCommon *sa_vars);
 
+/**
+*	@brief kontroluje token od skeneru, v pripade chyby ji zpropaguje do struktury sa_vars->err_code a v pripade chyby dealokuje token
+*	@author Daniel Bubenicek
+ *	@param sa_vars ukazatel na strukturu kde se nastavi pripadny error
+ *	@param t ukazatel na kontrolovany token (pokud chyba tak se dealokuje)!!!
+*	@return true pro token ktery je v poradku, jinak false a dealokace tokenu t
+*/
+bool err_check(Ttoken *t, TSynCommon *sa_vars);
+
+/**
+*	@brief alokuje vse potrebne pro syn. analyzator a vraci to ve strukture
+*	@author Daniel Bubenicek
+*	@return strukturu pripravenou k pouziti nebo NULL pri chybe alokace
+*/
+TSynCommon *alloc_sa();
+
+/**
+*	@brief dealokuje vse ze struktury sa_vars vcetne ni samotne
+*	@author Daniel Bubenicek
+ *	@param sa_vars dealokovana struktura
+*/
+void dealloc_sa(TSynCommon *sa_vars);
+
+/**
+ *
+ * @param ts_stack
+ */
+void TS_stack_free(TSymtables_stack *ts_stack); //TODO berry by denny javadoc
+
+/**
+*	@brief porovna pocet parametru predanych s poctem parametru v TS, specialne hlida fci print s neomez. poctem parametru (vraci vzdy true)
+*	@author Daniel Bubenicek
+ *	@param ts ukazatel na TS
+ *	@param t ukazatel na token, ktery obsahuje nazev fce
+ *	@param num_of_params porovnavany pocet
+ *	@return true pokud je to v poradku, jinak false
+*/
+bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params);
 
 #endif //IFJ2018_SAX_H

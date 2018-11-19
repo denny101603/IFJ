@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/IFJ2018.dir/savo.c.obj"
   "CMakeFiles/IFJ2018.dir/sax.c.obj"
   "CMakeFiles/IFJ2018.dir/symtable.c.obj"
+  "CMakeFiles/IFJ2018.dir/seman.c.obj"
   "IFJ2018.pdb"
   "IFJ2018.exe"
   "IFJ2018.exe.manifest"

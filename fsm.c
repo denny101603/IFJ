@@ -27,8 +27,10 @@ Ttoken *get_token(Tarray *token_value)
     int next_state = LEX_ERROR;
     bool final_state = false;
     int c; //znak ze stdin nebo bufferu
-    static int first = 1; //prvni token
-    Ttoken *token = malloc(sizeof(Ttoken));
+    static int first = 1; //pokud ==1, tak se jedna o prvni vstupni token
+    Ttoken *token = (Ttoken *) malloc(sizeof(Ttoken));
+    if(token == NULL)
+        return  NULL;
     token_init(token);
 
     while(!final_state)
@@ -103,28 +105,28 @@ Ttoken *get_token(Tarray *token_value)
                     case '#':
                         next_state = ONE_LINE_COMMENT;
                         break;
-                    /*case '.': //.IFJcode18 ??
-                    {
-                        char ifj[] = ".IFJcode18";
-                        for (int i = 0; ifj[i] != '\0'; i++)
+                        /*case '.': //.IFJcode18 ??
                         {
-                            if(ifj[i] != c)
+                            char ifj[] = ".IFJcode18";
+                            for (int i = 0; ifj[i] != '\0'; i++)
                             {
-                                next_state = LEX_ERROR;
-                                break; //break for
+                                if(ifj[i] != c)
+                                {
+                                    next_state = LEX_ERROR;
+                                    break; //break for
+                                }
+                                else
+                                {
+                                    arr_add_char(token_value, (char)c);
+                                }
+                                c = get_next_char(token_value);
                             }
+                            if (c == EOL) // ifj preambule ma byt na samostatnem radku
+                                next_state = IFJ_CODE_PREAM;
                             else
-                            {
-                                arr_add_char(token_value, (char)c);
-                            }
-                            c = get_next_char(token_value);
-                        }
-                        if (c == EOL) // ifj preambule ma byt na samostatnem radku
-                        	next_state = IFJ_CODE_PREAM;
-                        else
-                        	next_state = LEX_ERROR; //
-                        break; //break case
-                    }*/
+                                next_state = LEX_ERROR; //
+                            break; //break case
+                        }*/
                     case EOF:
                         next_state = EOF_STATE;
                         break;
@@ -149,10 +151,10 @@ Ttoken *get_token(Tarray *token_value)
                 fprintf(stderr, MESSAGE_LEX);
                 fflush(stderr);
                 break;
-            /*case IFJ_CODE_PREAM: //DONE
-                token_set_type(&token, IFJ_CODE_PREAM); //token ready
-                final_state = true;
-                break;*/
+                /*case IFJ_CODE_PREAM: //DONE
+                    token_set_type(&token, IFJ_CODE_PREAM); //token ready
+                    final_state = true;
+                    break;*/
             case OP_PLUS: //DONE
                 token_set_type(token, OP_PLUS); //token ready
                 final_state = true;
@@ -437,7 +439,7 @@ Ttoken *get_token(Tarray *token_value)
                 final_state = true;
                 break;
             case ESCAPE_0:
-            //fprintf(stderr, "jsem v ESCAPE_0\n");
+                //fprintf(stderr, "jsem v ESCAPE_0\n");
                 c = get_next_char(token_value);
                 switch(c)
                 {
@@ -724,14 +726,14 @@ int arr_get_buffer(Tarray *arr)
 
 int get_next_char(Tarray *arr) //TODO by Berry: problem CRLF vyresen tak, ze CR zahodim(libovolny pocet CR)
 {
-  int output;
-  if(arr->buffer_flag == true)
-      output = arr_get_buffer(arr);
-  else
-      output = getchar();
-  if(output == 13) //CRLF reseno tady
-      output = get_next_char(arr);
-  return output;
+    int output;
+    if(arr->buffer_flag == true)
+        output = arr_get_buffer(arr);
+    else
+        output = getchar();
+    if(output == 13) //CRLF reseno tady
+        output = get_next_char(arr);
+    return output;
 }
 int arr_set_buffer(Tarray *arr, int c)
 {
@@ -786,7 +788,7 @@ int token_init(Ttoken *token)
     return SUCCESS;
 }
 
- int token_get_type(Ttoken *token)
+int token_get_type(Ttoken *token) //todo berry/denny by denny: zapomnel jsem to pouzivat, zatim bych se na predelani vysral a pak pripadne tohle smazal
 {
     return token->type;
 }
@@ -794,17 +796,17 @@ int token_init(Ttoken *token)
 
 char *token_get_attribute(Ttoken *token) //TODO ALL bude to syntaktak potrebovat? Zatim to vypada, ze ne :D
 {
-   /* char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
-    if(output == NULL)
-    {
-        fprintf(stderr, MESSAGE_ALLOCATION);
-        return NULL;
-    }
-    for(int i = 0; i < token->a_used; i++) //kopirovani pole
-        output[i] = token->attribute[i];
-    output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
-    return output;*/
-   return NULL;
+    /* char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
+     if(output == NULL)
+     {
+         fprintf(stderr, MESSAGE_ALLOCATION);
+         return NULL;
+     }
+     for(int i = 0; i < token->a_used; i++) //kopirovani pole
+         output[i] = token->attribute[i];
+     output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
+     return output;*/
+    return NULL;
 }
 
 
@@ -862,7 +864,7 @@ int type_of_char(const int c)
 
 int is_keyword(const char *str)
 {
-     for (int i = 0; i < NUM_OF_KEYWORDS; i++)
+    for (int i = 0; i < NUM_OF_KEYWORDS; i++)
     {
         if(!strcmp(str, key_words[i])) //shoda
             return KEY_DEF + i; //KEY_DEF je prvni z keywords, dalsi nasleduji

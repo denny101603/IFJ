@@ -48,8 +48,7 @@ typedef struct{
  * @brief Struktura slouzici pro trasport hodnoty a atributu tokenu mezi LA a SA
  * @author Jan Beran
  * @note atribut i samotny token jsou dynamicky alokovane
- * @warning Pro set a get hodnot z a do struktury pouzivat prosim specialni funkce
- * @warning v0.5 = funkce hotove, netestovane.
+ * @warning Pro set a get hodnot z a do struktury pouzivat specialni funkce
  */
 typedef struct{
     int type; //pole pro typ tokenu
@@ -66,7 +65,7 @@ typedef struct{
  *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
 *	@return Ttoken - ukazatel na token
 */
-Ttoken *get_token(Tarray *arr); //TODO Berry by Berry: kompletne predelat vse tak, aby byl token dynalokovany == predavanny odkazem...
+Ttoken *get_token(Tarray *arr);
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)
@@ -254,7 +253,7 @@ enum states {
     ID_0,
     ID_1,
     ID_2,
-    ID_FCE,
+    ID_FCE, //todo denny udelat ve skeneru (zatim vzdy vraci id_2)
     KEY_WORD,
     EOF_STATE,
     STRING_0,
@@ -283,7 +282,9 @@ enum states {
     EXPRESSION, //pro potreby SAVu
     BOTTOM_TOKEN, //pro potreby SAVu
     ACTION_MENSITKO, //pro potreby SAVu
-    ACTION_VETSITKO //pro potreby SAVu
+    ACTION_VETSITKO, //pro potreby SAVu
+    NOBODY_KNOWS, //univerzalni typ
+    UNI_NUMBER //spolecny typ int float
 };
 
 
