@@ -320,13 +320,17 @@ void delete_stack(TStack *stack)
 }
 char *savo_name_generator()
 {
-    static unsigned long count = 0; // :P
-    char *ret = malloc(sizeof(char)*20); //todo berry by denny kontrola alokace, predpona
-    ltoa(count, ret, 10);
+    static long count = 0; // :P
+    // printf("%lo\n", count);
+    char *ret = (char *)malloc(sizeof(char)*22); //20 pro ulong, 1 pro & a jedno pro \0
+    ret[0] = '&';
+    if(ret == NULL)
+        return NULL;
+    ltoa(count, (ret+sizeof(char)), 10); //long to int
+    //printf("%s\n", ret);
     count++;
     return ret;
 }
-
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
