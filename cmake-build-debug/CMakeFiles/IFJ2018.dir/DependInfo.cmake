@@ -4,15 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "C:/Users/janbe/Desktop/IFJ/code_gen.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/code_gen.c.obj"
-  "C:/Users/janbe/Desktop/IFJ/fsm.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/fsm.c.obj"
-  "C:/Users/janbe/Desktop/IFJ/main.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
-  "C:/Users/janbe/Desktop/IFJ/savo.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/savo.c.obj"
-  "C:/Users/janbe/Desktop/IFJ/sax.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/sax.c.obj"
-  "C:/Users/janbe/Desktop/IFJ/seman.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/seman.c.obj"
-  "C:/Users/janbe/Desktop/IFJ/symtable.c" "C:/Users/janbe/Desktop/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.obj"
+  "/Users/jancarba/Documents/GitHub/IFJ/fsm.c" "/Users/jancarba/Documents/GitHub/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/fsm.c.o"
+  "/Users/jancarba/Documents/GitHub/IFJ/main.c" "/Users/jancarba/Documents/GitHub/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.o"
+  "/Users/jancarba/Documents/GitHub/IFJ/savo.c" "/Users/jancarba/Documents/GitHub/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/savo.c.o"
+  "/Users/jancarba/Documents/GitHub/IFJ/sax.c" "/Users/jancarba/Documents/GitHub/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/sax.c.o"
+  "/Users/jancarba/Documents/GitHub/IFJ/seman.c" "/Users/jancarba/Documents/GitHub/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/seman.c.o"
+  "/Users/jancarba/Documents/GitHub/IFJ/symtable.c" "/Users/jancarba/Documents/GitHub/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.o"
   )
-set(CMAKE_C_COMPILER_ID "GNU")
+set(CMAKE_C_COMPILER_ID "AppleClang")
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH

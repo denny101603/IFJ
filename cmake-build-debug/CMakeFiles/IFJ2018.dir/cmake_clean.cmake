@@ -1,15 +1,12 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/IFJ2018.dir/main.c.obj"
-  "CMakeFiles/IFJ2018.dir/fsm.c.obj"
-  "CMakeFiles/IFJ2018.dir/savo.c.obj"
-  "CMakeFiles/IFJ2018.dir/sax.c.obj"
-  "CMakeFiles/IFJ2018.dir/symtable.c.obj"
-  "CMakeFiles/IFJ2018.dir/seman.c.obj"
-  "CMakeFiles/IFJ2018.dir/code_gen.c.obj"
+  "CMakeFiles/IFJ2018.dir/main.c.o"
+  "CMakeFiles/IFJ2018.dir/fsm.c.o"
+  "CMakeFiles/IFJ2018.dir/savo.c.o"
+  "CMakeFiles/IFJ2018.dir/sax.c.o"
+  "CMakeFiles/IFJ2018.dir/symtable.c.o"
+  "CMakeFiles/IFJ2018.dir/seman.c.o"
   "IFJ2018.pdb"
-  "IFJ2018.exe"
-  "IFJ2018.exe.manifest"
-  "libIFJ2018.dll.a"
+  "IFJ2018"
 )
 
 # Per-language clean rules from dependency scanning.
