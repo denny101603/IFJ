@@ -21,81 +21,355 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-void gen_defvar(TThreeAC *instruct){}
+char *codegen_temp_id_generator()
+{
+    static unsigned long long cnt = 0;
+    char *name = (char *) malloc(sizeof(char)*32);
+    if(name == NULL)
+        return NULL;
+    sprintf(name, "&codegen%llu", cnt++);
+    return name;
+}
 
-void gen_move(TThreeAC *instruct){}
+void gen_defvar(TThreeAC *instruct)
+{
+    printf("DEFVAR LF@%s\n", instruct->op_1->name);
+}
 
-void gen_defmove_const(TThreeAC *instruct){}
+void gen_move(TThreeAC *instruct)
+{
+    printf("MOVE LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
 
-void gen_createframe(TThreeAC *instruct){}
+void gen_defmove_const(TThreeAC *instruct)
+{
 
-void gen_pushframe(TThreeAC *instruct){}
+}
 
-void gen_popframe(TThreeAC *instruct){}
+void gen_createframe(TThreeAC *instruct)
+{
+    printf("CREATEFRAME\n");
+}
 
-void gen_loadparam(TThreeAC *instruct){}
+void gen_pushframe(TThreeAC *instruct)
+{
+    printf("PUSHFRAME\n");
+}
 
-void gen_push(TThreeAC *instruct){}
+void gen_popframe(TThreeAC *instruct)
+{
+    printf("POPFRAME\n");
+}
 
-void gen_pop(TThreeAC *instruct){}
+void gen_loadparam(TThreeAC *instruct)
+{
+    printf("DEFVAR LF@%s\n"
+           "POPS LF@%s\n", instruct->destination->name, instruct->destination->name);
+}
 
-void gen_add(TThreeAC *instruct){}
+void gen_push(TThreeAC *instruct)
+{
+    printf("PUSHS LF@%s\n", instruct->op_1->name);
+}
 
-void gen_sub(TThreeAC *instruct){}
+void gen_pop(TThreeAC *instruct)
+{
+    printf("POPS LF@%s\n", instruct->destination->name);
+}
 
-void gen_mul(TThreeAC *instruct){}
+void gen_add(TThreeAC *instruct)
+{
+    char *atype = codegen_temp_id_generator(); //proměnná LF@atype
+    char *atmp = codegen_temp_id_generator(); //proměnná LF@atmp
 
-void gen_div(TThreeAC *instruct){}
+    char *btype = codegen_temp_id_generator(); //proměnná LF@btype
+    char *btmp = codegen_temp_id_generator(); //proměnná LF@btmp
 
-void gen_call(TThreeAC *instruct){}
+    char *addastring = codegen_temp_id_generator(); //label skoku když a je string
+    char *addaint = codegen_temp_id_generator(); //label skoku když a je int
+    char *addafloat = codegen_temp_id_generator(); //label skoku když a je float
+    char *addaintaretype = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
+    char *addafloatbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
+    char *addend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
+    char *adderrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
+    char *addasametypestring = codegen_temp_id_generator(); //label skoku když je a i b string a chceme konkatenovat
 
-void gen_return(TThreeAC *instruct){}
+    printf("DEFVAR LF@%s\n", atype);
+    printf("DEFVAR LF@%s\n", atmp);
+    printf("DEFVAR LF@%s\n", btype);
+    printf("DEFVAR LF@%s\n", btmp);
 
-void gen_int2float(TThreeAC *instruct){}
+    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
+    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_2->name);
 
-void gen_float2int(TThreeAC *instruct){}
+    printf("JUMPIFEQ %s LF@%s string@string\n",addastring, atype);
 
-void gen_int2char(TThreeAC *instruct){}
+    printf("JUMPIFEQ %s LF@%s string@int\n",addaint, atype);
 
-void gen_concat(TThreeAC *instruct){}
+    printf("JUMPIFEQ %s LF@%s string@float\n",addafloat , atype);
 
-void gen_setchar(TThreeAC *instruct){}
+    printf("LABEL %s\n", addastring);
+    printf("JUMPIFEQ %s LF@%s string@string\n", addasametypestring, btype);
+    printf("JUMP %s\n", adderrorend);
 
-void gen_isint(TThreeAC *instruct){}
+    printf("LABEL %s\n", addaint);
+    printf("JUMPIFEQ %s LF@%s string@float\n", addaintaretype, btype);
+    printf("JUMPIFNEQ %s LF@%s string@int\n", adderrorend, btype);
 
-void gen_isfloat(TThreeAC *instruct){}
+    printf("ADD LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
-void gen_isstring(TThreeAC *instruct){}
+    printf("LABEL %s\n", addaintaretype);
+    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
+    printf("ADD LF@%s LF@%s LF@%s\n", instruct->destination->name, atmp, instruct->op_2->name);
+    printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
-void gen_isbool(TThreeAC *instruct){}
+    printf("LABEL %s\n", addafloat);
+    printf("JUMPIFEQ %s LF@%s string@int\n", addafloatbretype, btype);
+    printf("JUMPIFNEQ %s LF@%s string@float\n", adderrorend, btype);
 
-void gen_lable(TThreeAC *instruct){}
+    printf("ADD LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
-void gen_deffunc(TThreeAC *instruct){}
+    printf("LABEL %s\n", addafloatbretype);
+    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
+    printf("ADD LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
+    printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
-void gen_jump(TThreeAC *instruct){}
+    printf("LABEL %s\n", addasametypestring);
+    printf("CONCAT LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
-void gen_jumpifeq(TThreeAC *instruct){}
+    printf("EXIT int@4\n");
 
-void gen_jumpifneq(TThreeAC *instruct){}
+    printf("LABEL %s\n", addend);
+}
 
-void gen_jumpifgt(TThreeAC *instruct){}
+void gen_sub(TThreeAC *instruct)
+{
+    char *atype = codegen_temp_id_generator(); //proměnná LF@atype
+    char *atmp = codegen_temp_id_generator(); //proměnná LF@atmp
 
-void gen_jumpiflt(TThreeAC *instruct){}
+    char *btype = codegen_temp_id_generator(); //proměnná LF@btype
+    char *btmp = codegen_temp_id_generator(); //proměnná LF@btmp
 
-void gen_dprint(TThreeAC *instruct){}
+    char *subaint = codegen_temp_id_generator(); //label skoku když a je int
+    char *subafloat = codegen_temp_id_generator(); //label skoku když a je float
+    char *subaintaretype = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
+    char *subafloatbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
+    char *subend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
+    char *suberrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
 
-void gen_eq(TThreeAC *instruct){}
+    printf("DEFVAR LF@%s\n", atype);
+    printf("DEFVAR LF@%s\n", atmp);
+    printf("DEFVAR LF@%s\n", btype);
+    printf("DEFVAR LF@%s\n", btmp);
 
-void gen_gt(TThreeAC *instruct){}
+    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
+    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_2->name);
 
-void gen_lt(TThreeAC *instruct){}
+    printf("JUMPIFEQ %s LF@%s string@int\n",subaint, atype);
 
-void gen_gteq(TThreeAC *instruct){}
+    printf("JUMPIFEQ %s LF@%s string@float\n",subafloat , atype);
+}
 
-void gen_lteq(TThreeAC *instruct){}
+void gen_mul(TThreeAC *instruct)
+{
+char* a$type = codegen_temp_id_generator();
+char* a$tmp = codegen_temp_id_generator();
+char* b$type = codegen_temp_id_generator();
+char* b$tmp = codegen_temp_id_generator();
+char* a = codegen_temp_id_generator();
+char* b = codegen_temp_id_generator();
+char* mul$a$int = codegen_temp_id_generator();
+char* mul$a$float = codegen_temp_id_generator();
+char* mul$a$int$a$retype = codegen_temp_id_generator();
+char* mul$error$end = codegen_temp_id_generator();
+char* x = codegen_temp_id_generator();
+char* mul$end = codegen_temp_id_generator();
+char* mul$a$float$b$retype = codegen_temp_id_generator();
 
-void gen_neq(TThreeAC *instruct){}
+
+
+
+    printf("DEFVAR LF@%s\n", a$type);
+    printf("DEFVAR LF@%s\n", a$tmp);
+    printf("DEFVAR LF@%s\n", b$type);
+    printf("DEFVAR LF@%s\n", b$tmp);
+
+    printf("TYPE LF@%s LF@%s\n", a$type, a);
+    printf("TYPE LF@%s LF@%s\n", b$type, b);
+
+    printf("JUMPIFEQ %s LF@%s string@int\n", mul$a$int, a$type);
+    printf("JUMPIFEQ %s LF@%s string@int\n", mul$a$float, a$type);
+
+    printf("LABEL %s\n", mul$a$int);
+
+    printf("JUMPIFEQ %s LF@%s string@float\n", mul$a$int$a$retype, b$type );
+    printf("JUMPIFNEQ %s LF@%s string@int\n", mul$error$end,  b$type);
+
+    printf("MUL LF@%s LF@%s LF@%s\n", x, a, b);
+    printf("JUMP %s\n",mul$end);
+
+    printf("LABEL %s", mul$a$int$a$retype);
+    printf("INT2FLOAT LF@%s LF@%s\n",a$tmp, a);
+
+
+    printf("MUL LF@%s LF@%s LF@%s", x, a$tmp, b);
+    printf("JUMP %s\n", mul$end);
+
+
+    printf("LABEL %s\n",mul$a$float );
+    printf("JUMPIFEQ %s LF@%s string@int\n",mul$a$float$b$retype, b$type );
+    printf("JUMPIFNEQ %s LF@%s string@float\n",mul$error$end, b$type );
+
+    printf("MUL LF@%s LF@%s LF@%s\n", x, a, b);
+
+    printf("JUMP %s\n", mul$end);
+
+    printf("LABEL %s\n",mul$a$float$b$retype );
+    printf("INT2FLOAT LF@%s LF@%s\n", b$tmp, b);
+
+    printf("MUL LF@%s LF@%s LF@%s\n",x, a, b$tmp );
+    printf("JUMP %s\n", mul$end);
+
+    printf("LABEl %s\n", mul$error$end) ;
+    printf("EXIT int@4");
+
+    printf("LABEL mul$end");
+}
+
+void gen_div(TThreeAC *instruct)
+{
+
+}
+
+void gen_call(TThreeAC *instruct)
+{
+
+}
+
+void gen_return(TThreeAC *instruct)
+{
+
+}
+
+void gen_int2float(TThreeAC *instruct)
+{
+    printf("INT2FLOAT LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
+
+void gen_float2int(TThreeAC *instruct)
+{
+    printf("FLOAT2INT LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
+
+void gen_int2char(TThreeAC *instruct)
+{
+    printf("INT2CHAR LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
+
+void gen_concat(TThreeAC *instruct)
+{
+    printf("CONCAT LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+}
+
+void gen_setchar(TThreeAC *instruct)
+{
+    printf("SETCHAR LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+}
+
+void gen_isint(TThreeAC *instruct) //až zjistím jak funguje generátor jmen
+{
+
+}
+
+void gen_isfloat(TThreeAC *instruct)
+{
+
+}
+
+void gen_isstring(TThreeAC *instruct)
+{
+
+}
+
+void gen_isbool(TThreeAC *instruct)
+{
+
+}
+
+void gen_lable(TThreeAC *instruct)
+{
+    printf("LABEL %s\n",instruct->op_1->name);
+}
+
+void gen_deffunc(TThreeAC *instruct)
+{
+    printf("LABEL %s\n"
+           "CREATEFRAME\n"
+           "PUSHFRAME\n",instruct->op_1->name);
+}
+
+void gen_jump(TThreeAC *instruct)
+{
+    printf("JUMP %s\n", instruct->op_1->name);
+}
+
+void gen_jumpifeq(TThreeAC *instruct)
+{
+    printf("JUMPIFEQ %s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+}
+
+void gen_jumpifneq(TThreeAC *instruct)
+{
+    printf("JUMPIFNEQ %s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+}
+
+void gen_jumpifgt(TThreeAC *instruct)
+{
+
+}
+
+void gen_jumpiflt(TThreeAC *instruct)
+{
+
+}
+
+void gen_dprint(TThreeAC *instruct)
+{
+
+}
+
+void gen_eq(TThreeAC *instruct)
+{
+
+}
+
+void gen_gt(TThreeAC *instruct)
+{
+
+}
+
+void gen_lt(TThreeAC *instruct)
+{
+
+}
+
+void gen_gteq(TThreeAC *instruct)
+{
+
+}
+
+void gen_lteq(TThreeAC *instruct)
+{
+
+}
+
+void gen_neq(TThreeAC *instruct)
+{
+
+}
 
 void GEN_start(TTacList *list)
 {
