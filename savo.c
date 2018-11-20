@@ -328,7 +328,7 @@ TStackElem *get_first_terminal(TStack *stack)
 Ttoken *get_token_from_elem(TStackElem *elem)
 {
     //fprintf(stderr, "*********************** %d\n", elem->data->type);
-    return elem->data; //todo dealok
+    return elem->data;
 }
 
 void delete_stack(TStack *stack)
@@ -408,9 +408,14 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
     if (error != ERR_SYN)
         sa_vars->err_code = error;
     if (stack != NULL)
+    {
         delete_stack(stack);
+        free(stack);
+    }
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
+    delete_buffer(internal_buffer);
+    free(internal_buffer);
 
     switch (error) // err_sem_param nenastane
     {
@@ -667,10 +672,10 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 bool savo(TSynCommon *sa_vars)
 {
     
-    sa_vars->boolean = true;
+    sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
-    if(input_token == NULL) //error handle //todo dennyho err_check()
+    if(input_token == NULL) //error handle
     {
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
         return false;
@@ -710,7 +715,7 @@ bool savo(TSynCommon *sa_vars)
 
     while(true) //hlavni cast sava - cyklicke provadeni pravidel
     {
-
+    //todo berry Omezit konstanty na nezáporná čísla
 
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
@@ -797,8 +802,15 @@ bool savo(TSynCommon *sa_vars)
    else
    {
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
+
        delete_buffer(internal_buffer);
+       free(internal_buffer);
+
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
+
+       delete_stack(stack);
+       free(stack);
+
        return true;
    }
 }
