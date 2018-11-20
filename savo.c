@@ -44,7 +44,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = { //E->
         {EXPRESSION, OP_DIV, EXPRESSION}, //14
         {EXPRESSION, OP_MORE_1, EXPRESSION}, //15
         {EXPRESSION, OP_LESS_1, EXPRESSION},//16
-        {EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+        {EXPRESSION, OP_EQAL_1, EXPRESSION},//17
         {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
         {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
         {EXPRESSION, OP_NOT_EQ_1, EXPRESSION}, //20
@@ -128,7 +128,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case OP_NOT_EQ_1:
             input_terminal = 13;
             break;
-        case OP_EQAL_2:
+        case OP_EQAL_1:
             input_terminal = 14;
             break;
         case EOF_STATE: //upravovano
@@ -188,7 +188,7 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case OP_NOT_EQ_1:
             stack_terminal = 13;
             break;
-        case OP_EQAL_2:
+        case OP_EQAL_1:
             stack_terminal = 14;
             break;
         case BOTTOM_TOKEN:
@@ -353,16 +353,16 @@ char *savo_name_generator()
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
-    push(stack, stack->top,input_token, NULL); //TODO!!! Kde vsude pouzivam action push?
+    push(stack, stack->top,input_token, NULL);
 
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     buffer_push_top(internal_buffer, ret);
     //pokud jsem dostal nil jako dalsi token v poradi A pred nim neni zavorka NEBO je nil na topu (byl dostan) A soucasny znak neni ukoncovaci
-    if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    /*if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
     {
         action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
         return NULL;
-    }
+    }*/
     //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
     return ret;
 }
@@ -382,11 +382,11 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
     buffer_push_top(internal_buffer, ret);
     //pokud jsem dostal nil jako dalsi token v poradi A pred nim neni zavorka NEBO je nil na topu (byl dostan) A soucasny znak neni ukoncovaci
-    if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    /*if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
     {
         action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
         return NULL;
-    }
+    }*/
     return ret;
 }
 
@@ -611,7 +611,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             tac_defvar(sa_vars->tac_list, dest);
             tac_lt(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
-        case 17://{EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+        case 17://{EXPRESSION, OP_EQAL_1, EXPRESSION},//17
             dest = op_init(NOBODY_KNOWS,savo_name_generator());
             tac_defvar(sa_vars->tac_list, dest);
             tac_eq(sa_vars->tac_list, dest, operands[2], operands[0]);
@@ -666,7 +666,8 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
 bool savo(TSynCommon *sa_vars)
 {
-    bool nil = false;
+    
+    sa_vars->boolean = true;
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle //todo dennyho err_check()
@@ -678,10 +679,6 @@ bool savo(TSynCommon *sa_vars)
     {
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
-    }
-    if(input_token->type == KEY_NIL)
-    {
-        nil = true;
     }
 
     /*Ladici vypis*/
@@ -737,7 +734,7 @@ bool savo(TSynCommon *sa_vars)
         {
             if(input_token->type == OP_MORE_1 ||
                input_token->type == OP_LESS_1 ||
-               input_token->type == OP_EQAL_2 ||
+               input_token->type == OP_EQAL_1 ||
                input_token->type == OP_LESS_EQUAL ||
                input_token->type == OP_MORE_EQUAL ||
                input_token->type == OP_NOT_EQ_1)
