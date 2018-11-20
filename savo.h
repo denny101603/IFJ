@@ -34,7 +34,7 @@
  */
 typedef struct StackElem{
     Ttoken *data; //data == *token
-    Toperand *operand; //operand, ktery
+    Toperand *operand; //operand
     struct StackElem *next; //ukazatel na nasledujici prvek
     struct StackElem *prev; //ukazatel na predchozi prvek
 }TStackElem;
@@ -47,6 +47,11 @@ typedef struct StackElem{
     TStackElem *top;
 }TStack;
 
+ /**
+  * @brief Funkce vraci jmeno pro docasnou promennou
+  * @return
+  */
+ char *savo_name_generator();
 /**
  * @brief Funkce inicializuje zasobnik typu TStack tak, že do něj vlozi prvni prvek, kterym je token s typem BOTTOM_TOKEN
  * @author Jan Beran
@@ -62,7 +67,7 @@ TStack *stack_init();
  * @param stack_elem ukazatel na polozku s tokenem, ZA ktery se ma prvek vlozit
  * @return true nebo false, podle vysledku alokace.
  */
-bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token);
+bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op);
 
 /**
  * @brief Funkce popne vrchni polozku TSTackElem ze zasobniku stack a vrati hodnotu tokenu.
