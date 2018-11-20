@@ -370,6 +370,8 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     token_free(t1);
 
     //ZACATEK TVORBY KODU*************************************//
+    tac_while(sa_vars->tac_list); //"zarazka" pro zacatek while
+
     char *bool_str = sax_temp_id_generator();
     if(bool_str == NULL)
     {
@@ -410,7 +412,6 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false; //todo denny dealokace?
     }
     tac_defvar(sa_vars->tac_list, temp_cond);
-
 
     char *temp_label = sax_temp_id_generator();
     if(temp_label == NULL)
@@ -490,7 +491,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
 
     tac_jump(sa_vars->tac_list, label1);
     tac_lable(sa_vars->tac_list, label2);
-
+    tac_endwhile(sa_vars->tac_list);
 
     if(nt_eolf(sa_vars))                //eolf
     {
