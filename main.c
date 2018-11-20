@@ -20,7 +20,8 @@ int main() {
 
     //z toho by se jeden posral(hlavně denny)
     printf("Hell, World!\n");
-    printf("navrat SA: %i", startSA());
+    TTacList *tac_list;
+    printf("navrat SA: %i", startSA(tac_list));
 /*    Tarray arr;
     arr_init(&arr); //Pole znak
     get_token(&arr);

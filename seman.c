@@ -454,3 +454,14 @@ bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
         return true;
     return false;
 }
+
+Toperand *op_init(int type, char *name)
+{
+    Toperand *op = (Toperand *) malloc(sizeof(Toperand));
+    if(op == NULL)
+        return NULL;
+
+    op->type = type;
+    op->name = name;
+    return op;
+}
