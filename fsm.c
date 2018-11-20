@@ -419,10 +419,59 @@ Ttoken *get_token(Tarray *token_value)
                 c = get_next_char(token_value);
                 while (c != '"' && c != '\\' && c != EOF)
                 {
-                    if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                    if(c == ' ')
                     {
-                        token_set_type(token, ERR_INTERNAL);
-                        return token;
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '3') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '2') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                    }
+                    else if(c == '#')
+                    {
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '3') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '5') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                    }
+                    else
+                    {
+                        if (arr_add_char(token_value, (char) c) == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
                     }
                     c = get_next_char(token_value);
                 }
@@ -443,24 +492,69 @@ Ttoken *get_token(Tarray *token_value)
                 c = get_next_char(token_value);
                 switch(c)
                 {
-                    case '"':
-                        if(arr_add_char(token_value, '\"') == ERR_INTERNAL)
+                    case '"': // = \034
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '3') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '4') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
                         }
                         next_state = STRING_0;
                         break;
-                    case 'n': //EOL
-                        if(arr_add_char(token_value, '\n') == ERR_INTERNAL)
+                    case 'n': //EOL \010
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '1') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
                         }
                         next_state = STRING_0;
                         break;
-                    case 't':
-                        if(arr_add_char(token_value, '\t') == ERR_INTERNAL)
+                    case 't': // \009
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '9') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
@@ -468,7 +562,22 @@ Ttoken *get_token(Tarray *token_value)
                         next_state = STRING_0;
                         break;
                     case 's':
-                        if(arr_add_char(token_value, ' ') == ERR_INTERNAL)
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '3') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '2') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
@@ -477,6 +586,21 @@ Ttoken *get_token(Tarray *token_value)
                         break;
                     case '\\':
                         if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '9') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
+                        if(arr_add_char(token_value, '2') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
@@ -516,13 +640,29 @@ Ttoken *get_token(Tarray *token_value)
                         hexa[1] = c;
                         //fprintf(stderr, "hexa0 = %c, hexa1 = %c\n", hexa[0], hexa[1]);
                         sscanf(hexa, "%x", &num);
-                        c = num;
-                        //fprintf(stderr, "c je: %d %c %c\n ", c, c, 153);
-                        if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                        char pica[4];
+                        sprintf(pica, "%i", num); //do píče to dá hodnotu cisla num ve stringu
+                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
                         }
+
+                        for(int kurva = 0; kurva < 3; kurva++)
+                        {
+                            if(arr_add_char(token_value, pica[kurva]) == ERR_INTERNAL)
+                            {
+                                token_set_type(token, ERR_INTERNAL);
+                                return token;
+                            }
+                        }
+                        //c = num;
+                        //fprintf(stderr, "c je: %d %c %c\n ", c, c, 153);
+                       /* if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }*/
                     }
                     else
                     {
@@ -847,6 +987,7 @@ int token_set_attribute(Ttoken *token, Tarray *arr)
 void token_free(Ttoken *token)
 {
     free(token->attribute);
+    token->attribute = NULL;
     free(token);
 }
 
