@@ -284,7 +284,8 @@ enum states {
     ACTION_MENSITKO, //pro potreby SAVu
     ACTION_VETSITKO, //pro potreby SAVu
     NOBODY_KNOWS, //univerzalni typ
-    UNI_NUMBER //spolecny typ int float
+    UNI_NUMBER, //spolecny typ int float
+    BOOLEAN //pro triadresnak
 };
 
 
