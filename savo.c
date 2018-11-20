@@ -16,7 +16,7 @@
 */
 #include "savo.h"
 #include "symtable.h"
-#include <string.h> //todo delete
+
 
 #define NUM_OF_RULES 22
 #define RULE_LENGTH 3
@@ -55,23 +55,24 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = { //E->
  * @brief Precedencni tbaulka pro syntaktickou analyzu vyrazu.
  * @author Jan Carba, Jan Beran
  */
-char prec_table[15][15] = {              //in
-        /*           + 	  -   *	  /	  (	  )	 id	 con  <   >  <=	  >=  !=  ==   $ */
-        /* + */    {'>','>','<','<','<','>','<','<','>','>','>','>','>','>','>'},
-        /* - */    {'>','>','<','<','<','>','<','<','>','>','>','>','>','>','>'},
-        /* * */    {'>','>','>','>','<','>','<','<','>','>','>','>','>','>','>'},
-        /* / */    {'>','>','>','>','<','>','<','<','>','>','>','>','>','>','>'},
-        /* ( */    {'<','<','<','<','<','=','<','<','<','<','<','<','<','<','?'},
-        /* ) */    {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-        /* id */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-/*stack  cons */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-        /* < */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* > */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* <= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* >= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* != */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* == */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','?'}
+char prec_table[16][16] = {              //in
+        /*           + 	  -   *	  /	  (	  )	 id	 con nil  <   >  <=	  >=  !=  ==   $ */
+        /* + */    {'>','>','<','<','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* - */    {'>','>','<','<','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* * */    {'>','>','>','>','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* / */    {'>','>','>','>','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* ( */    {'<','<','<','<','<','=','<','<','<','<','<','<','<','<','<','?'},
+        /* ) */    {'>','>','>','>','?','>','?','?','?','>','>','>','>','>','>','>'},
+        /* id */   {'>','>','>','>','?','>','?','?','?','>','>','>','>','>','>','>'},
+/*stack  cons */   {'>','>','>','>','?','>','?','?','?','>','>','>','>','>','>','>'},
+        /*nil*/    {'?','?','?','?','?','>','?','?','?','?','?','?','?','>','>','>'},
+        /* < */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* > */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* <= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* >= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* != */   {'<','<','<','<','<','>','<','<','<','?','?','?','?','?','?','>'},
+        /* == */   {'<','<','<','<','<','>','<','<','<','?','?','?','?','?','?','>'},
+        /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','<','?'}
 };
 //TODO ALL Zkontrolovat to po Janu Carbovi :). By Berry: pokud bude savo naoko fungovat, ale jinak, mrknout se sem.
 
@@ -107,33 +108,35 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case INTEGER:
         case STRING_1:
         case FLOAT_2:
-        case KEY_NIL:
             input_terminal = 7;
             break;
-        case OP_LESS_1:
+        case KEY_NIL:
             input_terminal = 8;
-            break;
-        case OP_MORE_1:
+                break;
+        case OP_LESS_1:
             input_terminal = 9;
             break;
-        case OP_LESS_EQUAL:
+        case OP_MORE_1:
             input_terminal = 10;
             break;
-        case OP_MORE_EQUAL:
+        case OP_LESS_EQUAL:
             input_terminal = 11;
             break;
-        case OP_NOT_EQ_1:
+        case OP_MORE_EQUAL:
             input_terminal = 12;
             break;
-        case OP_EQAL_2:
+        case OP_NOT_EQ_1:
             input_terminal = 13;
+            break;
+        case OP_EQAL_2:
+            input_terminal = 14;
             break;
         case EOF_STATE: //upravovano
         case EOL_1:
         case OP_COMMA:
         case KEY_THEN:
         case KEY_DO:
-            input_terminal = 14;
+            input_terminal = 15;
             break;
         default:
             input_terminal = -1;
@@ -165,29 +168,31 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case INTEGER:
         case STRING_1:
         case FLOAT_2:
-        case KEY_NIL:
             stack_terminal = 7;
             break;
-        case OP_LESS_1:
+        case KEY_NIL:
             stack_terminal = 8;
             break;
-        case OP_MORE_1:
+        case OP_LESS_1:
             stack_terminal = 9;
             break;
-        case OP_LESS_EQUAL:
+        case OP_MORE_1:
             stack_terminal = 10;
             break;
-        case OP_MORE_EQUAL:
+        case OP_LESS_EQUAL:
             stack_terminal = 11;
             break;
-        case OP_NOT_EQ_1:
+        case OP_MORE_EQUAL:
             stack_terminal = 12;
             break;
-        case OP_EQAL_2:
+        case OP_NOT_EQ_1:
             stack_terminal = 13;
             break;
-        case BOTTOM_TOKEN:
+        case OP_EQAL_2:
             stack_terminal = 14;
+            break;
+        case BOTTOM_TOKEN:
+            stack_terminal = 15;
             break;
         default:
             stack_terminal = -1;
@@ -274,7 +279,7 @@ Ttoken *pop(TStack *stack)
     return output;
 }
 
-Ttoken *pop_extended(TStack *stack, Toperand **op)
+Ttoken *pop_extended(TStack *stack, Toperand *op)
 {
     if (stack == NULL)
         return NULL;
@@ -282,8 +287,10 @@ Ttoken *pop_extended(TStack *stack, Toperand **op)
     stack->top = stack->top->prev;
     stack->top->next = NULL;
     Ttoken *output = temp->data;
+
     if(temp->operand != NULL)
-        *(op) = temp->operand;
+        op = temp->operand;
+
     free(temp);
     return output;
 }
@@ -336,16 +343,12 @@ void delete_stack(TStack *stack)
 }
 char *savo_name_generator()
 {
-    static long count = 0; // :P
-    // printf("%lo\n", count);
-    char *ret = (char *)malloc(sizeof(char)*22); //20 pro ulong, 1 pro & a jedno pro \0
-    ret[0] = '&';
-    if(ret == NULL)
+    static unsigned long long cnt = 0;
+    char *name = (char *) malloc(sizeof(char)*32);
+    if(name == NULL)
         return NULL;
-    ltoa(count, (ret+sizeof(char)), 10); //long to int
-    //printf("%s\n", ret);
-    count++;
-    return ret;
+    sprintf(name, "&savo%llu", cnt++);
+    return name;
 }
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
@@ -399,6 +402,7 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
 {
+    fprintf(stderr, "savo err\n");
     //ERR_SYN je osetrovan pouhym vracenim false:
     // sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli je to vyraz. Toto nema zpusobit pad.
     if (error != ERR_SYN)
@@ -492,6 +496,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     //operandy pro semanticke akce
     Toperand *operand1 = NULL;
     Toperand *operand2 = NULL;
+    Toperand *operand3 = NULL;
     Toperand *dest =NULL;
     Tsymbol_table_item *item = NULL;
 
@@ -502,7 +507,24 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             continue;
         else
         {
-            rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, &operands[RULE_LENGTH-1-i]);
+            switch(i)
+            {
+                case 0:
+                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand3);
+                    break;
+                case 1:
+                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand2);
+                    break;
+                case 2:
+                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand1);
+                    break;
+                default:
+                    break;
+            }
+            operands[0] = operand1;
+            operands[1] = operand2;
+            operands[2] = operand3;
+
             //abych mel v poli rule_tokens[] tokeny podle komutativity ([0] operand1, [1]operace, [2] operand2;
             //tzn treba [0]2[1]/[2]5 pro vyraz 2/5
             //ve stejnem poradi jsou take operandy v poli operands
@@ -636,13 +658,15 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         return false;
     token_init(expr_token);
     expr_token->type = EXPRESSION;
-
+    if(rule_tokens[0]->type == KEY_NIL)
+        expr_token->attribute = "nil";
     push(stack, stack->top, expr_token, dest);
     return true;
 }
 
 bool savo(TSynCommon *sa_vars)
 {
+    bool nil = false;
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle //todo dennyho err_check()
@@ -654,6 +678,10 @@ bool savo(TSynCommon *sa_vars)
     {
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
+    }
+    if(input_token->type == KEY_NIL)
+    {
+        nil = true;
     }
 
     /*Ladici vypis*/
@@ -685,8 +713,8 @@ bool savo(TSynCommon *sa_vars)
 
     while(true) //hlavni cast sava - cyklicke provadeni pravidel
     {
-        //todo povolit nil == nil
-        //todo nil != nil
+
+
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
         /*Konec l.v.*/
