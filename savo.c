@@ -16,7 +16,7 @@
 */
 #include "savo.h"
 #include "symtable.h"
-
+#include <string.h> //todo delete
 
 #define NUM_OF_RULES 21
 #define RULE_LENGTH 3
@@ -320,13 +320,17 @@ void delete_stack(TStack *stack)
 }
 char *savo_name_generator()
 {
-    static unsigned long count = 0; // :P
-    char *ret = malloc(sizeof(char)*20); //todo berry by denny kontrola alokace, predpona
-    ltoa(count, ret, 10);
+    static long count = 0; // :P
+    // printf("%lo\n", count);
+    char *ret = (char *)malloc(sizeof(char)*22); //20 pro ulong, 1 pro & a jedno pro \0
+    ret[0] = '&';
+    if(ret == NULL)
+        return NULL;
+    ltoa(count, (ret+sizeof(char)), 10); //long to int
+    //printf("%s\n", ret);
     count++;
     return ret;
 }
-
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
@@ -368,7 +372,6 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
 bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     int rule = find_rule(stack);
-
 
     if(rule != -1)
         return execute_rule(rule, stack, sa_vars, internal_buffer);
@@ -463,45 +466,25 @@ bool is_pseudotoken(Ttoken *token)
 }
 bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
+    //pole tokenu pro semanticke akce
+    Ttoken *rule_tokens[RULE_LENGTH] = {NULL, NULL, NULL}; //RULE_LENGHT == 3
 
-
+    //operandy pro semanticke akce
     Toperand *operand1 = NULL;
     Toperand *operand2 = NULL;
     Toperand *dest =NULL;
     Tsymbol_table_item *item = NULL;
-    /*
-   {0,0,INTEGER}, //0
-   {0,0,EXPRESSION}, //1 //todo co to tu dela? E->E
-   {0,0,FLOAT_2}, //2
-   {0,0,STRING_1}, //3
-   {0, 0,ID_2},//4
-   {0,0,KEY_NIL},//5
-   {LEFT_BRACKET, INTEGER, RIGHT_BRACKET},//6
-  {LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},//7
-  {LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},//8
-  {LEFT_BRACKET, STRING_1, RIGHT_BRACKET},//9
-  {LEFT_BRACKET, ID_2, RIGHT_BRACKET},//10
 
-  {EXPRESSION, OP_PLUS, EXPRESSION},//11
-  {EXPRESSION, OP_MINUS, EXPRESSION},//12
-  {EXPRESSION, OP_MULT, EXPRESSION},//13
-  {EXPRESSION, OP_DIV, EXPRESSION}, //14
-  {EXPRESSION, OP_MORE_1, EXPRESSION}, //15
-  {EXPRESSION, OP_LESS_1, EXPRESSION},//16
-  {EXPRESSION, OP_EQAL_2, EXPRESSION},//17
-  {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
-  {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
-  {EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //20
-   */
+/*
     switch (rule)
     {
         //pravidla ve tvaru E->cosi
-        //jednoadresna pravidla. Proc pouzivam stck->top?? Protoze to vychazi z definice action_Reduce: redukuju to, oc je na topu
+        //jednoadresna pravidla. Proc pouzivam stack->top?? Protoze to vychazi z definice action_Reduce: redukuju to, oc je na topu
         case 0: //E -> {0,0,INTEGER}, //0
         case 2: //{0,0,FLOAT_2}, //2
         case 3: //{0,0,STRING_1}, //3
         case 5: //{0,0,KEY_NIL},//5
-            dest = op_init(stack->top->data->type, savo_name_generator()); //todo upravit generator & todo2 operand
+            dest = op_init(stack->top->data->type, savo_name_generator()); /
             operand1 = op_init(stack->top->data->type, stack->top->data->attribute);
             tac_defmove_const(sa_vars->tac_list, dest, operand1);
             break;
@@ -513,14 +496,14 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         ;
             // item = zaznam o promenne z tokenu z TS
             item = symtab_find(sa_vars->local_tables->top->data, stack->top->data->attribute);
-            //vytvyrim Toperand, ktery priradim do tokenu Expression
+            //vytvarim Toperand, ktery priradim do tokenu Expression
             dest = op_init(item->type, stack->top->data->attribute);
             break;
         //triadresna pravidla
         case 6://{LEFT_BRACKET, INTEGER, RIGHT_BRACKET},//6
         case 8://{LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},//8
         case 9: //{LEFT_BRACKET, STRING_1, RIGHT_BRACKET},//9
-            dest = op_init(stack->top->prev->data->type, savo_name_generator()); //todo upravit generator & todo2 operand
+            dest = op_init(stack->top->prev->data->type, savo_name_generator());
             operand1 = op_init(stack->top->prev->data->type, stack->top->prev->data->attribute);
             tac_defmove_const(sa_vars->tac_list, dest, operand1);
             break;
@@ -539,43 +522,79 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             tac_defvar(sa_vars->tac_list, dest);
             tac_add(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 12: //Todo dtto podle tohoto ^
+        case 12: //{EXPRESSION, OP_MINUS, EXPRESSION},//12
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_sub(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 13:
+        case 13: //{EXPRESSION, OP_MULT, EXPRESSION},//13
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_mul(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 14:
+        case 14://{EXPRESSION, OP_DIV, EXPRESSION}, //14
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_div(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 15:
+        case 15://{EXPRESSION, OP_MORE_1, EXPRESSION}, //15
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_gt(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 16:
+        case 16://{EXPRESSION, OP_LESS_1, EXPRESSION},//16
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_lt(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 17:
+        case 17://{EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_eq(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 18:
+        case 18://{EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_lteq(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 19:
+        case 19:// {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_gteq(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
-        case 20:
+        case 20://{EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //20
+            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            tac_defvar(sa_vars->tac_list, dest);
+            tac_neq(sa_vars->tac_list, dest, stack->top->prev->prev->operand, stack->top->operand);
             break;
         default:
             break;//rule == -1
-    }
+    }*/
     //for je zde od toho, aby vyhodil ze zasobniku znaky, kterych se tyka pravidlo (ulozeny do internal bufferu davno pred tim)
-    for (int i = 0; i <RULE_LENGTH; i++)
+
+    for (int i = 0; i <RULE_LENGTH; i++) //RULE_LENGHT == 3
     {
         if(rules[rule][i] == 0)
             continue;
         else
         {
-            Ttoken *temp = pop(stack);
+            rule_tokens[RULE_LENGTH-1-i] = pop(stack); //abych mel v poli rule_tokens[] znaky podle komutativity ([0] operand1, [1]operace, [2] operand2;
+            //tzn treba [0]2[1]/[2]5 pro vyraz 2/5
         }
     }
-    Ttoken *temp = pop(stack);
+    //overeni, ze ted nasleduje mensitko
+    Ttoken *temp = pop(stack); // popnuti mensitka
+    if(temp->type != ACTION_MENSITKO) //pokud jsem jako dalsi znak nepopnul mensitko, tak je nekde chyba - u me ne, takze hazim ERR_SEM
+        action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
+    free(temp);
+
     Ttoken *expr_token = malloc(sizeof(Ttoken));
     if (expr_token == NULL)
         return false;
     token_init(expr_token);
     expr_token->type = EXPRESSION;
+
+    // TODO tady provest semantickou akci!!! Uz mame token expr = vime, kam budeme strkat dest
     push(stack, stack->top, expr_token, dest);
     return true;
 }
@@ -622,7 +641,7 @@ bool savo(TSynCommon *sa_vars)
 
     Ttoken *stack_token = NULL;
 
-    while(true)
+    while(true) //hlavni cast sava - cyklicke provadeni pravidel
     {
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");

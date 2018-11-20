@@ -44,8 +44,10 @@ typedef struct TAC_elem{
  *
  */
 typedef struct tac_buffer{
-    Toperand top;
+     TTAC_Elem *top;
 } Ttac_buffer;
+
+
 
 /**
  * @brief Struktura pro jednu triadresnou instrukci.
@@ -57,7 +59,7 @@ typedef struct three_ac{
     Toperand *destination;
     Toperand *op_1;
     Toperand *op_2;
-    Ttac_buffer *buffer; //Todo SOMEBODY udelat buffer pro parametry fci print a substr
+    Ttac_buffer *buffer;
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;
