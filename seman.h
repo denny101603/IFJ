@@ -59,7 +59,6 @@ typedef struct three_ac{
     Toperand *destination;
     Toperand *op_1;
     Toperand *op_2;
-    Ttac_buffer *buffer;
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;
@@ -141,12 +140,12 @@ TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem);
  * @brief Funkce maze posledni prvek ze seznamu (prvek oznaceny jako list->last) a vraci ho.
  * @author Jan Beran
  * @param list Seznam, ze ktereho ma byt prvek odstranen
- * @return Odstraneny prvek prostrednictvim ukazatele na strukturu TThreeAC
+ * @return Odstraneny prvek prostrednictvim ukazatele na strukturu TThreeAC nebo NULL pokud uz je prazdny
  */
 TThreeAC *TAC_remove(TTacList *list);
 
 /**
- * @brief Funkce kompletne smaze a dealokuje vsechny prvky seznamu list i seznam samotny, ktery nastavi na NULL. //TODO BERRY! by denny seznam jako takovy nedealokujes, naprav to! :D
+ * @brief Funkce kompletne smaze a dealokuje vsechny prvky seznamu list i seznam samotny, ktery nastavi na NULL.
  * @author Jan Beran
  * @param list Seznam ke smazani.
  */
@@ -315,7 +314,8 @@ enum instructions{
     GTEQ,
     LTEQ,
     NEQ,
-    LOADPARAM
+    LOADPARAM,
+    DEFMOVE
 };
 
 

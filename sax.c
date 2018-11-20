@@ -539,7 +539,6 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     }
     buffer_push_bottom(sa_vars->buffer, t1);
 
-    //todo seman:
     char *temp_id = sax_temp_id_generator();
     if(temp_id == NULL)
     {
@@ -684,14 +683,25 @@ bool nt_assignment(TSynCommon *sa_vars)
                 if(op == NULL)
                 {
                     sa_vars->err_code = ERR_INTERNAL;
+                    token_free(t1);
                     return false; //todo denny dealokace neceho?
                 }
                 tac_defvar(sa_vars->tac_list, op);
+                sa_vars->dest = op;
 
                 free(t1);
             }
             else
-                token_free(t1);
+            {
+                Toperand *op = op_init(symtab_find(sa_vars->local_tables->top->data, t1->attribute)->type, t1->attribute); //zakladam operand s typem z TS
+                if(op == NULL)
+                {
+                    sa_vars->err_code = ERR_INTERNAL;
+                    token_free(t1);
+                    return false; //todo denny dealokace neceho?
+                }
+                free(t1);
+            }
 
             //uz je definovana
             t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
@@ -886,6 +896,31 @@ bool nt_callfce(TSynCommon *sa_vars)
     }
 
     //todo seman: call(dest: to bychom tu meli vedet, op1: t1->attribute (LABEL))
+    char *temp_id = sax_temp_id_generator();
+    if(temp_id == NULL)
+    {
+        return false; //todo denny dealokace neceho?
+    }
+    Toperand *new_op = op_init(INTEGER, temp_id); //sem dam pocet argumentu
+    if(new_op == NULL)
+    {
+        return false; //todo denny dealokace neceho?
+    }
+
+    char *str_num_of_args = long_to_string(num_of_args);
+    if(str_num_of_args == NULL)
+    {
+        return false; //todo denny dealokace neceho?
+    }
+    Toperand *cons = op_init(INTEGER, temp_id);
+    if(cons == NULL)
+    {
+        return false; //todo denny dealokace neceho?
+    }
+
+    tac_defmove_const(sa_vars->tac_list, new_op, cons);
+    tac_push(sa_vars->tac_list, new_op); //pushnuti informace o poctu argumentu na zasobnik
+    //tac_call(sa_vars->tac_list, sa_vars->dest, );
 
     token_free(t1);
     if(!nt_eolf(sa_vars))
@@ -1214,6 +1249,7 @@ TSynCommon *alloc_sa()
     sa_vars->arr = arr;
     sa_vars->boolean = false; //vychozi stav
     sa_vars->tac_list = tac_list;
+    sa_vars->dest = NULL;
 
     TS_push(sa_vars->local_tables, symtab_local);
     return sa_vars;
@@ -1264,5 +1300,14 @@ char *sax_temp_id_generator()
     if(name == NULL)
         return NULL;
     sprintf(name, "&sax%llu", cnt++);
+    return name;
+}
+
+char *long_to_string(long num)
+{
+    char *name = (char *) malloc(sizeof(char)*22); //22 znaku by melo bohate stacit pro delku longu
+    if(name == NULL)
+        return NULL;
+    sprintf(name, "%li", num);
     return name;
 }

@@ -130,7 +130,8 @@ void TAC_delete_list(TTacList *list)
         /**konec ladiciho vypisu**/
         free(TAC_remove(list));
     }
-
+    free(list);
+    list = NULL;
 }
 
 
@@ -209,11 +210,6 @@ bool tac_move(TTacList *list, Toperand *dest, Toperand *op1)
     if(instruc_init(list, MOVE, dest, op1, NULL))
         return true;
     return false;
-}
-//TODO implementovat tuto funkci
-bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1)
-{
-
 }
 
 bool tac_createframe(TTacList *list)
@@ -516,4 +512,10 @@ Toperand *op_init(int type, char *name)
     op->type = type;
     op->name = name;
     return op;
+}
+bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, DEFMOVE, dest, op1, NULL))
+        return true;
+    return false;
 }

@@ -12,6 +12,7 @@
 #include "fsm.h"
 #include "sax.h"
 #include "seman.h"
+
 int main() {
 
     //ahoj, já jsem carbik a posilam comit
