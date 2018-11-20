@@ -715,7 +715,7 @@ bool savo(TSynCommon *sa_vars)
 
     while(true) //hlavni cast sava - cyklicke provadeni pravidel
     {
-
+    //todo berry Omezit konstanty na nezáporná čísla
 
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
