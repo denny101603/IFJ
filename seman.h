@@ -262,6 +262,10 @@ bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1
 
         bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
 
+        bool tac_while(TTacList *list);
+
+        bool tac_endwhile(TTacList *list);
+
 
 
 
@@ -315,7 +319,9 @@ enum instructions{
     LTEQ,
     NEQ,
     LOADPARAM,
-    DEFMOVE
+    DEFMOVE,
+    WHILE,
+    ENDWHILE
 };
 
 

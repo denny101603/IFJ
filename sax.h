@@ -63,8 +63,8 @@ typedef struct local_tables{
  * @param arr - pro spravnou funkci skeneru
  * @param buffer buffer (vyrovnavaci pamet) pro komunikaci mezi sax a savo
  */
-typedef struct SynCommon{
-
+typedef struct SynCommon
+{
     Tarray *arr;
     TBuffer *buffer;
     Tsymbol_table *ts_fun;
@@ -72,6 +72,7 @@ typedef struct SynCommon{
     int err_code; //pro uchovani pripadne chyby
     bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
     Toperand *dest; //operand kam se ma ulozit soucasne reseny vyraz
+    Toperand *ret; //kazda provedena akce se sem priradi, aby poznal navratovou hodnotu fce //todo denny zaridit v SA_alloc
     TSymtables_stack *local_tables;
 } TSynCommon;
 
