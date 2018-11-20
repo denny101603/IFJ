@@ -445,7 +445,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *label2 = op_init(NOBODY_CARES, temp_label);
+    Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str);
     if(label2 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -537,6 +537,78 @@ bool nt_expression(TSynCommon *sa_vars)
 
 bool nt_ifthenelse(TSynCommon *sa_vars)
 {
+    //ZACATEK TVORBY KODU*************************************//
+    char *bool_str = sax_temp_id_generator();
+    if(bool_str == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    Toperand *bool_temp = op_init(BOOLEAN, bool_str);
+    if(bool_temp == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+
+    char *cons_str = long_to_string(1);
+    if(cons_str == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    Toperand *cons_temp = op_init(BOOLEAN, cons_str);
+    if(cons_temp == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp); //true konstanta, kvuli urceni skoku
+
+    char *temp_cond_str = sax_temp_id_generator();
+    if(temp_cond_str == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str);
+    if(temp_cond == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    tac_defvar(sa_vars->tac_list, temp_cond); //promenna pro podminku
+    sa_vars->dest = temp_cond; //sem mi da savo vysledek vyrazu
+
+    char *temp_label = sax_temp_id_generator(); //label1
+    if(temp_label == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    Toperand *label1 = op_init(NOBODY_CARES, temp_label);
+    if(label1 == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    tac_lable(sa_vars->tac_list, label1); /////////////////////////////////////////////////////////////////////////////
+
+    char *temp_label2_str = sax_temp_id_generator(); //priprava pro label2
+    if(temp_label2_str == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+    Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str);
+    if(label2 == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace?
+    }
+
+    //KONEC TVORBY KODU*************************************//
+
     Ttoken *t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
         return false;
@@ -574,6 +646,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
     token_free(t1);
 
+    tac_jumpifneq(sa_vars->tac_list, label1, temp_cond, bool_temp);
+
     if(!nt_bodywhif(sa_vars))           //IFBODY
     {
         return false;
@@ -581,6 +655,9 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     t1 = get_next_token(sa_vars->arr, sa_vars->buffer);
     if(!err_check(t1, sa_vars))
         return false;
+
+    tac_jump(sa_vars->tac_list, label2);
+
     if(t1->type != KEY_ELSE) //ELSE
     {
         token_free(t1);
@@ -598,6 +675,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
     token_free(t1);
 
+    tac_lable(sa_vars->tac_list, label1);
+
     if(!nt_bodywhif(sa_vars))           //ELSEBODY
     {
         return false;
@@ -611,6 +690,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false;
     }
     token_free(t1);
+
+    tac_lable(sa_vars->tac_list, label2);
 
     if(nt_eolf(sa_vars))                //EOLF
     {
@@ -730,7 +811,7 @@ bool nt_right(TSynCommon *sa_vars)
         {
             //je to id_fce
             buffer_push_bottom(sa_vars->buffer, t1);
-            if(nt_callfce(sa_vars)) //todo seman: predam destinaci fci callfce, ta to tam ulozi
+            if(nt_callfce(sa_vars))
             {
                 return true;
             }
@@ -742,7 +823,7 @@ bool nt_right(TSynCommon *sa_vars)
     }
     //cekam EXPR
     buffer_push_bottom(sa_vars->buffer, t1);
-    if(savo(sa_vars)) //todo seman: predam destinaci kam ma vyraz ulozit
+    if(savo(sa_vars))
     {
         if(nt_eolf(sa_vars))                //eolf
         {
@@ -795,6 +876,7 @@ bool nt_assignment(TSynCommon *sa_vars)
                     token_free(t1);
                     return false; //todo denny dealokace neceho?
                 }
+                sa_vars->dest = op;
                 free(t1);
             }
 
@@ -868,7 +950,14 @@ bool nt_nextparams(TSynCommon *sa_vars)
                     else
                     {
                         symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
-                        //todo seman: loadparam(dest: t1->attribute)
+
+                        Toperand *op = op_init(t1->type, t1->attribute);
+                        if(op == NULL)
+                        {
+                            sa_vars->err_code = ERR_INTERNAL;
+                            return false; //todo denny dealokace?
+                        }
+                        tac_loadparam(sa_vars->tac_list, op);
 
                         free(t1);
                         if(nt_nextparams(sa_vars))
@@ -931,7 +1020,13 @@ bool nt_params(TSynCommon *sa_vars)
                 {
                     symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
 
-                    //todo seman: loadparam(dest. t1->attribute)
+                    Toperand *op = op_init(t1->type, t1->attribute);
+                    if(op == NULL)
+                    {
+                        sa_vars->err_code = ERR_INTERNAL;
+                        return false; //todo denny dealokace?
+                    }
+                    tac_loadparam(sa_vars->tac_list, op);
 
                     free(t1);
 
