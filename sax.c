@@ -165,7 +165,7 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
     return ret;
 }
 
-int startSA()
+int startSA(TTacList *list)
 {
     TSynCommon *sa_vars = alloc_sa();
     if(sa_vars == NULL)
@@ -185,6 +185,7 @@ int startSA()
         }
     }
     int ret = sa_vars->err_code;
+    list = sa_vars->tac_list;
     dealloc_sa(sa_vars);
     return ret;
 }
@@ -290,7 +291,8 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
             token_free(t2);
 
-            //todo seman: DEFFUNC(op1: t1->attribute)
+            //todo seman:
+            tac_deffunc(sa_vars->tac_list, op_init(t1->type, t1->attribute));
 
             if (!nt_params(sa_vars))
                 return false;
@@ -537,16 +539,32 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     }
     buffer_push_bottom(sa_vars->buffer, t1);
 
-    //todo seman: defvar(op1: vygeneruju nejakou docasnou promennou_#42)
+    //todo seman:
+    char *temp_id = sax_temp_id_generator();
+    if(temp_id == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace neceho?
+    }
 
-    if(!savo(sa_vars)) //todo seman: reknu savu aby mi to dal do tte docasne promenne_#42
+    Toperand *op = op_init(NOBODY_KNOWS, temp_id);
+    if(op == NULL)
+    {
+        sa_vars->err_code = ERR_INTERNAL;
+        return false; //todo denny dealokace neceho?
+    }
+
+    tac_defvar(sa_vars->tac_list, op);
+    sa_vars->dest = op; //reknu savu, aby mi ulozilo vyraz do teto promenne
+
+    if(!savo(sa_vars))
     {
         return false;
     }
     (*num_of_args)++; //pribyl argument
     if(nt_nextargs(sa_vars, num_of_args))
     {
-        //todo seman: PUSH(op1: ta docasna promenna_#42)
+        tac_push(sa_vars->tac_list, op);
         return true;
     }
     else
@@ -560,9 +578,23 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         return false;
     if(t1->type == OP_COMMA) //RULE33
     {
-        //todo seman: defvar(op1: vygeneruju nejakou docasnou promennou_#41)
+        //vygeneruju nejakou docasnou promennou a predam ji savu
+        char *temp_id = sax_temp_id_generator();
+        if(temp_id == NULL)
+        {
+            sa_vars->err_code = ERR_INTERNAL;
+            return false; //todo denny dealokoace neceho
+        }
+        Toperand *op = op_init(NOBODY_KNOWS, temp_id);
+        if(op == NULL)
+        {
+            sa_vars->err_code = ERR_INTERNAL;
+            return false; //todo denny dealokoace neceho
+        }
+        tac_defvar(sa_vars->tac_list, op);
+        sa_vars->dest = op; //reknu savu aby mi to dal do te docasne promenne
 
-        if(!savo(sa_vars)) //todo seman: reknu savu aby mi to dal do tte docasne promenne_#41
+        if(!savo(sa_vars))
         {
             buffer_push_bottom(sa_vars->buffer, t1);
             return false;
@@ -570,7 +602,7 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         (*num_of_args)++; //pribyl argument
         if(nt_nextargs(sa_vars, num_of_args))
         {
-            //todo seman: PUSH(op1: ta docasna promenna_#41)
+            tac_push(sa_vars->tac_list, op);
 
             token_free(t1); //povedlo se, muzu uvolnit
             return true;
@@ -647,7 +679,15 @@ bool nt_assignment(TSynCommon *sa_vars)
             if(symtab_find(sa_vars->local_tables->top->data, t1->attribute) == NULL) //jeste neni definovana
             {
                 symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, 1, NOBODY_CARES); //pridani promenne do lokalni TS
-                //todo seman: defvar(op1: t1->attribute)
+                //zalozeni nove promenne
+                Toperand *op = op_init(NOBODY_KNOWS, t1->attribute);
+                if(op == NULL)
+                {
+                    sa_vars->err_code = ERR_INTERNAL;
+                    return false; //todo denny dealokace neceho?
+                }
+                tac_defvar(sa_vars->tac_list, op);
+
                 free(t1);
             }
             else
@@ -1141,14 +1181,16 @@ TSynCommon *alloc_sa()
     TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
     TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
+    TTacList *tac_list = TAC_init();
 
-    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
+    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL || tac_list == NULL) //neuspesna alokace
     { //dealokace
         free(sa_vars);
         free(arr);
         free(buffer);
         free(local_tables);
         symtab_free(symtab_local);
+        TAC_delete_list(tac_list);
         return NULL;
     }
 
@@ -1161,6 +1203,7 @@ TSynCommon *alloc_sa()
         free(buffer);
         free(local_tables);
         symtab_free(symtab_local);
+        TAC_delete_list(tac_list);
         return NULL;
     }
     buffer_init(buffer);
@@ -1170,6 +1213,7 @@ TSynCommon *alloc_sa()
     sa_vars->buffer = buffer;
     sa_vars->arr = arr;
     sa_vars->boolean = false; //vychozi stav
+    sa_vars->tac_list = tac_list;
 
     TS_push(sa_vars->local_tables, symtab_local);
     return sa_vars;
@@ -1211,4 +1255,14 @@ bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params)
         return true;
     else
         return false;
+}
+
+char *sax_temp_id_generator()
+{
+    static unsigned long long cnt = 0;
+    char *name = (char *) malloc(sizeof(char)*32);
+    if(name == NULL)
+        return NULL;
+    sprintf(name, "&sax%llu", cnt++);
+    return name;
 }

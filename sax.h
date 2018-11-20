@@ -71,7 +71,7 @@ typedef struct SynCommon{
     TTacList *tac_list; //list pro triadresny kod
     int err_code; //pro uchovani pripadne chyby
     bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
-    char *dest; //nazev promenne kam se ma ulozit soucasne reseny vyraz
+    Toperand *dest; //operand kam se ma ulozit soucasne reseny vyraz
     TSymtables_stack *local_tables;
 } TSynCommon;
 
@@ -173,9 +173,10 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer);
 /**
 *	@brief provadi cely preklad
 *	@author Daniel Bubenicek
+ *	@param [in, out] list alokuje list a v prubehu SA ho naplni triadresnymi instrukcemi
 *	@return kod chyby/uspechu prekladu
 */
-int startSA();
+int startSA(TTacList *list);
 
 /**
 *	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)
@@ -322,7 +323,7 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars);
 TSynCommon *alloc_sa();
 
 /**
-*	@brief dealokuje vse ze struktury sa_vars vcetne ni samotne
+*	@brief dealokuje vse ze struktury sa_vars s vyjimkou tac_list (ocekava se predani jinam), dealokuje i sa_vars jako takove
 *	@author Daniel Bubenicek
  *	@param sa_vars dealokovana struktura
 */
@@ -343,5 +344,12 @@ void TS_stack_free(TSymtables_stack *ts_stack); //TODO berry by denny javadoc
  *	@return true pokud je to v poradku, jinak false
 */
 bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params);
+
+/**
+*	@brief generator nazvu pro docasne promenne pro sax
+*	@author Daniel Bubenicek
+ *	@return true pokud je to v poradku, jinak
+*/
+char *sax_temp_id_generator();
 
 #endif //IFJ2018_SAX_H
