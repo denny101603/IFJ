@@ -210,6 +210,11 @@ bool tac_move(TTacList *list, Toperand *dest, Toperand *op1)
         return true;
     return false;
 }
+//TODO implementovat tuto funkci
+bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1)
+{
+
+}
 
 bool tac_createframe(TTacList *list)
 {
