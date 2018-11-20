@@ -348,8 +348,16 @@ bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params);
 /**
 *	@brief generator nazvu pro docasne promenne pro sax
 *	@author Daniel Bubenicek
- *	@return true pokud je to v poradku, jinak
+ *	@return dynalokovany string, pri neuspesne alokaci NULL
 */
 char *sax_temp_id_generator();
+
+/**
+*	@brief z longu udela string napr. 654 -> "564"
+*	@author Daniel Bubenicek
+ *	@return string, pri neuspesne alokaci NULL
+*/
+char *long_to_string(long num);
+
 
 #endif //IFJ2018_SAX_H
