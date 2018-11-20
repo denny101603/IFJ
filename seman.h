@@ -77,10 +77,11 @@ void op_delete_buffer(Ttac_buffer *buffer);
 
 
 /**
- *
- * @param type
- * @param name
- * @return operand, pokud se nepovede alokace, NULL
+ * @brief alokuje strukturu Toperand a naplni ji
+ * @author Daniel Bubenicek
+ * @param type typ operandu
+ * @param name jmeno promenne nebo u konstant hodnota
+ * @return operand, pokud se nepovede alokace tak NULL
  */
 Toperand *op_init(int type, char *name);
 
@@ -97,7 +98,7 @@ typedef struct tac_list{
 /**
  * @brief Funkce pro vytvoreni a alokaci seznamu triadresnych instrukci (Konstruktor).
  * @author Jan Beran
- * @return Ukazatel na nove vytvoreny seznam typu TTacList
+ * @return Ukazatel na nove vytvoreny seznam typu TTacList nebo NULL pri neuspesne alokaci
  */
 TTacList *TAC_init();
 
@@ -143,7 +144,7 @@ TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem);
 TThreeAC *TAC_remove(TTacList *list);
 
 /**
- * @brief Funkce kompletne smaze a dealokuje vsechny prvky seznamu list i seznam samotny, ktery nastavi na NULL.
+ * @brief Funkce kompletne smaze a dealokuje vsechny prvky seznamu list i seznam samotny, ktery nastavi na NULL. //TODO BERRY! by denny seznam jako takovy nedealokujes, naprav to! :D
  * @author Jan Beran
  * @param list Seznam ke smazani.
  */

@@ -321,7 +321,7 @@ void delete_stack(TStack *stack)
 char *savo_name_generator()
 {
     static unsigned long count = 0; // :P
-    char *ret = malloc(sizeof(char)*20);
+    char *ret = malloc(sizeof(char)*20); //todo berry by denny kontrola alokace, predpona
     ltoa(count, ret, 10);
     count++;
     return ret;
@@ -710,7 +710,7 @@ bool savo(TSynCommon *sa_vars)
    {
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
        delete_buffer(internal_buffer);
-       tac_move(sa_vars->tac_list, (Toperand *)sa_vars->dest, stack->top->operand); //TODO smaz to  (Toperand *) vole :)
+       tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
        return true;
    }
 }
