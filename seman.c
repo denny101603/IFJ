@@ -130,10 +130,58 @@ void TAC_delete_list(TTacList *list)
         /**konec ladiciho vypisu**/
         free(TAC_remove(list));
     }
-
+    free(list);
+    list = NULL;
 }
 
 
+/*typedef struct tac_buffer{
+    Toperand *top;
+} Ttac_buffer;*/
+
+Ttac_buffer *op_buffer_init()
+{
+    Ttac_buffer *buffer = malloc(sizeof(Ttac_buffer));
+    if(buffer == NULL)
+        return NULL;
+    buffer->top = NULL;
+    return buffer;
+}
+
+void op_push(Ttac_buffer *buffer, Toperand *operand)
+{
+    if(buffer == NULL || operand == NULL)
+        return;
+
+    TTAC_Elem *elem = malloc(sizeof(TTAC_Elem));
+    if(elem == NULL)
+        return;
+
+    elem->operand = operand;
+
+    elem->prev = buffer->top;
+    buffer->top = elem;
+}
+
+Toperand *op_pop(Ttac_buffer *buffer)
+{
+    TTAC_Elem *elem = buffer->top;
+    buffer->top = buffer->top->prev;
+    Toperand *ret = elem->operand;
+    free(elem);
+    return ret;
+}
+
+void op_delete_buffer(Ttac_buffer *buffer)
+{
+    Toperand *temp = NULL;
+    while(buffer->top != NULL)
+    {
+        temp = op_pop(buffer);
+        free(temp);
+    }
+    free(buffer);
+}
 
 
 bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2)
@@ -464,4 +512,10 @@ Toperand *op_init(int type, char *name)
     op->type = type;
     op->name = name;
     return op;
+}
+bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, DEFMOVE, dest, op1, NULL))
+        return true;
+    return false;
 }
