@@ -21,81 +21,81 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-void gen_defvar(TThreeAC *instruct);
+void gen_defvar(TThreeAC *instruct){}
 
-void gen_move(TThreeAC *instruct);
+void gen_move(TThreeAC *instruct){}
 
-void gen_defmove_const(TThreeAC *instruct);
+void gen_defmove_const(TThreeAC *instruct){}
 
-void gen_createframe(TThreeAC *instruct);
+void gen_createframe(TThreeAC *instruct){}
 
-void gen_pushframe(TThreeAC *instruct);
+void gen_pushframe(TThreeAC *instruct){}
 
-void gen_popframe(TThreeAC *instruct);
+void gen_popframe(TThreeAC *instruct){}
 
-void gen_loadparam(TThreeAC *instruct);
+void gen_loadparam(TThreeAC *instruct){}
 
-void gen_push(TThreeAC *instruct);
+void gen_push(TThreeAC *instruct){}
 
-void gen_pop(TThreeAC *instruct);
+void gen_pop(TThreeAC *instruct){}
 
-void gen_add(TThreeAC *instruct);
+void gen_add(TThreeAC *instruct){}
 
-void gen_sub(TThreeAC *instruct);
+void gen_sub(TThreeAC *instruct){}
 
-void gen_mul(TThreeAC *instruct);
+void gen_mul(TThreeAC *instruct){}
 
-void gen_div(TThreeAC *instruct);
+void gen_div(TThreeAC *instruct){}
 
-void gen_call(TThreeAC *instruct);
+void gen_call(TThreeAC *instruct){}
 
-void gen_return(TThreeAC *instruct);
+void gen_return(TThreeAC *instruct){}
 
-void gen_int2float(TThreeAC *instruct);
+void gen_int2float(TThreeAC *instruct){}
 
-void gen_float2int(TThreeAC *instruct);
+void gen_float2int(TThreeAC *instruct){}
 
-void gen_int2char(TThreeAC *instruct);
+void gen_int2char(TThreeAC *instruct){}
 
-void gen_concat(TThreeAC *instruct);
+void gen_concat(TThreeAC *instruct){}
 
-void gen_setchar(TThreeAC *instruct);
+void gen_setchar(TThreeAC *instruct){}
 
-void gen_isint(TThreeAC *instruct);
+void gen_isint(TThreeAC *instruct){}
 
-void gen_isfloat(TThreeAC *instruct);
+void gen_isfloat(TThreeAC *instruct){}
 
-void gen_isstring(TThreeAC *instruct);
+void gen_isstring(TThreeAC *instruct){}
 
-void gen_isbool(TThreeAC *instruct);
+void gen_isbool(TThreeAC *instruct){}
 
-void gen_lable(TThreeAC *instruct);
+void gen_lable(TThreeAC *instruct){}
 
-void gen_deffunc(TThreeAC *instruct);
+void gen_deffunc(TThreeAC *instruct){}
 
-void gen_jump(TThreeAC *instruct);
+void gen_jump(TThreeAC *instruct){}
 
-void gen_jumpifeq(TThreeAC *instruct);
+void gen_jumpifeq(TThreeAC *instruct){}
 
-void gen_jumpifneq(TThreeAC *instruct);
+void gen_jumpifneq(TThreeAC *instruct){}
 
-void gen_jumpifgt(TThreeAC *instruct);
+void gen_jumpifgt(TThreeAC *instruct){}
 
-void gen_jumpiflt(TThreeAC *instruct);
+void gen_jumpiflt(TThreeAC *instruct){}
 
-void gen_dprint(TThreeAC *instruct);
+void gen_dprint(TThreeAC *instruct){}
 
-void gen_eq(TThreeAC *instruct);
+void gen_eq(TThreeAC *instruct){}
 
-void gen_gt(TThreeAC *instruct);
+void gen_gt(TThreeAC *instruct){}
 
-void gen_lt(TThreeAC *instruct);
+void gen_lt(TThreeAC *instruct){}
 
-void gen_gteq(TThreeAC *instruct);
+void gen_gteq(TThreeAC *instruct){}
 
-void gen_lteq(TThreeAC *instruct);
+void gen_lteq(TThreeAC *instruct){}
 
-void gen_neq(TThreeAC *instruct);
+void gen_neq(TThreeAC *instruct){}
 
 void GEN_start(TTacList *list)
 {
