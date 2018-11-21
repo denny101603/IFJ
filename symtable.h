@@ -78,6 +78,7 @@ Tsymbol_table_item *symtab_find(Tsymbol_table *t, const char *key);
 *	@brief zruseni vsech itemu, tabulka zustane prazdna
 *	@author Daniel Bubenicek
 *	@param[in, out] t - rusena tabulka
+ *	@warning nedealokuje item->key
 */
 void symtab_clear(Tsymbol_table *t);
 

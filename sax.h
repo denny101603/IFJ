@@ -123,7 +123,7 @@ Ttoken *buffer_popTop(TBuffer *buffer);
 Ttoken *buffer_popBottom(TBuffer *buffer);
 
 /**
- * @brief Funkce vymaze zasobnik.
+ * @brief Funkce vymaze zasobnik - deaalokuje atribut tokenu, token, obalovaci strukturu i buffer jako takovy (sam sebe)
  * @author Jan Beran
  * @param buffer Zasobnik k vymazani.
  */
@@ -162,8 +162,6 @@ void TS_stack_init(TSymtables_stack *stack);
   */
 Tsymbol_table *TS_pop(TSymtables_stack *stack);
 
-
-
 /**
  * @brief Funkce vraci dalsi token a na zaklade toho, zda se v bufferu nachazi nejake tokeny, je bere bud z nej, nebo ze stdin pomoci scanneru.
  * @author Jan Beran, Daniel Bubenicek (arr)
@@ -179,7 +177,7 @@ Ttoken *get_next_token(TSynCommon *sa_vars);
  *	@param [in, out] list alokuje list a v prubehu SA ho naplni triadresnymi instrukcemi
 *	@return kod chyby/uspechu prekladu
 */
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin);
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup);
 
 /**
 *	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)
