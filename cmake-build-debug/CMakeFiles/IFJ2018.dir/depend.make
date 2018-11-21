@@ -3,6 +3,8 @@
 
 CMakeFiles/IFJ2018.dir/code_gen.c.obj: ../code_gen.c
 CMakeFiles/IFJ2018.dir/code_gen.c.obj: ../code_gen.h
+CMakeFiles/IFJ2018.dir/code_gen.c.obj: ../fsm.h
+CMakeFiles/IFJ2018.dir/code_gen.c.obj: ../seman.h
 
 CMakeFiles/IFJ2018.dir/fsm.c.obj: ../err_codes.h
 CMakeFiles/IFJ2018.dir/fsm.c.obj: ../fsm.c

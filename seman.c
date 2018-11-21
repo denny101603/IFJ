@@ -519,3 +519,17 @@ bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1)
         return true;
     return false;
 }
+
+bool tac_while(TTacList *list)
+{
+    if(instruc_init(list, WHILE, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool tac_endwhile(TTacList *list)
+{
+    if(instruc_init(list, ENDWHILE, NULL, NULL, NULL))
+        return true;
+    return false;
+}

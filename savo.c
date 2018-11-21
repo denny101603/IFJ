@@ -16,7 +16,7 @@
 */
 #include "savo.h"
 #include "symtable.h"
-#include <string.h> //todo delete
+
 
 #define NUM_OF_RULES 22
 #define RULE_LENGTH 3
@@ -44,7 +44,7 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = { //E->
         {EXPRESSION, OP_DIV, EXPRESSION}, //14
         {EXPRESSION, OP_MORE_1, EXPRESSION}, //15
         {EXPRESSION, OP_LESS_1, EXPRESSION},//16
-        {EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+        {EXPRESSION, OP_EQAL_1, EXPRESSION},//17
         {EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
         {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
         {EXPRESSION, OP_NOT_EQ_1, EXPRESSION}, //20
@@ -55,23 +55,24 @@ int rules[NUM_OF_RULES][RULE_LENGTH] = { //E->
  * @brief Precedencni tbaulka pro syntaktickou analyzu vyrazu.
  * @author Jan Carba, Jan Beran
  */
-char prec_table[15][15] = {              //in
-        /*           + 	  -   *	  /	  (	  )	 id	 con  <   >  <=	  >=  !=  ==   $ */
-        /* + */    {'>','>','<','<','<','>','<','<','>','>','>','>','>','>','>'},
-        /* - */    {'>','>','<','<','<','>','<','<','>','>','>','>','>','>','>'},
-        /* * */    {'>','>','>','>','<','>','<','<','>','>','>','>','>','>','>'},
-        /* / */    {'>','>','>','>','<','>','<','<','>','>','>','>','>','>','>'},
-        /* ( */    {'<','<','<','<','<','=','<','<','<','<','<','<','<','<','?'},
-        /* ) */    {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-        /* id */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-/*stack  cons */   {'>','>','>','>','?','>','?','?','>','>','>','>','>','>','>'},
-        /* < */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* > */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* <= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* >= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* != */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* == */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','>'},
-        /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','?'}
+char prec_table[16][16] = {              //in
+        /*           + 	  -   *	  /	  (	  )	 id	 con nil  <   >  <=	  >=  !=  ==   $ */
+        /* + */    {'>','>','<','<','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* - */    {'>','>','<','<','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* * */    {'>','>','>','>','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* / */    {'>','>','>','>','<','>','<','<','?','>','>','>','>','>','>','>'},
+        /* ( */    {'<','<','<','<','<','=','<','<','<','<','<','<','<','<','<','?'},
+        /* ) */    {'>','>','>','>','?','>','?','?','?','>','>','>','>','>','>','>'},
+        /* id */   {'>','>','>','>','?','>','?','?','?','>','>','>','>','>','>','>'},
+/*stack  cons */   {'>','>','>','>','?','>','?','?','?','>','>','>','>','>','>','>'},
+        /*nil*/    {'?','?','?','?','?','>','?','?','?','?','?','?','?','>','>','>'},
+        /* < */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* > */    {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* <= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* >= */   {'<','<','<','<','<','>','<','<','?','?','?','?','?','?','?','>'},
+        /* != */   {'<','<','<','<','<','>','<','<','<','?','?','?','?','?','?','>'},
+        /* == */   {'<','<','<','<','<','>','<','<','<','?','?','?','?','?','?','>'},
+        /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','<','?'}
 };
 //TODO ALL Zkontrolovat to po Janu Carbovi :). By Berry: pokud bude savo naoko fungovat, ale jinak, mrknout se sem.
 
@@ -107,33 +108,35 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case INTEGER:
         case STRING_1:
         case FLOAT_2:
-        case KEY_NIL:
             input_terminal = 7;
             break;
-        case OP_LESS_1:
+        case KEY_NIL:
             input_terminal = 8;
-            break;
-        case OP_MORE_1:
+                break;
+        case OP_LESS_1:
             input_terminal = 9;
             break;
-        case OP_LESS_EQUAL:
+        case OP_MORE_1:
             input_terminal = 10;
             break;
-        case OP_MORE_EQUAL:
+        case OP_LESS_EQUAL:
             input_terminal = 11;
             break;
-        case OP_NOT_EQ_1:
+        case OP_MORE_EQUAL:
             input_terminal = 12;
             break;
-        case OP_EQAL_2:
+        case OP_NOT_EQ_1:
             input_terminal = 13;
+            break;
+        case OP_EQAL_1:
+            input_terminal = 14;
             break;
         case EOF_STATE: //upravovano
         case EOL_1:
         case OP_COMMA:
         case KEY_THEN:
         case KEY_DO:
-            input_terminal = 14;
+            input_terminal = 15;
             break;
         default:
             input_terminal = -1;
@@ -165,29 +168,31 @@ char get_action(Ttoken *input_token, Ttoken *stack_token)
         case INTEGER:
         case STRING_1:
         case FLOAT_2:
-        case KEY_NIL:
             stack_terminal = 7;
             break;
-        case OP_LESS_1:
+        case KEY_NIL:
             stack_terminal = 8;
             break;
-        case OP_MORE_1:
+        case OP_LESS_1:
             stack_terminal = 9;
             break;
-        case OP_LESS_EQUAL:
+        case OP_MORE_1:
             stack_terminal = 10;
             break;
-        case OP_MORE_EQUAL:
+        case OP_LESS_EQUAL:
             stack_terminal = 11;
             break;
-        case OP_NOT_EQ_1:
+        case OP_MORE_EQUAL:
             stack_terminal = 12;
             break;
-        case OP_EQAL_2:
+        case OP_NOT_EQ_1:
             stack_terminal = 13;
             break;
-        case BOTTOM_TOKEN:
+        case OP_EQAL_1:
             stack_terminal = 14;
+            break;
+        case BOTTOM_TOKEN:
+            stack_terminal = 15;
             break;
         default:
             stack_terminal = -1;
@@ -274,7 +279,7 @@ Ttoken *pop(TStack *stack)
     return output;
 }
 
-Ttoken *pop_extended(TStack *stack, Toperand **op)
+Ttoken *pop_extended(TStack *stack, Toperand *op)
 {
     if (stack == NULL)
         return NULL;
@@ -282,8 +287,10 @@ Ttoken *pop_extended(TStack *stack, Toperand **op)
     stack->top = stack->top->prev;
     stack->top->next = NULL;
     Ttoken *output = temp->data;
+
     if(temp->operand != NULL)
-        *(op) = temp->operand;
+        op = temp->operand;
+
     free(temp);
     return output;
 }
@@ -321,7 +328,7 @@ TStackElem *get_first_terminal(TStack *stack)
 Ttoken *get_token_from_elem(TStackElem *elem)
 {
     //fprintf(stderr, "*********************** %d\n", elem->data->type);
-    return elem->data; //todo dealok
+    return elem->data;
 }
 
 void delete_stack(TStack *stack)
@@ -336,30 +343,44 @@ void delete_stack(TStack *stack)
 }
 char *savo_name_generator()
 {
-    static long count = 0; // :P
-    // printf("%lo\n", count);
-    char *ret = (char *)malloc(sizeof(char)*22); //20 pro ulong, 1 pro & a jedno pro \0
-    ret[0] = '&';
-    if(ret == NULL)
+    static unsigned long long cnt = 0;
+    char *name = (char *) malloc(sizeof(char)*32);
+    if(name == NULL)
         return NULL;
-    ltoa(count, (ret+sizeof(char)), 10); //long to int
-    //printf("%s\n", ret);
-    count++;
-    return ret;
+    sprintf(name, "&savo%llu", cnt++);
+    return name;
 }
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
-    push(stack, stack->top,input_token, NULL); //TODO!!! Kde vsude pouzivam action push?
+    push(stack, stack->top,input_token, NULL);
 
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(ret->type == FLOAT_2) // cislo
+    {
+        if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        {
+            action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
+            return  NULL;
+        }
+    }
+    if(ret->type == INTEGER && strtol(ret->attribute, NULL, 10)<0)
+    {
+        action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
+        return NULL;
+    }
+    if(ret->type == LEX_ERROR)
+    {
+        action_err(stack, sa_vars, LEX_ERROR, internal_buffer);
+        return  NULL;
+    }
     buffer_push_top(internal_buffer, ret);
     //pokud jsem dostal nil jako dalsi token v poradi A pred nim neni zavorka NEBO je nil na topu (byl dostan) A soucasny znak neni ukoncovaci
-    if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    /*if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
     {
         action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
         return NULL;
-    }
+    }*/
     //fprintf(stderr,"\n\n*******INPUT TOKEN JE: %d\n\n", ret->type);
     return ret;
 }
@@ -377,13 +398,31 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
 
     //nacteme dalsi token a okamzite ukladame do interniho bufferu
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    if(ret->type == FLOAT_2) // cislo
+    {
+        if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        {
+            action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
+            return  NULL;
+        }
+    }
+    if(ret->type == INTEGER && strtol(ret->attribute, NULL, 10)<0)
+    {
+        action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
+        return NULL;
+    }
+    if(ret->type == LEX_ERROR)
+    {
+        action_err(stack, sa_vars, LEX_ERROR, internal_buffer);
+        return  NULL;
+    }
     buffer_push_top(internal_buffer, ret);
     //pokud jsem dostal nil jako dalsi token v poradi A pred nim neni zavorka NEBO je nil na topu (byl dostan) A soucasny znak neni ukoncovaci
-    if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
+    /*if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
     {
         action_err(stack, sa_vars, ERR_SEM_TYPE, internal_buffer);
         return NULL;
-    }
+    }*/
     return ret;
 }
 
@@ -399,14 +438,21 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
 {
+    fprintf(stderr, "savo err %d\n", error);
     //ERR_SYN je osetrovan pouhym vracenim false:
     // sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli je to vyraz. Toto nema zpusobit pad.
     if (error != ERR_SYN)
         sa_vars->err_code = error;
+
     if (stack != NULL)
+    {
         delete_stack(stack);
+        free(stack);
+    }
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
+    delete_buffer(internal_buffer);
+    free(internal_buffer);
 
     switch (error) // err_sem_param nenastane
     {
@@ -492,6 +538,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     //operandy pro semanticke akce
     Toperand *operand1 = NULL;
     Toperand *operand2 = NULL;
+    Toperand *operand3 = NULL;
     Toperand *dest =NULL;
     Tsymbol_table_item *item = NULL;
 
@@ -502,7 +549,24 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             continue;
         else
         {
-            rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, &operands[RULE_LENGTH-1-i]);
+            switch(i)
+            {
+                case 0:
+                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand3);
+                    break;
+                case 1:
+                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand2);
+                    break;
+                case 2:
+                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand1);
+                    break;
+                default:
+                    break;
+            }
+            operands[0] = operand1;
+            operands[1] = operand2;
+            operands[2] = operand3;
+
             //abych mel v poli rule_tokens[] tokeny podle komutativity ([0] operand1, [1]operace, [2] operand2;
             //tzn treba [0]2[1]/[2]5 pro vyraz 2/5
             //ve stejnem poradi jsou take operandy v poli operands
@@ -589,7 +653,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             tac_defvar(sa_vars->tac_list, dest);
             tac_lt(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
-        case 17://{EXPRESSION, OP_EQAL_2, EXPRESSION},//17
+        case 17://{EXPRESSION, OP_EQAL_1, EXPRESSION},//17
             dest = op_init(NOBODY_KNOWS,savo_name_generator());
             tac_defvar(sa_vars->tac_list, dest);
             tac_eq(sa_vars->tac_list, dest, operands[2], operands[0]);
@@ -636,24 +700,46 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         return false;
     token_init(expr_token);
     expr_token->type = EXPRESSION;
-
+    if(rule_tokens[0]->type == KEY_NIL)
+        expr_token->attribute = "nil";
     push(stack, stack->top, expr_token, dest);
     return true;
 }
 
 bool savo(TSynCommon *sa_vars)
 {
+    
+    sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
     Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
-    if(input_token == NULL) //error handle //todo dennyho err_check()
+    if(input_token == NULL) //error handle
     {
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
         return false;
     }
+    else
     if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky kvuli a = EOL
     {
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
+    }
+    if(input_token->type == FLOAT_2) // cislo
+    {
+        if(strtof(input_token->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        {
+            action_err(NULL, sa_vars, ERR_SEM_MISC, NULL);
+            return false;
+        }
+    }
+    if(input_token->type == INTEGER && strtol(input_token->attribute, NULL, 10)<0)
+    {
+        action_err(NULL, sa_vars, ERR_SEM_MISC, NULL);
+        return false;
+    }
+    if(input_token->type == LEX_ERROR)
+    {
+        action_err(NULL, sa_vars, LEX_ERROR, NULL);
+        return false;
     }
 
     /*Ladici vypis*/
@@ -685,8 +771,8 @@ bool savo(TSynCommon *sa_vars)
 
     while(true) //hlavni cast sava - cyklicke provadeni pravidel
     {
-        //todo povolit nil == nil
-        //todo nil != nil
+
+
         /*Ladici vypis*/
         //fprintf(stderr, "Zacatek hlavniho while cyklu\n");
         /*Konec l.v.*/
@@ -709,7 +795,7 @@ bool savo(TSynCommon *sa_vars)
         {
             if(input_token->type == OP_MORE_1 ||
                input_token->type == OP_LESS_1 ||
-               input_token->type == OP_EQAL_2 ||
+               input_token->type == OP_EQAL_1 ||
                input_token->type == OP_LESS_EQUAL ||
                input_token->type == OP_MORE_EQUAL ||
                input_token->type == OP_NOT_EQ_1)
@@ -772,8 +858,15 @@ bool savo(TSynCommon *sa_vars)
    else
    {
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
+
        delete_buffer(internal_buffer);
+       free(internal_buffer);
+
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
+
+       delete_stack(stack);
+       free(stack);
+
        return true;
    }
 }

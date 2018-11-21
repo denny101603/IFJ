@@ -84,7 +84,7 @@ Ttoken *pop(TStack *stack);
  * @param op ukazatel na operand, do ktereho davame hodnotu operandu
  * @return Popnuty token.
  */
-Ttoken *pop_extended(TStack *stack, Toperand **op);
+Ttoken *pop_extended(TStack *stack, Toperand *op);
 /**
  * @brief Funkce vymaze zasobnik vcetne prvni polozky.
  * @author Jan Beran
