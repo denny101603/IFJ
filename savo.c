@@ -355,7 +355,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
 {
     push(stack, stack->top,input_token, NULL);
 
-    Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
     {
         if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
@@ -397,7 +397,7 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
     push(stack, stack->top, input_token, NULL); //push input tokenu na top
 
     //nacteme dalsi token a okamzite ukladame do interniho bufferu
-    Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
     {
         if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
@@ -694,7 +694,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     Ttoken *temp = pop(stack); // popnuti mensitka
     if(temp->type != ACTION_MENSITKO) //pokud jsem jako dalsi znak nepopnul mensitko, tak je nekde chyba - u me ne, takze hazim ERR_SEM
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
-    free(temp);
+    token_free(temp);
     Ttoken *expr_token = malloc(sizeof(Ttoken));
     if (expr_token == NULL)
         return false;
@@ -703,6 +703,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     if(rule_tokens[0]->type == KEY_NIL)
         expr_token->attribute = "nil";
     push(stack, stack->top, expr_token, dest);
+    //token free trules tokens
     return true;
 }
 
@@ -711,7 +712,7 @@ bool savo(TSynCommon *sa_vars)
     
     sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
-    Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
+    Ttoken *input_token = get_next_token(sa_vars); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
     {
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);

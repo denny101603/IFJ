@@ -1424,12 +1424,12 @@ void GEN_start(TTacList *list)
 {
     TThreeAC *I2 = list->first;
     TThreeAC *first_while;
-    int while_count;
+    int while_count = 0;
 
     //generace .IFJcode18 a podobné píčoviny
     pream();
 
-    while(I2 != list->first)
+    while(I2 != NULL)
     {
         if(I2->name == WHILE)
         {
@@ -1450,7 +1450,7 @@ void GEN_start(TTacList *list)
         I2 = I2->next;
     }
 
-    I2 = TAC_remove(list);//todo otocit
+    I2 = TAC_remove(list);
     while (I2 != NULL)
     {
         switch (I2->name) {
