@@ -21,8 +21,9 @@ int main() {
 
     //z toho by se jeden posral(hlavně denny)
     printf("Hell, World!\n");
-    TTacList *tac_list;
+    TTacList *tac_list = TAC_init();
     printf("navrat SA: %i", startSA(tac_list));
+    TAC_delete_list(tac_list);
 /*    Tarray arr;
     arr_init(&arr); //Pole znak
     get_token(&arr);
