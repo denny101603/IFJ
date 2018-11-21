@@ -60,12 +60,13 @@ TThreeAC *TAC_remove(TTacList *list)
         return NULL;
     }
     //alespon jeden prvek
-    TThreeAC *ret = list->last;
-    if(list->last == list->first) //jediny prvek => last se do NULL hodi sam, firstu je treba pomoci :)
-        list->first = NULL;
-    list->last = list->last->prev; // if list->last->prev == NULL, neni problem, stale OK
-    if(list->last != NULL) //pokud NULL neni, korektne zaslepim
-        list->last->next = NULL;
+    TThreeAC *ret = list->first;
+    if(list->last == list->first) //jediny prvek => first se do NULL hodi sam, lastu je treba pomoci :)
+        list->last = NULL;
+
+    list->first = list->first->next; // if list->first->next == NULL, neni problem, stale OK
+    if(list->first != NULL) //pokud NULL neni, korektne zaslepim
+        list->first->prev = NULL;
     ret->prev = NULL; //odpojeni od listu
     ret->next = NULL; //jistota, neni nutne
     return ret;

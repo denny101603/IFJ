@@ -179,6 +179,8 @@ void pream()
 
     //začátek kódu
     printf("LABEL main\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
 
 }
 
@@ -1420,7 +1422,7 @@ void gen_neq(TThreeAC *instruct)
 
 void GEN_start(TTacList *list)
 {
-    TThreeAC *I2 = list->last;
+    TThreeAC *I2 = list->first; //todo Prvni instrukce je na pozici list->first!!! (fronta) -> tohle je asi blbe
     TThreeAC *first_while;
     int while_count;
 
@@ -1442,13 +1444,13 @@ void GEN_start(TTacList *list)
         }
         if((I2->name == DEFVAR && while_count != 0) || (I2->name == DEFMOVE && while_count != 0))
         {
-            I2 = TAC_remove_this(list, I2);
-            TAC_insert_post(list, first_while, I2);
+            I2 = TAC_remove_this(list, I2); //todo :)
+            TAC_insert_post(list, first_while, I2);//todo
         }
-        I2 = I2->prev;
+        I2 = I2->next;
     }
 
-    I2 = TAC_remove(list);
+    I2 = TAC_remove(list);//todo otocit
     while (I2 != NULL)
     {
         switch (I2->name) {

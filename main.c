@@ -12,6 +12,7 @@
 #include "fsm.h"
 #include "sax.h"
 #include "seman.h"
+#include "code_gen.h"
 
 int main() {
 
@@ -23,6 +24,7 @@ int main() {
     printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
     printf("navrat SA: %i", startSA(tac_list));
+    GEN_start(tac_list);
     TAC_delete_list(tac_list);
 /*    Tarray arr;
     arr_init(&arr); //Pole znak
