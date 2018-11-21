@@ -1422,7 +1422,7 @@ void gen_neq(TThreeAC *instruct)
 
 void GEN_start(TTacList *list)
 {
-    TThreeAC *I2 = list->first; //todo Prvni instrukce je na pozici list->first!!! (fronta) -> tohle je asi blbe
+    TThreeAC *I2 = list->first;
     TThreeAC *first_while;
     int while_count;
 
