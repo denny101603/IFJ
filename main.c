@@ -33,11 +33,11 @@ int main() {
     printf("navrat SA: %i", startSA(tac_list, symtabs_bin, tokens_backup));
     GEN_start(tac_list);
 
-    //TAC_delete_list(tac_list);
-    //TS_stack_free(symtabs_bin);
-    //free(symtabs_bin);
+    TAC_delete_list(tac_list);
+    TS_stack_free(symtabs_bin);
+    free(symtabs_bin);
 
-    //delete_buffer(tokens_backup);
+    delete_buffer(tokens_backup);
 
     return 0;
 }

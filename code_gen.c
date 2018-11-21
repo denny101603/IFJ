@@ -1568,7 +1568,7 @@ void GEN_start(TTacList *list)
                 gen_neq(I2);
                 break;
         }
-        TThreeAC_delete(I2);
+        //TThreeAC_delete(I2);
         I2 = TAC_remove(list);
     }
 }
