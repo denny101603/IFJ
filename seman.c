@@ -89,6 +89,11 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
 
 }
 
+TThreeAC *TAC_remove_this(TTacList *list, TThreeAC *operand)
+{
+
+}
+
 TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
 {
     //neexistujici seznam, prvek, prazdny seznam, jednoprvkovy seznam -> ERR
