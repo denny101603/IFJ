@@ -717,8 +717,7 @@ bool savo(TSynCommon *sa_vars)
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
         return false;
     }
-    else
-    if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky kvuli a = EOL
+    else if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky kvuli a = EOL
     {
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
