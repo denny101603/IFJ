@@ -120,6 +120,46 @@ TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
     }
     return ret;
 }
+void TThreeAC_delete(TThreeAC* tac)
+{
+    if(tac != NULL)
+    {
+       if(tac->destination != NULL)
+       {
+           if(tac->destination->name != NULL)
+           {
+               if(tac->destination->name[0] == '&')
+               {
+                   free(tac->destination->name);
+               }
+           }
+           free(tac->destination);
+       }
+        if(tac->op_1 != NULL)
+        {
+            if(tac->op_2->name != NULL)
+            {
+                if(tac->op_2->name[0] == '&')
+                {
+                    free(tac->op_2->name);
+                }
+            }
+            free(tac->op_2);
+        }
+        if(tac->op_1 != NULL)
+        {
+            if(tac->op_1->name != NULL)
+            {
+                if(tac->op_1->name[0] == '&')
+                {
+                    free(tac->op_1->name);
+                }
+            }
+            free(tac->op_1);
+        }
+    free(tac);
+    }
+}
 
 void TAC_delete_list(TTacList *list)
 {
@@ -135,13 +175,8 @@ void TAC_delete_list(TTacList *list)
         printf("_________________________\n");*/
         /**konec ladiciho vypisu**/
         TThreeAC* temp= TAC_remove(list);
-        free(temp->destination->name);
-        free(temp->destination);
-        free(temp->op_1->name);
-        free(temp->op_1);
-        free(temp->op_2->name);
-        free(temp->op_2);
-        free(temp);
+        //zkontrolovat, ze temp i operandy z temp != NULL;
+        TThreeAC_delete(temp);
     }
     free(list);
     list = NULL;

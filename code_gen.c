@@ -1444,8 +1444,8 @@ void GEN_start(TTacList *list)
         }
         if((I2->name == DEFVAR && while_count != 0) || (I2->name == DEFMOVE && while_count != 0))
         {
-            I2 = TAC_remove_this(list, I2); //todo :)
-            TAC_insert_post(list, first_while, I2);//todo
+            I2 = TAC_remove_this(list, I2);
+            TAC_insert_post(list, first_while, I2);
         }
         I2 = I2->next;
     }
@@ -1569,6 +1569,7 @@ void GEN_start(TTacList *list)
                 gen_neq(I2);
                 break;
         }
+        TThreeAC_delete(I2);
         I2 = TAC_remove(list);
     }
 }
