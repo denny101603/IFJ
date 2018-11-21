@@ -106,7 +106,7 @@ void delete_buffer(TBuffer *buffer)
         buffer->top = buffer->top->prev;
         if(temp != NULL)
         {
-            if(temp->data != NULL) token_free(temp->data);
+            if(temp->data != NULL) free(temp->data);
             free(temp);
         }
     }
@@ -165,7 +165,7 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer)
     return ret;
 }
 
-int startSA(TTacList *list)
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin)
 {
     TSynCommon *sa_vars = alloc_sa();
     if(sa_vars == NULL)
@@ -338,7 +338,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
             tac_return(sa_vars->tac_list, op);
 
             //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
-            symtab_free(TS_pop(sa_vars->local_tables));
+            TS_push(sa_vars->symtabs_bin, TS_pop(sa_vars->local_tables));
 
             if (!nt_eolf(sa_vars))
                 return false;
@@ -1411,15 +1411,17 @@ TSynCommon *alloc_sa()
     Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
     TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
     TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
+    TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
     //TTacList *tac_list = TAC_init(); //todo denny uprava + v ifu dole
 
-    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL /*|| tac_list == NULL*/) //neuspesna alokace
+    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL || symtabs_bin == NULL) //neuspesna alokace
     { //dealokace
         free(sa_vars);
         free(arr);
         free(buffer);
         free(local_tables);
+        free(symtabs_bin);
         symtab_free(symtab_local);
         //TAC_delete_list(tac_list); //todo denny uprava
         return NULL;
@@ -1433,6 +1435,7 @@ TSynCommon *alloc_sa()
         free(arr);
         free(buffer);
         free(local_tables);
+        free(symtabs_bin);
         symtab_free(symtab_local);
         //TAC_delete_list(tac_list); //todo denny uprava
         return NULL;
@@ -1441,6 +1444,7 @@ TSynCommon *alloc_sa()
     TS_stack_init(local_tables);
 
     sa_vars->local_tables = local_tables;
+    sa_vars->symtabs_bin = symtabs_bin;
     sa_vars->buffer = buffer;
     sa_vars->arr = arr;
     sa_vars->boolean = false; //vychozi stav
@@ -1462,7 +1466,7 @@ void dealloc_sa(TSynCommon *sa_vars)
     delete_buffer(sa_vars->buffer);
     free(sa_vars->buffer);
 
-    symtab_free(sa_vars->ts_fun);
+    //symtab_free(sa_vars->ts_fun);
 
     free(sa_vars);
 }

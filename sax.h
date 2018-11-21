@@ -74,6 +74,7 @@ typedef struct SynCommon
     Toperand *dest; //operand kam se ma ulozit soucasne reseny vyraz
     Toperand *ret; //kazda provedena akce se sem priradi, aby poznal navratovou hodnotu fce //todo denny zaridit v SA_alloc
     TSymtables_stack *local_tables;
+    TSymtables_stack *symtabs_bin;
 } TSynCommon;
 
 /********************************/
@@ -177,7 +178,7 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer);
  *	@param [in, out] list alokuje list a v prubehu SA ho naplni triadresnymi instrukcemi
 *	@return kod chyby/uspechu prekladu
 */
-int startSA(TTacList *list);
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin);
 
 /**
 *	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)

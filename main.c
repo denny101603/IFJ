@@ -23,7 +23,8 @@ int main() {
     //z toho by se jeden posral(hlavně denny)
     printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
-    printf("navrat SA: %i", startSA(tac_list));
+    TSymtables_stack *symtabs_bin = NULL;
+    printf("navrat SA: %i", startSA(tac_list, symtabs_bin));
     GEN_start(tac_list);
     TAC_delete_list(tac_list);
 /*    Tarray arr;
