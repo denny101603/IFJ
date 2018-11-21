@@ -1423,7 +1423,7 @@ void gen_neq(TThreeAC *instruct)
 void GEN_start(TTacList *list)
 {
     TThreeAC *I2 = list->first;
-    TThreeAC *first_while;
+    TThreeAC *first_while = NULL;
     int while_count = 0;
 
     //generace .IFJcode18 a podobné píčoviny
@@ -1449,8 +1449,7 @@ void GEN_start(TTacList *list)
         }
         I2 = I2->next;
     }
-
-    I2 = TAC_remove(list);
+ I2 = TAC_remove(list);
     while (I2 != NULL)
     {
         switch (I2->name) {

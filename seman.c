@@ -92,7 +92,30 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
 
 TThreeAC *TAC_remove_this(TTacList *list, TThreeAC *operand)
 {
+    TThreeAC *ret = NULL;
+    if(operand != NULL && list != NULL)
+    {
+        ret = operand;
 
+        if(operand == list->first)
+        {
+            list->first = list->first->next;
+            list->first->prev = NULL;
+        }
+        if(operand == list->last)
+        {
+            list->last = list->last->prev;
+            list->last->prev = NULL;
+        }
+        if(operand->prev != NULL)
+            operand->prev->next = operand->next;
+        if(operand->next != NULL)
+            operand->next->prev = operand->prev;
+
+        operand->prev = NULL;
+        operand->next = NULL;
+    }
+    return ret;
 }
 
 TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
@@ -135,7 +158,7 @@ void TThreeAC_delete(TThreeAC* tac)
            }
            free(tac->destination);
        }
-        if(tac->op_1 != NULL)
+        if(tac->op_2 != NULL)
         {
             if(tac->op_2->name != NULL)
             {
