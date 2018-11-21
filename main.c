@@ -24,13 +24,16 @@ int main() {
     printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
     TSymtables_stack *symtabs_bin = NULL;
+    TBuffer *tokens_backup = NULL;
 
-    printf("navrat SA: %i", startSA(tac_list, symtabs_bin));
+    printf("navrat SA: %i", startSA(tac_list, symtabs_bin, tokens_backup));
     GEN_start(tac_list);
 
     TAC_delete_list(tac_list);
     TS_stack_free(symtabs_bin);
     free(symtabs_bin);
+
+    delete_buffer(tokens_backup);
 
     return 0;
 }

@@ -99,18 +99,27 @@ Ttoken *buffer_popBottom(TBuffer *buffer) //rpo sax
 
 void delete_buffer(TBuffer *buffer)
 {
-    TBufferElem *temp = NULL;// = stack->top;
-    while (buffer->top != NULL)
+    if(buffer != NULL)
     {
-        temp = buffer->top;
-        buffer->top = buffer->top->prev;
-        if(temp != NULL)
+        TBufferElem *temp = NULL;// = stack->top;
+        while (buffer->top != NULL)
         {
-            if(temp->data != NULL) free(temp->data);
-            free(temp);
+            temp = buffer->top;
+            buffer->top = buffer->top->prev;
+            if(temp != NULL)
+            {
+                if(temp->data != NULL)
+                {
+                    //dealok tokenu:
+                    free(temp->data->attribute); //dealok vnitrku tokenu
+                    free(temp->data); //dealok tokenu
+                }
+                free(temp); //dealok buffer elem
+            }
         }
+        buffer->bottom = NULL;
+        free(buffer);
     }
-    buffer->bottom = NULL;
 }
 
 bool buffer_empty(TBuffer *buffer)
@@ -167,7 +176,7 @@ Ttoken *get_next_token(TSynCommon *sa_vars)
     return ret;
 }
 
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin)
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup)
 {
     TSynCommon *sa_vars = alloc_sa();
     if(sa_vars == NULL)
@@ -1412,7 +1421,6 @@ void dealloc_sa(TSynCommon *sa_vars)
     free(sa_vars->local_tables);
 
     delete_buffer(sa_vars->buffer);
-    free(sa_vars->buffer);
 
     //symtab_free(sa_vars->ts_fun);
 

@@ -86,8 +86,7 @@ void symtab_clear(Tsymbol_table *t)
             while(item != NULL)
             {
                 Tsymbol_table_item *tmp = item->next; //zaloha pristi
-                free(item->key);
-                item->key;
+                //free(item->key); toto nedealokuji, dealokuje se to v tokenech
                 free(item);
                 (t->size)--;
                 item=tmp;
