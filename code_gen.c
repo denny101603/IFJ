@@ -104,6 +104,56 @@ void pream()
     printf("POPFRAME\n");
     printf("RETURN\n");
 
+    //substr
+    printf("LABEL substr\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@podretezec\n");
+    printf("DEFVAR LF@znak\n");
+    printf("DEFVAR LF@s\n");
+    printf("DEFVAR LF@i\n");
+    printf("DEFVAR LF@n\n");
+    printf("POPS LF@n\n");
+    printf("POPS LF@i\n");
+    printf("POPS LF@s\n");
+    printf("MOVE LF@podretezec LF@znak\n");
+    printf("LABEL while2\n");
+    printf("JUMPIFEQ while2_end LF@i LF@n\n");
+    printf("GETCHAR LF@znak LF@s LF@i\n");
+    printf("CONCAT LF@podretezec LF@podretezec LF@znak\n");
+    printf("ADD LF@i LF@i int@i\n");
+    printf("JUMP while2\n");
+    printf("LABEL while2_end\n");
+    printf("PUSHS LF@podretezec\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
+    //ord
+    printf("LABEL ord\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@hodnota\n");
+    printf("DEFVAR LF@s\n");
+    printf("DEFVAR LF@i\n");
+    printf("POPS LF@i\n");
+    printf("POPS LF@s\n");
+    printf("STRI2INT LF@hodnota LF@s LF@i\n");
+    printf("PUSHS LF@hodnota\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
+    //chr
+    printf("LABEL chr\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@znak\n");
+    printf("DEFVAR LF@s\n");
+    printf("POPS LF@i\n");
+    printf("INT2CHAR LF@znak LF@i\n");
+    printf("PUSHS LF@znak\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
     //začátek kódu
     printf("LABEL main\n");
 
@@ -523,7 +573,7 @@ void gen_gt(TThreeAC *instruct)
 
 void gen_lt(TThreeAC *instruct)
 {
-//TODO
+
 }
 
 void gen_gteq(TThreeAC *instruct)
@@ -822,6 +872,10 @@ void GEN_start(TTacList *list)
     TThreeAC *I2 = list->last;
     TThreeAC *first_while;
     int while_count;
+
+    //generace .IFJcode18 a podobné píčoviny
+    pream();
+    
     while(I2 != list->first)
     {
         if(I2->name == WHILE)
