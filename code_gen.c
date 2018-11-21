@@ -32,6 +32,81 @@ char *codegen_temp_id_generator()
     return name;
 }
 
+void pream()
+{
+    //pream
+    printf(".IFJcode18\n");
+    printf("JUMP main\n");
+
+    //inputi
+    printf("LABEL inputi\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@var\n");
+    printf("READ LF@var int\n");
+    printf("PUSHS LF@var\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
+    //inputf
+    printf("LABEL inputf\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@var\n");
+    printf("READ LF@var float\n");
+    printf("PUSHS LF@var\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
+    //inputs
+    printf("LABEL inputi\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@var\n");
+    printf("READ LF@var string\n");
+    printf("PUSHS LF@var\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
+    //length
+    printf("LABEL length\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@var\n");
+    printf("DEFVAR LF@x\n");
+    printf("POPS LF@x");
+    printf("TYPE LF@xtype LF@x\n");
+    printf("JUMPIFNEQ lengtherror LF@xtype string@string\n");
+    printf("STRLEN LF@var LF@x\n");
+    printf("SUB LF@var LF@var int@1\n");
+    printf("PUSHS LF@var\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+    printf("LABEL lengtherror\n");
+    printf("EXIT int@4\n");
+
+    //print
+    printf("LABEL length\n");
+    printf("CREATEFRAME\n");
+    printf("PUSHFRAME\n");
+    printf("DEFVAR LF@counter\n");
+    printf("DEFVAR LF@test\n");
+    printf("DEFVAR LF@term\n");
+    printf("POPS LF@counter\n");
+    printf("LABEL loop\n");
+    printf("POPS LF@term\n");
+    printf("WRITE LF@term\n");
+    printf("SUB LF@counter LF@counter int@0\n");
+    printf("GT LF@test LF@counter int@0\n");
+    printf("JUMPIFEQ loop LF@test bool@true\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+
+    //začátek kódu
+    printf("LABEL main\n");
+
+}
+
 void gen_defvar(TThreeAC *instruct)
 {
     printf("DEFVAR LF@%s\n", instruct->op_1->name);
@@ -134,7 +209,7 @@ void gen_add(TThreeAC *instruct)
 
     printf("LABEL %s\n", addafloatbretype);
     printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
-    printf("ADD LF@%s LF@%s LF@%s\n",instruct->destination->name, instruct->op_1->name, btmp);
+    printf("ADD LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
     printf("LABEL %s\n", addasametypestring);
@@ -194,7 +269,7 @@ void gen_sub(TThreeAC *instruct)
 
     printf("LABEL %s\n", subafloatbretype);
     printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
-    printf("SUB LF@%s LF@%s LF@%s\n",instruct->destination->name, instruct->op_1->name, btmp);
+    printf("SUB LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s\n", subend); //skočí na úspěšný konec sub
 
     printf("LABEL %s\n", suberrorend);
@@ -466,6 +541,7 @@ void gen_neq(TThreeAC *instruct)
 
 void GEN_start(TTacList *list)
 {
+    pream();
     TThreeAC *I2 = TAC_remove(list);
     while (I2 != NULL)
     {
