@@ -35,6 +35,8 @@ void GEN_start(TTacList *list);
  * @param instruct triadresna instrukce k prevedeni na ifjcode2018
  * @return true pokud se vse povede (alokace apod.), jinak false
  */
+void pream();
+
 void gen_defvar(TThreeAC *instruct);
 
 void gen_move(TThreeAC *instruct);
@@ -110,6 +112,8 @@ void gen_gteq(TThreeAC *instruct);
 void gen_lteq(TThreeAC *instruct);
 
 void gen_neq(TThreeAC *instruct);
+
+char *codegen_temp_id_generator();
 
 
 
