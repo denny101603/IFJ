@@ -356,20 +356,20 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
     push(stack, stack->top,input_token, NULL);
 
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(input_token->type == FLOAT_2) // cislo
+    if(ret->type == FLOAT_2) // cislo
     {
-        if(strtof(input_token->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
         {
             action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
             return  NULL;
         }
     }
-    if(input_token->type == INTEGER && strtol(input_token->attribute, NULL, 10)<0)
+    if(ret->type == INTEGER && strtol(ret->attribute, NULL, 10)<0)
     {
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
         return NULL;
     }
-    if(input_token->type == LEX_ERROR)
+    if(ret->type == LEX_ERROR)
     {
         action_err(stack, sa_vars, LEX_ERROR, internal_buffer);
         return  NULL;
@@ -398,20 +398,20 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
 
     //nacteme dalsi token a okamzite ukladame do interniho bufferu
     Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
-    if(input_token->type == FLOAT_2) // cislo
+    if(ret->type == FLOAT_2) // cislo
     {
-        if(strtof(input_token->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
         {
             action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
             return  NULL;
         }
     }
-    if(input_token->type == INTEGER && strtol(input_token->attribute, NULL, 10)<0)
+    if(ret->type == INTEGER && strtol(ret->attribute, NULL, 10)<0)
     {
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
         return NULL;
     }
-    if(input_token->type == LEX_ERROR)
+    if(ret->type == LEX_ERROR)
     {
         action_err(stack, sa_vars, LEX_ERROR, internal_buffer);
         return  NULL;
@@ -438,11 +438,12 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
 {
-    fprintf(stderr, "savo err\n");
+    fprintf(stderr, "savo err %d\n", error);
     //ERR_SYN je osetrovan pouhym vracenim false:
     // sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli je to vyraz. Toto nema zpusobit pad.
     if (error != ERR_SYN)
         sa_vars->err_code = error;
+
     if (stack != NULL)
     {
         delete_stack(stack);
