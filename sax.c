@@ -1444,6 +1444,7 @@ TSynCommon *alloc_sa()
     }
     buffer_init(buffer);
     TS_stack_init(local_tables);
+    TS_stack_init(symtabs_bin);
 
     sa_vars->local_tables = local_tables;
     sa_vars->symtabs_bin = symtabs_bin;

@@ -87,6 +87,7 @@ void symtab_clear(Tsymbol_table *t)
             {
                 Tsymbol_table_item *tmp = item->next; //zaloha pristi
                 free(item->key);
+                item->key;
                 free(item);
                 (t->size)--;
                 item=tmp;
