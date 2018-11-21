@@ -185,8 +185,10 @@ int startSA(TTacList *list, TSymtables_stack *symtabs_bin)
             break;
         }
     }
+    TS_push(sa_vars->symtabs_bin, TS_pop(sa_vars->local_tables)); //prevedeni TS pro "main" do bin
     int ret = sa_vars->err_code;
     list = sa_vars->tac_list;
+    symtabs_bin = sa_vars->symtabs_bin;
     dealloc_sa(sa_vars);
     return ret;
 }

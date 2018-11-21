@@ -24,12 +24,13 @@ int main() {
     printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
     TSymtables_stack *symtabs_bin = NULL;
+
     printf("navrat SA: %i", startSA(tac_list, symtabs_bin));
     GEN_start(tac_list);
+
     TAC_delete_list(tac_list);
-/*    Tarray arr;
-    arr_init(&arr); //Pole znak
-    get_token(&arr);
-    arr_free(&arr);*/
+    TS_stack_free(symtabs_bin);
+    free(symtabs_bin);
+
     return 0;
 }
