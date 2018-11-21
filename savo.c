@@ -858,8 +858,9 @@ bool savo(TSynCommon *sa_vars)
    {
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
 
-       delete_buffer(internal_buffer);
-       //free(internal_buffer);
+       //delete_buffer(internal_buffer); //todo dealokovat buffer_elementy. Kvuli saxu musim udelat novou fci :D
+      // buffer_init(internal_buffer);
+       free(internal_buffer);
 
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
 
