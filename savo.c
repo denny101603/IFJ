@@ -575,7 +575,6 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             if(rule_tokens[RULE_LENGTH-1-i]->type == ACTION_MENSITKO || rule_tokens[RULE_LENGTH-1-i]->type == BOTTOM_TOKEN)
             {
                 //action_err(stack, sa_vars, ERR_SYN, internal_buffer);
-                //todo dealok vse
                 return false;
             }
         }
@@ -710,7 +709,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 bool savo(TSynCommon *sa_vars)
 {
     
-    sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
+    //sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
     Ttoken *input_token = get_next_token(sa_vars); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
@@ -860,7 +859,7 @@ bool savo(TSynCommon *sa_vars)
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
 
        delete_buffer(internal_buffer);
-       free(internal_buffer);
+       //free(internal_buffer);
 
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
 

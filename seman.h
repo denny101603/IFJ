@@ -75,6 +75,7 @@ Toperand *op_pop(Ttac_buffer *buffer);
 
 void op_delete_buffer(Ttac_buffer *buffer);
 
+void TThreeAC_delete(TThreeAC* tac);
 
 /**
  * @brief alokuje strukturu Toperand a naplni ji
