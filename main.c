@@ -23,17 +23,21 @@ int main() {
     //z toho by se jeden posral(hlavně denny)
     printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
-    TSymtables_stack *symtabs_bin = NULL;
-    TBuffer *tokens_backup = NULL;
+    TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
+    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu
+    buffer_init(tokens_backup);
+    TS_stack_init(symtabs_bin);
+
+
 
     printf("navrat SA: %i", startSA(tac_list, symtabs_bin, tokens_backup));
     GEN_start(tac_list);
 
-    TAC_delete_list(tac_list);
-    TS_stack_free(symtabs_bin);
-    free(symtabs_bin);
+    //TAC_delete_list(tac_list);
+    //TS_stack_free(symtabs_bin);
+    //free(symtabs_bin);
 
-    delete_buffer(tokens_backup);
+    //delete_buffer(tokens_backup);
 
     return 0;
 }
