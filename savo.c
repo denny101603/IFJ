@@ -849,7 +849,7 @@ bool savo(TSynCommon *sa_vars)
                break;
        }
    }//end while
-
+    //todo pri x EOL = to misto lex erroru vraci syn_error. Jak to?
    if (err != 0)
    {
        return false;

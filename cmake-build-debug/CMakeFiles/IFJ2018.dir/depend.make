@@ -10,6 +10,7 @@ CMakeFiles/IFJ2018.dir/fsm.c.obj: ../err_codes.h
 CMakeFiles/IFJ2018.dir/fsm.c.obj: ../fsm.c
 CMakeFiles/IFJ2018.dir/fsm.c.obj: ../fsm.h
 
+CMakeFiles/IFJ2018.dir/main.c.obj: ../code_gen.h
 CMakeFiles/IFJ2018.dir/main.c.obj: ../fsm.h
 CMakeFiles/IFJ2018.dir/main.c.obj: ../main.c
 CMakeFiles/IFJ2018.dir/main.c.obj: ../sax.h

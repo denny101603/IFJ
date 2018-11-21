@@ -134,7 +134,14 @@ void TAC_delete_list(TTacList *list)
         }
         printf("_________________________\n");*/
         /**konec ladiciho vypisu**/
-        free(TAC_remove(list));
+        TThreeAC* temp= TAC_remove(list);
+        free(temp->destination->name);
+        free(temp->destination);
+        free(temp->op_1->name);
+        free(temp->op_1);
+        free(temp->op_2->name);
+        free(temp->op_2);
+        free(temp);
     }
     free(list);
     list = NULL;
