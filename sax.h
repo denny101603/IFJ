@@ -67,6 +67,7 @@ typedef struct SynCommon
 {
     Tarray *arr;
     TBuffer *buffer;
+    TBuffer *tokens_backup;
     Tsymbol_table *ts_fun;
     TTacList *tac_list; //list pro triadresny kod
     int err_code; //pro uchovani pripadne chyby
@@ -170,7 +171,7 @@ Tsymbol_table *TS_pop(TSymtables_stack *stack);
  * @param buffer buffer pro uchovavani tokenu
  * @return Token z prislusneho zdroje
  */
-Ttoken *get_next_token(Tarray *arr, TBuffer *buffer);
+Ttoken *get_next_token(TSynCommon *sa_vars);
 
 /**
 *	@brief provadi cely preklad
