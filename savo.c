@@ -355,7 +355,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
 {
     push(stack, stack->top,input_token, NULL);
 
-    Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
     {
         if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
@@ -397,7 +397,7 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
     push(stack, stack->top, input_token, NULL); //push input tokenu na top
 
     //nacteme dalsi token a okamzite ukladame do interniho bufferu
-    Ttoken *ret = get_next_token(sa_vars->arr, sa_vars->buffer);
+    Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
     {
         if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
@@ -575,7 +575,6 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             if(rule_tokens[RULE_LENGTH-1-i]->type == ACTION_MENSITKO || rule_tokens[RULE_LENGTH-1-i]->type == BOTTOM_TOKEN)
             {
                 //action_err(stack, sa_vars, ERR_SYN, internal_buffer);
-                //todo dealok vse
                 return false;
             }
         }
@@ -590,7 +589,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         case 3: //{0,0,STRING_1}, //3
         case 5: //{0,0,KEY_NIL},//5
             dest = op_init(rule_tokens[0]->type, savo_name_generator());
-            operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute);
+            operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute); //todo pokud nebude fungovat float 2e-1, tak to tady konvertovat.
             tac_defmove_const(sa_vars->tac_list, dest, operand1);
             break;
         case 1: //{0,0,EXPRESSION}, //1 //todo mozna neni potreba - DIVNY
@@ -694,7 +693,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     Ttoken *temp = pop(stack); // popnuti mensitka
     if(temp->type != ACTION_MENSITKO) //pokud jsem jako dalsi znak nepopnul mensitko, tak je nekde chyba - u me ne, takze hazim ERR_SEM
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
-    free(temp);
+    token_free(temp);
     Ttoken *expr_token = malloc(sizeof(Ttoken));
     if (expr_token == NULL)
         return false;
@@ -703,22 +702,22 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     if(rule_tokens[0]->type == KEY_NIL)
         expr_token->attribute = "nil";
     push(stack, stack->top, expr_token, dest);
+    //token free trules tokens
     return true;
 }
 
 bool savo(TSynCommon *sa_vars)
 {
     
-    sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
+    //sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
-    Ttoken *input_token = get_next_token(sa_vars->arr, sa_vars->buffer); //token pusnut na buffer az po init bufferu
+    Ttoken *input_token = get_next_token(sa_vars); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
     {
         action_err(NULL, sa_vars, ERR_INTERNAL, NULL);
         return false;
     }
-    else
-    if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky kvuli a = EOL
+    else if(is_terminus(input_token)) //pokud je hned prvni token terminus -> err syntakticky kvuli a = EOL
     {
         action_err(NULL, sa_vars,ERR_SYN, NULL );
         return  false;
@@ -850,7 +849,7 @@ bool savo(TSynCommon *sa_vars)
                break;
        }
    }//end while
-
+    //todo pri x EOL = to misto lex erroru vraci syn_error. Jak to?
    if (err != 0)
    {
        return false;
@@ -860,7 +859,7 @@ bool savo(TSynCommon *sa_vars)
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
 
        delete_buffer(internal_buffer);
-       free(internal_buffer);
+       //free(internal_buffer);
 
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
 

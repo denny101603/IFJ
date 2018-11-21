@@ -75,6 +75,7 @@ Toperand *op_pop(Ttac_buffer *buffer);
 
 void op_delete_buffer(Ttac_buffer *buffer);
 
+void TThreeAC_delete(TThreeAC* tac);
 
 /**
  * @brief alokuje strukturu Toperand a naplni ji
@@ -135,6 +136,13 @@ void TAC_insert(TTacList *list, TThreeAC *inserted);
  */
 TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem);
 
+/**
+ * //TODO doplnit doku
+ * @param list
+ * @param operand
+ * @return
+ */
+TThreeAC *TAC_remove_this(TTacList *list, TThreeAC *operand);
 /**
  * @brief Funkce maze posledni prvek ze seznamu (prvek oznaceny jako list->last) a vraci ho.
  * @author Jan Beran

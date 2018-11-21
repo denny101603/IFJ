@@ -12,6 +12,7 @@
 #include "fsm.h"
 #include "sax.h"
 #include "seman.h"
+#include "code_gen.h"
 
 int main() {
 
@@ -22,11 +23,17 @@ int main() {
     //z toho by se jeden posral(hlavně denny)
     printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
-    printf("navrat SA: %i", startSA(tac_list));
+    TSymtables_stack *symtabs_bin = NULL;
+    TBuffer *tokens_backup = NULL;
+
+    printf("navrat SA: %i", startSA(tac_list, symtabs_bin, tokens_backup));
+    GEN_start(tac_list);
+
     TAC_delete_list(tac_list);
-/*    Tarray arr;
-    arr_init(&arr); //Pole znak
-    get_token(&arr);
-    arr_free(&arr);*/
+    TS_stack_free(symtabs_bin);
+    free(symtabs_bin);
+
+    delete_buffer(tokens_backup);
+
     return 0;
 }

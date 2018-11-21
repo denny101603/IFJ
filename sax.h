@@ -67,6 +67,7 @@ typedef struct SynCommon
 {
     Tarray *arr;
     TBuffer *buffer;
+    TBuffer *tokens_backup;
     Tsymbol_table *ts_fun;
     TTacList *tac_list; //list pro triadresny kod
     int err_code; //pro uchovani pripadne chyby
@@ -74,6 +75,7 @@ typedef struct SynCommon
     Toperand *dest; //operand kam se ma ulozit soucasne reseny vyraz
     Toperand *ret; //kazda provedena akce se sem priradi, aby poznal navratovou hodnotu fce //todo denny zaridit v SA_alloc
     TSymtables_stack *local_tables;
+    TSymtables_stack *symtabs_bin;
 } TSynCommon;
 
 /********************************/
@@ -121,7 +123,7 @@ Ttoken *buffer_popTop(TBuffer *buffer);
 Ttoken *buffer_popBottom(TBuffer *buffer);
 
 /**
- * @brief Funkce vymaze zasobnik.
+ * @brief Funkce vymaze zasobnik - deaalokuje atribut tokenu, token, obalovaci strukturu i buffer jako takovy (sam sebe)
  * @author Jan Beran
  * @param buffer Zasobnik k vymazani.
  */
@@ -160,8 +162,6 @@ void TS_stack_init(TSymtables_stack *stack);
   */
 Tsymbol_table *TS_pop(TSymtables_stack *stack);
 
-
-
 /**
  * @brief Funkce vraci dalsi token a na zaklade toho, zda se v bufferu nachazi nejake tokeny, je bere bud z nej, nebo ze stdin pomoci scanneru.
  * @author Jan Beran, Daniel Bubenicek (arr)
@@ -169,7 +169,7 @@ Tsymbol_table *TS_pop(TSymtables_stack *stack);
  * @param buffer buffer pro uchovavani tokenu
  * @return Token z prislusneho zdroje
  */
-Ttoken *get_next_token(Tarray *arr, TBuffer *buffer);
+Ttoken *get_next_token(TSynCommon *sa_vars);
 
 /**
 *	@brief provadi cely preklad
@@ -177,7 +177,7 @@ Ttoken *get_next_token(Tarray *arr, TBuffer *buffer);
  *	@param [in, out] list alokuje list a v prubehu SA ho naplni triadresnymi instrukcemi
 *	@return kod chyby/uspechu prekladu
 */
-int startSA(TTacList *list);
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup);
 
 /**
 *	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)

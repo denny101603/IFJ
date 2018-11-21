@@ -60,12 +60,13 @@ TThreeAC *TAC_remove(TTacList *list)
         return NULL;
     }
     //alespon jeden prvek
-    TThreeAC *ret = list->last;
-    if(list->last == list->first) //jediny prvek => last se do NULL hodi sam, firstu je treba pomoci :)
-        list->first = NULL;
-    list->last = list->last->prev; // if list->last->prev == NULL, neni problem, stale OK
-    if(list->last != NULL) //pokud NULL neni, korektne zaslepim
-        list->last->next = NULL;
+    TThreeAC *ret = list->first;
+    if(list->last == list->first) //jediny prvek => first se do NULL hodi sam, lastu je treba pomoci :)
+        list->last = NULL;
+
+    list->first = list->first->next; // if list->first->next == NULL, neni problem, stale OK
+    if(list->first != NULL) //pokud NULL neni, korektne zaslepim
+        list->first->prev = NULL;
     ret->prev = NULL; //odpojeni od listu
     ret->next = NULL; //jistota, neni nutne
     return ret;
@@ -86,6 +87,11 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
     inserted->prev = elem;
     if(elem == list->last)
          list->last = inserted;
+
+}
+
+TThreeAC *TAC_remove_this(TTacList *list, TThreeAC *operand)
+{
 
 }
 
@@ -114,6 +120,46 @@ TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
     }
     return ret;
 }
+void TThreeAC_delete(TThreeAC* tac)
+{
+    if(tac != NULL)
+    {
+       if(tac->destination != NULL)
+       {
+           if(tac->destination->name != NULL)
+           {
+               if(tac->destination->name[0] == '&')
+               {
+                   free(tac->destination->name);
+               }
+           }
+           free(tac->destination);
+       }
+        if(tac->op_1 != NULL)
+        {
+            if(tac->op_2->name != NULL)
+            {
+                if(tac->op_2->name[0] == '&')
+                {
+                    free(tac->op_2->name);
+                }
+            }
+            free(tac->op_2);
+        }
+        if(tac->op_1 != NULL)
+        {
+            if(tac->op_1->name != NULL)
+            {
+                if(tac->op_1->name[0] == '&')
+                {
+                    free(tac->op_1->name);
+                }
+            }
+            free(tac->op_1);
+        }
+    free(tac);
+    }
+}
 
 void TAC_delete_list(TTacList *list)
 {
@@ -128,7 +174,9 @@ void TAC_delete_list(TTacList *list)
         }
         printf("_________________________\n");*/
         /**konec ladiciho vypisu**/
-        free(TAC_remove(list));
+        TThreeAC* temp= TAC_remove(list);
+        //zkontrolovat, ze temp i operandy z temp != NULL;
+        TThreeAC_delete(temp);
     }
     free(list);
     list = NULL;
