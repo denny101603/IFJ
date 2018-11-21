@@ -183,6 +183,9 @@ int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backu
         return ERR_INTERNAL;
 
     sa_vars->tac_list = list;
+    sa_vars->symtabs_bin = symtabs_bin;
+    sa_vars->tokens_backup = tokens_backup;
+
     sa_vars->err_code = IN_PROGRESS;
     while(sa_vars->err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
     {
@@ -1031,7 +1034,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     long num_of_args = 0; //pocitadlo argumentu pro overeni s TS
     if(!nt_args(sa_vars, &num_of_args)) //nepovedlo se, zkusim tedy jestli nebyla zavorka, pokud ano, zkusim to znovu
     {
-        Ttoken *t2 = get_next_token(sa_vars);
+        Ttoken *t2 = get_next_token(sa_vars); //todo denny dodelat
         //if(err_check())
         return false;
     }
@@ -1361,20 +1364,16 @@ TSynCommon *alloc_sa()
     TSynCommon *sa_vars = (TSynCommon *) malloc(sizeof(TSynCommon)); //struktura s promennymi pro komunikaci mezi castmi prekladace
     Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
     TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
-    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu
     TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
-    TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
     //TTacList *tac_list = TAC_init(); //todo denny uprava + v ifu dole
 
-    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL || symtabs_bin == NULL || tokens_backup == NULL) //neuspesna alokace
+    if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
     { //dealokace
         free(sa_vars);
         free(arr);
         free(buffer);
-        free(tokens_backup);
         free(local_tables);
-        free(symtabs_bin);
         symtab_free(symtab_local);
         //TAC_delete_list(tac_list); //todo denny uprava
         return NULL;
@@ -1387,22 +1386,16 @@ TSynCommon *alloc_sa()
         free(sa_vars);
         free(arr);
         free(buffer);
-        free(tokens_backup);
         free(local_tables);
-        free(symtabs_bin);
         symtab_free(symtab_local);
         //TAC_delete_list(tac_list); //todo denny uprava
         return NULL;
     }
     buffer_init(buffer);
-    buffer_init(tokens_backup);
     TS_stack_init(local_tables);
-    TS_stack_init(symtabs_bin);
 
     sa_vars->local_tables = local_tables;
-    sa_vars->symtabs_bin = symtabs_bin;
     sa_vars->buffer = buffer;
-    sa_vars->tokens_backup = tokens_backup;
     sa_vars->arr = arr;
     sa_vars->boolean = false; //vychozi stav
     //sa_vars->tac_list = tac_list; //todo denny uprava
@@ -1417,8 +1410,8 @@ void dealloc_sa(TSynCommon *sa_vars)
     arr_free(sa_vars->arr);
     free(sa_vars->arr);
 
-    TS_stack_free(sa_vars->local_tables);
-    free(sa_vars->local_tables);
+    //TS_stack_free(sa_vars->local_tables); //todo denny odkomentovat oba radky
+    //free(sa_vars->local_tables);
 
     delete_buffer(sa_vars->buffer);
 
