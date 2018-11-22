@@ -198,8 +198,23 @@ void gen_move(TThreeAC *instruct)
 void gen_defmove_const(TThreeAC *instruct)
 {
     char *typ = whatType(instruct->op_1->type);
+    char *hodnota = instruct->op_1->name
     printf("DEFVAR LF@%s\n", instruct->destination->name);
-    printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
+    if(typ == "bool")
+    {
+        if(hodnota == "0")
+        {
+            printf("MOVE LF@%s bool@false\n", instruct->destination->name);
+        }
+        else
+        {
+            printf("MOVE LF@%s bool@true\n", instruct->destination->name);
+        }
+    }
+    else
+    {
+        printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
+    }
 }
 
 void gen_createframe(TThreeAC *instruct)
