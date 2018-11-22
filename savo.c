@@ -536,10 +536,10 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     Toperand *operands[RULE_LENGTH] = {NULL, NULL, NULL};
 
     //operandy pro semanticke akce
-    Toperand *operand1 = NULL;
-    Toperand *operand2 = NULL;
-    Toperand *operand3 = NULL;
-    Toperand *dest =NULL;
+    Toperand *operand1 = malloc(sizeof(Toperand));
+    Toperand *operand2 = malloc(sizeof(Toperand));
+    Toperand *operand3 = malloc(sizeof(Toperand));
+    Toperand *dest = malloc(sizeof(Toperand));
     Tsymbol_table_item *item = NULL;
 
     //syntakticka predkontrola, protoze syntakticka analyza je destruktivni
@@ -552,20 +552,20 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             switch(i)
             {
                 case 0:
-                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand3);
+                    operand3 = stack->top->operand;
+                    rule_tokens[RULE_LENGTH-1-i] = pop(stack);
                     break;
                 case 1:
-                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand2);
+                    operand2 = stack->top->operand;
+                    rule_tokens[RULE_LENGTH-1-i] = pop(stack);
                     break;
                 case 2:
-                    rule_tokens[RULE_LENGTH-1-i] = pop_extended(stack, operand1);
+                    operand1 = stack->top->operand;
+                    rule_tokens[RULE_LENGTH-1-i] = pop(stack);
                     break;
                 default:
                     break;
             }
-            operands[0] = operand1;
-            operands[1] = operand2;
-            operands[2] = operand3;
 
             //abych mel v poli rule_tokens[] tokeny podle komutativity ([0] operand1, [1]operace, [2] operand2;
             //tzn treba [0]2[1]/[2]5 pro vyraz 2/5
@@ -579,6 +579,9 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             }
         }
     }
+    operands[0] = operand1;
+    operands[1] = operand2;
+    operands[2] = operand3;
 
     switch (rule)
     {
