@@ -80,6 +80,16 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
     if(list == NULL || elem == NULL || inserted == NULL || list->first == NULL)
         return;
 
+    /* Toto je insert_post, o kterem mi denny rekl, at ho naimplementuju, aby to vzapeti poprel -_- :D
+     inserted->prev = elem->prev;
+    if(elem->prev != NULL)
+        elem->prev->next = inserted;
+    elem->prev = inserted;
+    inserted->next = elem;
+    if(elem == list->first)
+        list->first = inserted;*/
+
+
     inserted->next = elem->next;
     if(elem->next != NULL)
         elem->next->prev = inserted;
@@ -87,6 +97,7 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
     inserted->prev = elem;
     if(elem == list->last)
          list->last = inserted;
+
 
 }
 
