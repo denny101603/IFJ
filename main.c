@@ -21,16 +21,16 @@ int main() {
     //Berry was here!
 
     //z toho by se jeden posral(hlavně denny)
-    printf("Hell, World!\n");
+    //printf("Hell, World!\n");
     TTacList *tac_list = TAC_init();
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu
     buffer_init(tokens_backup);
     TS_stack_init(symtabs_bin);
 
+    int i = startSA(tac_list, symtabs_bin, tokens_backup);
 
-
-    printf("navrat SA: %i", startSA(tac_list, symtabs_bin, tokens_backup));
+    /*printf("navrat SA: %i", i);*/
     GEN_start(tac_list);
 
     TAC_delete_list(tac_list);
