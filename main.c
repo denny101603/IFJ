@@ -200,5 +200,5 @@ int main() {
 
     delete_buffer(tokens_backup);
 
-    return 0;
+    return i;
 }
