@@ -1,4 +1,4 @@
-Cannot generate into C:\Users\rackh\CLionProjects\IFJ\cmake-build-debug
-It is already used for project C:\Users\janbe\Desktop\IFJ
+Cannot generate into /Volumes/seconddisk/do školy/Vejška/Druhák Prvnisem/SKUPINA/IFJ/cmake-build-debug
+It is already used for project C:/Users/janbe/Desktop/IFJ
 
 Please either delete it manually or select another generation directory
