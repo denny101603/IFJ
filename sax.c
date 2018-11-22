@@ -587,7 +587,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    tac_lable(sa_vars->tac_list, label1); /////////////////////////////////////////////////////////////////////////////
+   // tac_lable(sa_vars->tac_list, label1); /////////////////////////////////////////////////////////////////////////////todo odkomentovat, nez na to denny prijde
 
     char *temp_label2_str = sax_temp_id_generator(); //priprava pro label2
     if(temp_label2_str == NULL)

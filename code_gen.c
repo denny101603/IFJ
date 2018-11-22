@@ -198,7 +198,7 @@ void gen_move(TThreeAC *instruct)
 void gen_defmove_const(TThreeAC *instruct)
 {
     char *typ = whatType(instruct->op_1->type);
-    char *hodnota = instruct->op_1->name
+    char *hodnota = instruct->op_1->name;
     printf("DEFVAR LF@%s\n", instruct->destination->name);
     if(typ == "bool")
     {
