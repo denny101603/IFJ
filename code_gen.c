@@ -111,7 +111,7 @@ void pream()
     printf("EXIT int@4\n");
 
     //print
-    printf("LABEL print\n");//todo byl tu label lenght (stejný jako u lenght), to bylo blbe, ze?
+    printf("LABEL print\n");
     printf("CREATEFRAME\n");
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@counter\n");
@@ -144,7 +144,7 @@ void pream()
     printf("JUMPIFEQ while2_end LF@i LF@n\n");
     printf("GETCHAR LF@znak LF@s LF@i\n");
     printf("CONCAT LF@podretezec LF@podretezec LF@znak\n");
-    printf("ADD LF@i LF@i int@1\n");//todo hazi err
+    printf("ADD LF@i LF@i int@1\n");
     printf("JUMP while2\n");
     printf("LABEL while2_end\n");
     printf("PUSHS LF@podretezec\n");
@@ -198,7 +198,7 @@ void gen_defmove_const(TThreeAC *instruct)
 {
     char *typ = whatType(instruct->op_1->type);
     printf("DEFVAR LF@%s\n", instruct->destination->name);
-    printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name); //todo hazi errory
+    printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
 }
 
 void gen_createframe(TThreeAC *instruct)
@@ -1141,6 +1141,39 @@ void gen_jumpiflt(TThreeAC *instruct)
     char *lterror = codegen_temp_id_generator(); //label skoku když error
     char *ltend = codegen_temp_id_generator(); //label skoku když end
 
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (tmp == NULL)||
+        (ltafloat == NULL)||
+        (ltaint == NULL)||
+        (ltastring == NULL)||
+        (ltabool == NULL)||
+        (ltaintretype == NULL)||
+        (ltafloatsame == NULL)||
+        (ltafloatretype == NULL)||
+        (ltend == NULL)||
+        (lterror == NULL)||
+        (ltaintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(ltabool);
+        free(ltafloat);
+        free(ltaint);
+        free(ltaintretype);
+        free(ltafloatretype);
+        free(ltafloatsame);
+        free(ltaintsame);
+        free(lterror);
+        free(ltend);
+        free(ltastring);
+        return;
+    }
+
     printf("DEFVAR LF@%s\n", atype);
     printf("DEFVAR LF@%s\n", atmp);
     printf("DEFVAR LF@%s\n", btype);
@@ -1203,6 +1236,21 @@ void gen_jumpiflt(TThreeAC *instruct)
 
     printf("LABEL %s\n", ltend);
     printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
+
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(ltabool);
+    free(ltafloat);
+    free(ltaint);
+    free(ltaintretype);
+    free(ltafloatretype);
+    free(ltafloatsame);
+    free(ltaintsame);
+    free(lterror);
+    free(ltend);
+    free(ltastring);
 }
 
 void gen_dprint(TThreeAC *instruct)
@@ -1230,6 +1278,40 @@ void gen_eq(TThreeAC *instruct)
     char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *eqintsame = codegen_temp_id_generator();
+
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (eqafloat == NULL)||
+        (eqaint == NULL)||
+        (eqastring == NULL)||
+        (eqabool == NULL)||
+        (eqanil == NULL)||
+        (eqaretype == NULL)||
+        (eqfloatsame == NULL)||
+        (eqbretype == NULL)||
+        (eqend == NULL)||
+        (eqerrorend == NULL)||
+        (eqintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(eqabool);
+        free(eqafloat);
+        free(eqaint);
+        free(eqanil);
+        free(eqaretype);
+        free(eqastring);
+        free(eqbretype);
+        free(eqend);
+        free(eqerrorend);
+        free(eqfloatsame);
+        free(eqintsame);
+        return;
+    }
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1282,6 +1364,22 @@ void gen_eq(TThreeAC *instruct)
     printf("JUMPIFNEQ %s LF@%s string@string\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
+
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(eqabool);
+    free(eqafloat);
+    free(eqaint);
+    free(eqanil);
+    free(eqaretype);
+    free(eqastring);
+    free(eqbretype);
+    free(eqend);
+    free(eqerrorend);
+    free(eqfloatsame);
+    free(eqintsame);
 }
 
 void gen_gt(TThreeAC *instruct)
@@ -1301,6 +1399,37 @@ void gen_gt(TThreeAC *instruct)
     char *gtafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *gterror = codegen_temp_id_generator(); //label skoku když error
     char *gtend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (gtastring == NULL)||
+        (gtabool == NULL)||
+        (gtaintretype == NULL)||
+        (gtafloatsame == NULL)||
+        (gtafloatretype == NULL)||
+        (gtend == NULL)||
+        (gterror == NULL)||
+        (gtaintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(gtabool);
+        free(gtafloat);
+        free(gtaint);
+        free(gtaintretype);
+        free(gtafloatretype);
+        free(gtafloatsame);
+        free(gtaintsame);
+        free(gterror);
+        free(gtend);
+        free(gtastring);
+        return;
+    }
+
 
     printf("DEFVAR LF@%s\n", atype);
     printf("DEFVAR LF@%s\n", atmp);
@@ -1363,6 +1492,21 @@ void gen_gt(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", gtend);
+
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(gtabool);
+    free(gtafloat);
+    free(gtaint);
+    free(gtaintretype);
+    free(gtafloatretype);
+    free(gtafloatsame);
+    free(gtaintsame);
+    free(gterror);
+    free(gtend);
+    free(gtastring);
 }
 
 void gen_lt(TThreeAC *instruct)
@@ -1382,6 +1526,36 @@ void gen_lt(TThreeAC *instruct)
         char *ltafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
         char *lterror = codegen_temp_id_generator(); //label skoku když error
         char *ltend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (ltastring == NULL)||
+        (ltabool == NULL)||
+        (ltaintretype == NULL)||
+        (ltafloatsame == NULL)||
+        (ltafloatretype == NULL)||
+        (ltend == NULL)||
+        (lterror == NULL)||
+        (ltaintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(ltabool);
+        free(ltafloat);
+        free(ltaint);
+        free(ltaintretype);
+        free(ltafloatretype);
+        free(ltafloatsame);
+        free(ltaintsame);
+        free(lterror);
+        free(ltend);
+        free(ltastring);
+        return;
+    }
 
         printf("DEFVAR LF@%s\n", atype);
         printf("DEFVAR LF@%s\n", atmp);
@@ -1444,6 +1618,21 @@ void gen_lt(TThreeAC *instruct)
         printf("EXIT int@4\n");
 
         printf("LABEL %s\n", ltend);
+
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(ltabool);
+    free(ltafloat);
+    free(ltaint);
+    free(ltaintretype);
+    free(ltafloatretype);
+    free(ltafloatsame);
+    free(ltaintsame);
+    free(lterror);
+    free(ltend);
+    free(ltastring);
 }
 
 void gen_gteq(TThreeAC *instruct)
@@ -1465,6 +1654,40 @@ void gen_gteq(TThreeAC *instruct)
     char *gteqafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *gteqerror = codegen_temp_id_generator(); //label skoku když error
     char *gteqend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (xgt == NULL)||
+        (xeq == NULL)||
+        (gteqastring == NULL)||
+        (gteqabool == NULL)||
+        (gteqaintretype == NULL)||
+        (gteqafloatsame == NULL)||
+        (gteqafloatretype == NULL)||
+        (gteqend == NULL)||
+        (gteqerror == NULL)||
+        (gteqaintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(xgt);
+        free(xeq);
+        free(gteqabool);
+        free(gteqafloat);
+        free(gteqaint);
+        free(gteqaintretype);
+        free(gteqafloatretype);
+        free(gteqafloatsame);
+        free(gteqaintsame);
+        free(gteqerror);
+        free(gteqend);
+        free(gteqastring);
+        return;
+    }
 
     printf("DEFVAR LF@%s\n", atype);
     printf("DEFVAR LF@%s\n", atmp);
@@ -1542,6 +1765,22 @@ void gen_gteq(TThreeAC *instruct)
 
     printf("LABEL %s\n", gteqend);
 
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(xgt);
+    free(xeq);
+    free(gteqabool);
+    free(gteqafloat);
+    free(gteqaint);
+    free(gteqaintretype);
+    free(gteqafloatretype);
+    free(gteqafloatsame);
+    free(gteqaintsame);
+    free(gteqerror);
+    free(gteqend);
+    free(gteqastring);
 }
 
 void gen_lteq(TThreeAC *instruct)
@@ -1563,6 +1802,40 @@ void gen_lteq(TThreeAC *instruct)
     char *lteqafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *lteqerror = codegen_temp_id_generator(); //label skoku když error
     char *lteqend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (xlt == NULL)||
+        (xeq == NULL)||
+        (lteqastring == NULL)||
+        (lteqabool == NULL)||
+        (lteqaintretype == NULL)||
+        (lteqafloatsame == NULL)||
+        (lteqafloatretype == NULL)||
+        (lteqend == NULL)||
+        (lteqerror == NULL)||
+        (lteqaintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(xlt);
+        free(xeq);
+        free(lteqabool);
+        free(lteqafloat);
+        free(lteqaint);
+        free(lteqaintretype);
+        free(lteqafloatretype);
+        free(lteqafloatsame);
+        free(lteqaintsame);
+        free(lteqerror);
+        free(lteqend);
+        free(lteqastring);
+        return;
+    }
 
     printf("DEFVAR LF@%s\n", atype);
     printf("DEFVAR LF@%s\n", atmp);
@@ -1639,6 +1912,23 @@ void gen_lteq(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", lteqend);
+
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(xlt);
+    free(xeq);
+    free(lteqabool);
+    free(lteqafloat);
+    free(lteqaint);
+    free(lteqaintretype);
+    free(lteqafloatretype);
+    free(lteqafloatsame);
+    free(lteqaintsame);
+    free(lteqerror);
+    free(lteqend);
+    free(lteqastring);
 }
 
 void gen_neq(TThreeAC *instruct)
@@ -1659,6 +1949,40 @@ void gen_neq(TThreeAC *instruct)
     char *neqafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *neqerror = codegen_temp_id_generator(); //label skoku když error
     char *neqend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((atype == NULL)||
+        (atmp == NULL)||
+        (btype == NULL)||
+        (btmp == NULL)||
+        (neqafloat == NULL)||
+        (neqaint == NULL)||
+        (neqastring == NULL)||
+        (neqabool == NULL)||
+        (neqanil == NULL)||
+        (neqaintretype == NULL)||
+        (neqafloatsame == NULL)||
+        (neqafloatretype == NULL)||
+        (neqend == NULL)||
+        (neqerror == NULL)||
+        (neqaintsame == NULL))
+    {
+        free(atmp);
+        free(atype);
+        free(btmp);
+        free(btype);
+        free(neqabool);
+        free(neqafloat);
+        free(neqaint);
+        free(neqanil);
+        free(neqaintretype);
+        free(neqafloatretype);
+        free(neqafloatsame);
+        free(neqaintsame);
+        free(neqerror);
+        free(neqend);
+        free(neqastring);
+        return;
+    }
 
     printf("DEFVAR LF@%s\n", atype);
     printf("DEFVAR LF@%s\n", atmp);
@@ -1735,6 +2059,22 @@ void gen_neq(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", neqend);
+
+    free(atmp);
+    free(atype);
+    free(btmp);
+    free(btype);
+    free(neqabool);
+    free(neqafloat);
+    free(neqaint);
+    free(neqanil);
+    free(neqaintretype);
+    free(neqafloatretype);
+    free(neqafloatsame);
+    free(neqaintsame);
+    free(neqerror);
+    free(neqend);
+    free(neqastring);
 }
 
 void GEN_start(TTacList *list)
