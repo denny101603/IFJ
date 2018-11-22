@@ -89,7 +89,7 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
     if(elem == list->first)
         list->first = inserted;*/
 
-
+/**/
     inserted->next = elem->next;
     if(elem->next != NULL)
         elem->next->prev = inserted;
