@@ -17,20 +17,12 @@
 */
 
 #include "code_gen.h"
-//#include "seman.h"
+#include "seman.h"
 #include "fsm.h"
 //#include <stdio.h>
 //#include <stdbool.h>
 
-char *codegen_temp_id_generator()
-{
-    static unsigned long long cnt = 0;
-    char *name = (char *) malloc(sizeof(char)*32);
-    if(name == NULL)
-        return NULL;
-    sprintf(name, "&codegen%llu", cnt++);
-    return name;
-}
+
 
 char *whatType(int x)
 {
@@ -248,27 +240,35 @@ void gen_pop(TThreeAC *instruct)
     printf("POPS LF@%s\n", instruct->destination->name);
 }
 
-void gen_add_def()
+Tgen_add_struct gen_add_def()
 {
+    Tgen_add_struct tmp;
+    tmp.atype = codegen_temp_id_generator(); //proměnná LF@atype
+    tmp.atmp = codegen_temp_id_generator(); //proměnná LF@atmp
+
+    tmp.btype = codegen_temp_id_generator(); //proměnná LF@btype
+    tmp.btmp = codegen_temp_id_generator(); //proměnná LF@btmp
 
 }
 
 void gen_add(TThreeAC *instruct)
 {
-    char *atype = codegen_temp_id_generator(); //proměnná LF@atype
-    char *atmp = codegen_temp_id_generator(); //proměnná LF@atmp
+    Tgen_add_struct tmp = gen_add_def();
+    char *atype = tmp.atype;
+    char *atmp = tmp.atmp;
 
-    char *btype = codegen_temp_id_generator(); //proměnná LF@btype
-    char *btmp = codegen_temp_id_generator(); //proměnná LF@btmp
+    char *btype = tmp.btype;
+    char *btmp = tmp.btmp;
 
-    char *addastring = codegen_temp_id_generator(); //label skoku když a je string
-    char *addaint = codegen_temp_id_generator(); //label skoku když a je int
+    char *addastring = tmp.addastring;
+    char *addaint = codegen_temp_id_ge
     char *addafloat = codegen_temp_id_generator(); //label skoku když a je float
     char *addaintaretype = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
     char *addafloatbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
     char *addend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *adderrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *addasametypestring = codegen_temp_id_generator(); //label skoku když je a i b string a chceme konkatenovat
+
 
     if ((atype == NULL)||
         (atmp == NULL)||

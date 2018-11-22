@@ -18,6 +18,7 @@
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
 
+#include <
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -331,6 +332,7 @@ enum instructions{
     ENDWHILE
 };
 
+char *codegen_temp_id_generator();
 
 
 #endif //IFJ2018_SEMAN_H

@@ -338,6 +338,7 @@ bool tac_pop(TTacList *list, Toperand *dest)
 
 bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
+
     if(instruc_init(list, ADD, dest, op1, op2))
         return true;
     return false;
@@ -614,4 +615,13 @@ bool tac_endwhile(TTacList *list)
     if(instruc_init(list, ENDWHILE, NULL, NULL, NULL))
         return true;
     return false;
+}
+char *codegen_temp_id_generator()
+{
+    static unsigned long long cnt = 0;
+    char *name = (char *) malloc(sizeof(char)*32);
+    if(name == NULL)
+        return NULL;
+    sprintf(name, "&codegen%llu", cnt++);
+    return name;
 }
