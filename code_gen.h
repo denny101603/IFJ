@@ -16,7 +16,7 @@
 */
 
 #ifndef IFJ2018_CODE_GEN_H
-#define IFJ2018_CODE_GEN_H
+#define IFJ2018_CODE_GEN_H/**/
 
 #include "seman.h"
 #include "stdio.h"
