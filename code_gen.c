@@ -124,6 +124,7 @@ void pream()
     printf("SUB LF@counter LF@counter int@1\n");
     printf("GT LF@test LF@counter int@0\n");
     printf("JUMPIFEQ loop LF@test bool@true\n");
+    printf("PUSHS nil@nil\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
 
