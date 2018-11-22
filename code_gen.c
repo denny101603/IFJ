@@ -84,7 +84,7 @@ void pream()
     printf("RETURN\n");
 
     //inputs
-    printf("LABEL inputi\n");
+    printf("LABEL inputs\n");
     printf("CREATEFRAME\n");
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@var\n");
@@ -111,7 +111,7 @@ void pream()
     printf("EXIT int@4\n");
 
     //print
-    printf("LABEL length\n");
+    printf("LABEL print\n");//todo byl tu label lenght (stejný jako u lenght), to bylo blbe, ze?
     printf("CREATEFRAME\n");
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@counter\n");
