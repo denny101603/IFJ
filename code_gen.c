@@ -99,7 +99,7 @@ void pream()
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@var\n");
     printf("DEFVAR LF@x\n");
-    printf("POPS LF@x");
+    printf("POPS LF@x\n");
     printf("TYPE LF@xtype LF@x\n");
     printf("JUMPIFNEQ lengtherror LF@xtype string@string\n");
     printf("STRLEN LF@var LF@x\n");
@@ -144,7 +144,7 @@ void pream()
     printf("JUMPIFEQ while2_end LF@i LF@n\n");
     printf("GETCHAR LF@znak LF@s LF@i\n");
     printf("CONCAT LF@podretezec LF@podretezec LF@znak\n");
-    printf("ADD LF@i LF@i int@i\n");
+    printf("ADD LF@i LF@i int@i\n");//todo hazi err
     printf("JUMP while2\n");
     printf("LABEL while2_end\n");
     printf("PUSHS LF@podretezec\n");
@@ -198,7 +198,7 @@ void gen_defmove_const(TThreeAC *instruct)
 {
     char *typ = whatType(instruct->op_1->type);
     printf("DEFVAR LF@%s\n", instruct->destination->name);
-    printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
+    printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name); //todo hazi errory
 }
 
 void gen_createframe(TThreeAC *instruct)
