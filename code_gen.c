@@ -299,7 +299,7 @@ void gen_add(TThreeAC *instruct)
     printf("DEFVAR LF@%s\n", btmp);
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
-    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_2->name);
+    printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
     printf("JUMPIFEQ %s LF@%s string@string\n",addastring, atype);
 
@@ -583,6 +583,11 @@ void gen_div(TThreeAC *instruct)
         return;
     }
 
+    printf("DEFVAR LF@%s\n", atype);
+    printf("DEFVAR LF@%s\n", atmp);
+    printf("DEFVAR LF@%s\n", btype);
+    printf("DEFVAR LF@%s\n", btmp);
+
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -798,6 +803,13 @@ void gen_jumpifeq(TThreeAC *instruct)
         free(eqintsame);
         return;
     }
+
+    printf("DEFVAR LF@%s\n", atype);
+    printf("DEFVAR LF@%s\n", atmp);
+    printf("DEFVAR LF@%s\n", btype);
+    printf("DEFVAR LF@%s\n", btmp);
+    printf("DEFVAR LF@%s\n", tmp);
+
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
     printf("JUMPIFEQ %s LF@%s string@float\n", eqafloat, atype);
@@ -930,6 +942,12 @@ void gen_jumpifneq(TThreeAC *instruct)
         free(eqintsame);
         return;
     }
+
+    printf("DEFVAR LF@%s\n", atype);
+    printf("DEFVAR LF@%s\n", atmp);
+    printf("DEFVAR LF@%s\n", btype);
+    printf("DEFVAR LF@%s\n", btmp);
+    printf("DEFVAR LF@%s\n", tmp);
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1329,6 +1347,12 @@ void gen_eq(TThreeAC *instruct)
         return;
     }
 
+    printf("DEFVAR LF@%s\n", atype);
+    printf("DEFVAR LF@%s\n", atmp);
+    printf("DEFVAR LF@%s\n", btype);
+    printf("DEFVAR LF@%s\n", btmp);
+    //printf("DEFVAR LF@%s\n", tmp);
+
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
     printf("JUMPIFEQ %s LF@%s string@float\n", eqafloat, atype);
@@ -1381,6 +1405,7 @@ void gen_eq(TThreeAC *instruct)
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
+    printf("LABEL %s\n", eqend);
     free(atmp);
     free(atype);
     free(btmp);
