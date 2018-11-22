@@ -492,12 +492,12 @@ Ttoken *get_token(Tarray *token_value)
                 c = get_next_char(token_value);
                 switch(c)
                 {
-                    case '"': // = \034
-                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                    case '"': // => \034
+                        /* if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
-                        }
+                        }*/
                         if(arr_add_char(token_value, '0') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
@@ -516,7 +516,7 @@ Ttoken *get_token(Tarray *token_value)
                         next_state = STRING_0;
                         break;
                     case 'n': //EOL \010
-                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                       if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
@@ -539,11 +539,11 @@ Ttoken *get_token(Tarray *token_value)
                         next_state = STRING_0;
                         break;
                     case 't': // \009
-                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        /* if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
-                        }
+                        }*/
                         if(arr_add_char(token_value, '0') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
@@ -562,11 +562,11 @@ Ttoken *get_token(Tarray *token_value)
                         next_state = STRING_0;
                         break;
                     case 's':
-                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        /* if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
-                        }
+                        }*/
                         if(arr_add_char(token_value, '0') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
@@ -585,11 +585,11 @@ Ttoken *get_token(Tarray *token_value)
                         next_state = STRING_0;
                         break;
                     case '\\':
-                        if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
+                        /* if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
                             return token;
-                        }
+                        }*/
                         if(arr_add_char(token_value, '0') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
