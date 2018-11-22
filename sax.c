@@ -1052,7 +1052,7 @@ bool nt_callfce(TSynCommon *sa_vars)
         if (temp_id == NULL) {
             return false; //todo denny dealokace neceho?
         }
-        Toperand *new_op = op_init(INTEGER, temp_id); //sem dam pocet argumentu
+        Toperand *new_op = op_init(INTEGER, temp_id); //sem dam pocet argumentu //todo by berry potencialni chyba
         if (new_op == NULL) {
             return false; //todo denny dealokace neceho?
         }
@@ -1061,11 +1061,11 @@ bool nt_callfce(TSynCommon *sa_vars)
         if (str_num_of_args == NULL) {
             return false; //todo denny dealokace neceho?
         }
-        Toperand *cons = op_init(INTEGER, temp_id);
+        Toperand *cons = op_init(INTEGER, str_num_of_args); //todo by berry potencialni chyba
         if (cons == NULL) {
             return false; //todo denny dealokace neceho?
         }
-
+        //problem: do defmoveconst prijde &sax1 &sax1, ale zadna hodnota
         tac_defmove_const(sa_vars->tac_list, new_op, cons);
         tac_push(sa_vars->tac_list, new_op); //pushnuti informace o poctu argumentu na zasobnik
     }
