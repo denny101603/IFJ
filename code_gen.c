@@ -24,27 +24,27 @@
 
 char *whatType(int x)
 {
-    if(x == 41) //int
+    if(x == INTEGER) //int
     {
         return "int";
     }
-    else if(x == 35) //string
+    else if(x == STRING_1) //string
     {
         return "string";
     }
-    else if(x == 63) //bool
+    else if(x == BOOLEAN) //bool
     {
         return "bool";
     }
-    else if(x == 44) //float
+    else if(x == FLOAT_2) //float
     {
         return "float";
     }
-    else if(x == 54) //nil
+    else if(x == KEY_NIL) //nil
     {
         return "nil";
     }
-
+    return "nobody_knows";
 }
 
 void pream()
@@ -205,7 +205,6 @@ void gen_defmove_const(TThreeAC *instruct)
     {
         printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
     }
-    free(typ);
     free(hodnota);
 }
 
@@ -1446,10 +1445,10 @@ void gen_gt(TThreeAC *instruct)
 
 void gen_lt(TThreeAC *instruct)
 {
-    char *atype = codegen_temp_id_generator(); //promìnná LF@atype
-    char *atmp = codegen_temp_id_generator(); //promìnná LF@atmp
-    char *btype = codegen_temp_id_generator(); //promìnná LF@btype
-    char *btmp = codegen_temp_id_generator(); //promìnná LF@btmp
+    char *atype = instruct->names[0]; //promìnná LF@atype
+    char *atmp = instruct->names[1]; //promìnná LF@atmp
+    char *btype = instruct->names[2]; //promìnná LF@btype
+    char *btmp = instruct->names[3]; //promìnná LF@btmp
 
     char *ltastring = codegen_temp_id_generator(); //label skoku když a je string
     char *ltabool = codegen_temp_id_generator(); //label skoku když a je bool
@@ -2189,6 +2188,7 @@ void GEN_start(TTacList *list)
                 break;
         }
         //TThreeAC_delete(I2);
+        fflush(stdout);
         I2 = TAC_remove(list);
     }
 }
