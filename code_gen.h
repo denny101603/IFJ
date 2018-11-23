@@ -36,6 +36,12 @@ void GEN_start(TTacList *list);
  */
 void pream();
 
+void gen_loadparam_def(TThreeAC *instruct);
+
+void gen_add_def(TThreeAC *instruct);
+
+void gen_jumpifeq_def(TThreeAC *instruct);
+
 void gen_defvar(TThreeAC *instruct);
 
 void gen_move(TThreeAC *instruct);
