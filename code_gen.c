@@ -504,7 +504,7 @@ void gen_mul(TThreeAC *instruct)
     printf("LABEl %s\n", mulerrorend) ;
     printf("EXIT int@4\n");
 
-    printf("LABEL mul$end\n");
+    printf("LABEL %s\n", mulend);
 
     free(atype);
     free(btype);
