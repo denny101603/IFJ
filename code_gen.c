@@ -24,27 +24,27 @@
 
 char *whatType(int x)
 {
-    if(x == 41) //int
+    if(x == INTEGER) //int
     {
         return "int";
     }
-    else if(x == 35) //string
+    else if(x == STRING_1) //string
     {
         return "string";
     }
-    else if(x == 63) //bool
+    else if(x == BOOLEAN) //bool
     {
         return "bool";
     }
-    else if(x == 44) //float
+    else if(x == FLOAT_2) //float
     {
         return "float";
     }
-    else if(x == 54) //nil
+    else if(x == KEY_NIL) //nil
     {
         return "nil";
     }
-
+    return "nobody_knows";
 }
 
 void pream()
@@ -231,7 +231,7 @@ void gen_loadparam_def(TThreeAC *instruct)
 
 void gen_loadparam(TThreeAC *instruct)
 {
-    printf("POPS LF@%s\n", instruct->destination->name, instruct->destination->name);
+    printf("POPS LF@%s\n", instruct->destination->name);
 }
 
 void gen_push(TThreeAC *instruct)
@@ -254,7 +254,6 @@ void gen_add_def(TThreeAC *instruct)
 
 void gen_add(TThreeAC *instruct)
 {
-
     char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
@@ -585,7 +584,7 @@ void gen_div(TThreeAC *instruct)
     printf("LABEL %s\n", diverrorend);
     printf("EXIT int@4\n");
 
-    printf("LABEL %s", divend);
+    printf("LABEL %s\n", divend);
 
     free(atype);
     free(btype);
@@ -801,7 +800,7 @@ void gen_jumpifeq(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", eqend);
-    printf("JUMPIFEQ %s LF@%s bool@true", instruct->destination->name, tmp);
+    printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
 
     free(atype);
     free(atmp);
@@ -2190,6 +2189,7 @@ void GEN_start(TTacList *list)
                 break;
         }
         //TThreeAC_delete(I2);
+        fflush(stdout);
         I2 = TAC_remove(list);
     }
 }
