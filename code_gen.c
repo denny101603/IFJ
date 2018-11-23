@@ -24,27 +24,27 @@
 
 char *whatType(int x)
 {
-    if(x == 41) //int
+    if(x == INTEGER) //int
     {
         return "int";
     }
-    else if(x == 35) //string
+    else if(x == STRING_1) //string
     {
         return "string";
     }
-    else if(x == 63) //bool
+    else if(x == BOOLEAN) //bool
     {
         return "bool";
     }
-    else if(x == 44) //float
+    else if(x == FLOAT_2) //float
     {
         return "float";
     }
-    else if(x == 54) //nil
+    else if(x == KEY_NIL) //nil
     {
         return "nil";
     }
-
+    return NOBODY_KNOWS;
 }
 
 void pream()
