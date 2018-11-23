@@ -59,6 +59,7 @@ typedef struct three_ac{
     Toperand *destination;
     Toperand *op_1;
     Toperand *op_2;
+    char *names[6]; //max pocet predavanych nazvu
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;
