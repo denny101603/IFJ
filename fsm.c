@@ -768,6 +768,19 @@ Ttoken *get_token(Tarray *token_value)
                 }
                 break;
             case FLOAT_2: //DONE
+                ;
+                float num = 0.0;
+                arr_add_char(token_value, '\0');
+                sscanf(token_value->array, "%f", &num);
+                char *temp = malloc(sizeof(char)*128);
+                //sprintf(token_value->array, "%a", num);
+                sprintf(temp, "%.20a", num);
+
+                arr_reset(token_value);
+                for(int i = 0; temp[i] != '\0'; i++)
+                {
+                    arr_add_char(token_value, temp[i]);
+                }
                 if(token_set_attribute(token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
                     token_set_type(token, ERR_INTERNAL);
