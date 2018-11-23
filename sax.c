@@ -304,14 +304,25 @@ bool nt_deffunc(TSynCommon *sa_vars)
             if (t2->type != LEFT_BRACKET)
                 return false;
 
-            //todo seman:
+            //*****ZACATEK TVORBY KODU **************************************/
+            char *label_str = sax_temp_id_generator();
+            if(label_str == NULL)
+                return false;
+            Toperand *label = op_init(KEY_NIL, label_str);
+            if(label == NULL)
+            {
+                sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
+                return false;
+            }
+
             Toperand *op = op_init(t1->type, t1->attribute);
             if(op == NULL)
             {
                 sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
                 return false;
             }
-            tac_deffunc(sa_vars->tac_list, op);
+            tac_deffunc(sa_vars->tac_list, op, label);
+            //******KONEC TVORBY KODU****************************************/
 
             if (!nt_params(sa_vars))
                 return false;
@@ -343,7 +354,21 @@ bool nt_deffunc(TSynCommon *sa_vars)
             if (t1->type != KEY_END)
                 return false;
 
-            tac_return(sa_vars->tac_list, op);
+            //*****ZACATEK TVORBY KODU **************************************/
+            char *nil_str = sax_temp_id_generator();
+            if(nil_str == NULL)
+                return false;
+            Toperand *op_nil = op_init(KEY_NIL, nil_str);
+
+            char *nil_const_str = (char *) malloc(sizeof(char)*4); //nil\0
+            if(nil_const_str == NULL)
+                return false;
+            strcpy(nil_const_str, "nil");
+            Toperand *op_nil_const = op_init(KEY_NIL, nil_const_str);
+
+            tac_defmove_const(sa_vars->tac_list, op_nil, op_nil_const);
+            tac_return(sa_vars->tac_list, op_nil, label);
+            //******KONEC TVORBY KODU****************************************/
 
             //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
             TS_push(sa_vars->symtabs_bin, TS_pop(sa_vars->local_tables));
@@ -1027,6 +1052,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     }
     if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci
     {
+        sa_vars->err_code = ERR_SEM_DEF;
         return false;
     }
     //todo denny poresit volitelne zavorky
