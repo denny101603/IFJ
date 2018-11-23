@@ -478,6 +478,7 @@ Ttoken *get_token(Tarray *token_value)
                 if (c == '"')
                     next_state = STRING_1;
                 else if (c == '\\')
+
                     next_state = ESCAPE_0;
                 else if(c == EOF)
                     next_state = LEX_ERROR;
@@ -647,8 +648,13 @@ Ttoken *get_token(Tarray *token_value)
                             token_set_type(token, ERR_INTERNAL);
                             return token;
                         }
+                        if(arr_add_char(token_value, '0') == ERR_INTERNAL)
+                        {
+                            token_set_type(token, ERR_INTERNAL);
+                            return token;
+                        }
 
-                        for(int kurva = 0; kurva < 3; kurva++)
+                        for(int kurva = 0; kurva < 2; kurva++)
                         {
                             if(arr_add_char(token_value, pica[kurva]) == ERR_INTERNAL)
                             {
