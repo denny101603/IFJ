@@ -358,7 +358,7 @@ Ttoken *get_token(Tarray *token_value)
                 if(c == EOF)
                     next_state = EOF_STATE;
                 if(c == EOL)
-                    next_state = START;
+                    next_state = EOL_1;
                 break; //konec OONE_LINE_COMMENT
             case ID_0: //DONE
                 c = get_next_char(token_value);
