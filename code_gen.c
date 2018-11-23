@@ -205,6 +205,8 @@ void gen_defmove_const(TThreeAC *instruct)
     {
         printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
     }
+    free(typ);
+    free(hodnota);
 }
 
 void gen_createframe(TThreeAC *instruct)
@@ -467,7 +469,7 @@ void gen_mul(TThreeAC *instruct)
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
     printf("JUMPIFEQ %s LF@%s string@int\n", mulaint, atype);
-    printf("JUMPIFEQ %s LF@%s string@int\n", mulafloat, atype);
+    printf("JUMPIFEQ %s LF@%s string@float\n", mulafloat, atype);
 
     printf("LABEL %s\n", mulaint);
 
@@ -502,7 +504,7 @@ void gen_mul(TThreeAC *instruct)
     printf("LABEl %s\n", mulerrorend) ;
     printf("EXIT int@4\n");
 
-    printf("LABEL mul$end\n");
+    printf("LABEL %s\n", mulend);
 
     free(atype);
     free(btype);
