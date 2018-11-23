@@ -160,7 +160,6 @@ TThreeAC *TAC_remove(TTacList *list);
  */
 void TAC_delete_list(TTacList *list);
 
-
 /**
  * @brief
  * @author Matej Jelinek
@@ -330,7 +329,11 @@ enum instructions{
     LOADPARAM,
     DEFMOVE,
     WHILE,
-    ENDWHILE
+    ENDWHILE,
+    LOADPARAM_DEF,
+    ADD_DEF,
+    JUMPIFEQ_DEF,
+    GTEQ_DEF
 };
 
 
