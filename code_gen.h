@@ -20,6 +20,7 @@
 #include "seman.h"
 #include "stdio.h"
 #include "stdbool.h"
+#include <string.h>
 
 /**
  * @brief funkce pro zacatek generovani kodu

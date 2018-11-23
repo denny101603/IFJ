@@ -190,9 +190,9 @@ void gen_defmove_const(TThreeAC *instruct)
     char *typ = whatType(instruct->op_1->type);
     char *hodnota = instruct->op_1->name;
     printf("DEFVAR LF@%s\n", instruct->destination->name);
-    if(typ == "bool")
+    if(!strcmp(typ,"bool"))
     {
-        if(hodnota == "0")
+        if(!strcmp(hodnota,"0"))
         {
             printf("MOVE LF@%s bool@false\n", instruct->destination->name);
         }
@@ -240,11 +240,6 @@ void gen_push(TThreeAC *instruct)
 void gen_pop(TThreeAC *instruct)
 {
     printf("POPS LF@%s\n", instruct->destination->name);
-}
-
-void gen_add_def()
-{
-
 }
 
 void gen_add_def(TThreeAC *instruct)
@@ -2008,7 +2003,8 @@ void GEN_start(TTacList *list)
             if(while_count != 0)
                 while_count--;
         }
-        if((I2->name == DEFVAR && while_count != 0) || (I2->name == DEFMOVE && while_count != 0))
+        if((I2->name == DEFVAR && while_count != 0) || (I2->name == DEFMOVE && while_count != 0) || (I2->name == ADD_DEF && while_count != 0)
+        || (I2->name == LOADPARAM_DEF && while_count != 0) || (I2->name == JUMPIFEQ_DEF && while_count != 0) || (I2->name == GTEQ_DEF && while_count != 0))
         {
             tmp = I2->next;
             temp = TAC_remove_this(list, I2);
@@ -2173,6 +2169,22 @@ void GEN_start(TTacList *list)
             case NEQ:
                 printf("#_________toto je NEQ _____\n");
                 gen_neq(I2);
+                break;
+            case LOADPARAM_DEF:
+                printf("#_________toto je LOADPARAM_DEF_____\n");
+                gen_loadparam_def(I2);
+                break;
+            case ADD_DEF:
+                printf("#_________toto je ADD_DEF_____\n");
+                gen_add_def(I2);
+                break;
+            case JUMPIFEQ_DEF:
+                printf("#_________toto je JUMPIFEQ_DEF_____\n");
+                gen_jumpifeq_def(I2);
+                break;
+            case GTEQ_DEF:
+                printf("#_________toto je GTEQ_DEF_____\n");
+                gen_gteq_def(I2);
                 break;
         }
         //TThreeAC_delete(I2);
