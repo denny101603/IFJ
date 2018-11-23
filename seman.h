@@ -222,7 +222,7 @@ bool tac_chr(TTacList *list, Toperand *dest, Toperand *op1);
 
 bool tac_call(TTacList *list, Toperand *dest, Toperand *op1);
 
-bool tac_return(TTacList *list, Toperand *op1);
+bool tac_return(TTacList *list, Toperand *op1, Toperand *op2);
 
 bool tac_int2float(TTacList *list, Toperand *dest, Toperand *op1);
 
@@ -244,7 +244,7 @@ bool tac_isbool(TTacList *list, Toperand *dest, Toperand *op1);
 
 bool tac_lable(TTacList *list, Toperand *op1);
 
-bool tac_deffunc(TTacList *list, Toperand *op1);
+bool tac_deffunc(TTacList *list, Toperand *op1, Toperand *op2);
 
 bool tac_jump(TTacList *list, Toperand *op1);
 

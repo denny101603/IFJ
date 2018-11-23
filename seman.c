@@ -485,9 +485,9 @@ bool tac_call(TTacList *list, Toperand *dest, Toperand *op1)
     return false;
 }
 
-bool tac_return(TTacList *list, Toperand *op1)
+bool tac_return(TTacList *list, Toperand *op1, Toperand *op2)
 {
-    if (instruc_init(list, RETURN, NULL, op1, NULL, NULL))
+    if (instruc_init(list, RETURN, NULL, op1, op2, NULL))
         return true;
     return false;
 }
@@ -562,9 +562,9 @@ bool tac_lable(TTacList *list, Toperand *op1)
     return false;
 }
 
-bool tac_deffunc(TTacList *list, Toperand *op1)
+bool tac_deffunc(TTacList *list, Toperand *op1, Toperand *op2)
 {
-    if (instruc_init(list, DEFFUNC, NULL, op1, NULL, NULL))
+    if (instruc_init(list, DEFFUNC, NULL, op1, op2, NULL))
         return true;
     return false;
 }
