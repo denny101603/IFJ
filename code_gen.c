@@ -44,7 +44,7 @@ char *whatType(int x)
     {
         return "nil";
     }
-    return NOBODY_KNOWS;
+    return "nobody_knows";
 }
 
 void pream()
@@ -2189,6 +2189,7 @@ void GEN_start(TTacList *list)
                 break;
         }
         //TThreeAC_delete(I2);
+        fflush(stdout);
         I2 = TAC_remove(list);
     }
 }
