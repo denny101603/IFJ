@@ -327,55 +327,115 @@ bool tac_loadparam(TTacList *list, Toperand *dest)
     char *names[MAX_NAMES];
     for (int i = 0; i < MAX_NAMES; i++)
         names[i] = NULL;
-    //names[0] =
+    names[0] = codegen_temp_id_generator();
+    if(names[0] == NULL)
+        return false;
 
-    if (instruc_init(list, LOADPARAM, dest, NULL, NULL))
-        return true;
-    return false;
+    if(!instruc_init(list, LOADPARAM_DEF, NULL, NULL, NULL, names))
+        return false;
+    if (!instruc_init(list, LOADPARAM, dest, NULL, NULL, names))
+        return false;
+    return true;
 }
 
 bool tac_push(TTacList *list, Toperand *op1)
 {
-    if (instruc_init(list, PUSH, NULL, op1, NULL))
+    if (instruc_init(list, PUSH, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
-
+/*
 bool tac_pop(TTacList *list, Toperand *dest)
 {
     if (instruc_init(list, POP, dest, NULL, NULL))
         return true;
     return false;
 }
-
+*/
 bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, ADD, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, ADD, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_sub(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, SUB, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, SUB, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_mul(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, MUL, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, MUL, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, DIV, dest, op1, op2))
-        return true;
-    return false;
-}
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
 
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, DIV, dest, op1, op2, names))
+        return false;
+    return true;
+}
+/*
 bool tac_inputi(TTacList *list, Toperand *dest)
 {
     if (instruc_init(list, INPUTI, dest, NULL, NULL))
@@ -397,16 +457,12 @@ bool tac_inputf(TTacList *list, Toperand *dest)
     return false;
 }
 
-//TODO print
-
 bool tac_length(TTacList *list, Toperand *dest, Toperand *op1)
 {
     if(instruc_init(list, LENGTH, dest, op1, NULL))
         return true;
     return false;
 }
-
-//TODO substr
 
 bool tac_ord(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
@@ -421,21 +477,21 @@ bool tac_chr(TTacList *list, Toperand *dest, Toperand *op1)
         return true;
     return false;
 }
-
+*/
 bool tac_call(TTacList *list, Toperand *dest, Toperand *op1)
 {
-    if(instruc_init(list, CALL, dest, op1, NULL))
+    if(instruc_init(list, CALL, dest, op1, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_return(TTacList *list, Toperand *op1)
 {
-    if (instruc_init(list, RETURN, NULL, op1, NULL))
+    if (instruc_init(list, RETURN, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
-
+/*
 bool tac_int2float(TTacList *list, Toperand *dest, Toperand *op1)
 {
     if(instruc_init(list, INT2FLOAT, dest, op1, NULL))
@@ -498,42 +554,70 @@ bool tac_isbool(TTacList *list, Toperand *dest, Toperand *op1)
         return true;
     return false;
 }
-
+*/
 bool tac_lable(TTacList *list, Toperand *op1)
 {
-    if (instruc_init(list, LABLE, NULL, op1, NULL))
+    if (instruc_init(list, LABLE, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_deffunc(TTacList *list, Toperand *op1)
 {
-    if (instruc_init(list, DEFFUNC, NULL, op1, NULL))
+    if (instruc_init(list, DEFFUNC, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_jump(TTacList *list, Toperand *op1)
 {
-    if (instruc_init(list, JUMP, NULL, op1, NULL))
+    if (instruc_init(list, JUMP, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_jumpifeq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, JUMPIFEQ, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 5; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL || names[4] == NULL)
+    {
+        for(int i = 0; i < 5; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, JUMPIFEQ_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, JUMPIFEQ, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_jumpifneq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, JUMPIFNEQ, dest, op1, op2))
-        return true;
-    return false;
-}
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 5; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL || names[4] == NULL)
+    {
+        for(int i = 0; i < 5; i++)
+            free(names[i]);
+        return false;
+    }
 
+    if(!instruc_init(list, JUMPIFEQ_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, JUMPIFNEQ, dest, op1, op2, names))
+        return false;
+    return true;
+}
+/*
 bool tac_jumpifgt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
     if(instruc_init(list, JUMPIFGT, dest, op1, op2))
@@ -547,54 +631,138 @@ bool tac_jumpiflt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
         return true;
     return false;
 }
-
+*/
 bool tac_dprint(TTacList *list, Toperand *op1)
 {
-    if(instruc_init(list, DPRINT, NULL, op1, NULL))
+    if(instruc_init(list, DPRINT, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, EQ, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, EQ, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_gt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, GT, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, GT, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_lt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, LT, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, LT, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_gteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, GTEQ, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 6; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL || names[4] == NULL || names[5] == NULL)
+    {
+        for(int i = 0; i < 6; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, GTEQ_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, GTEQ, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_lteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, LTEQ, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 6; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL || names[4] == NULL || names[5] == NULL)
+    {
+        for(int i = 0; i < 6; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, GTEQ_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, LTEQ, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-    if(instruc_init(list, NEQ, dest, op1, op2))
-        return true;
-    return false;
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    for(int i = 0; i < 4; i++)
+        names[i] = codegen_temp_id_generator();
+    if(names[0] == NULL || names[1] == NULL || names[2] == NULL || names[3] == NULL)
+    {
+        for(int i = 0; i < 4; i++)
+            free(names[i]);
+        return false;
+    }
+
+    if(!instruc_init(list, ADD_DEF, NULL, NULL, NULL, names))
+        return false;
+    if(!instruc_init(list, NEQ, dest, op1, op2, names))
+        return false;
+    return true;
 }
 
 Toperand *op_init(int type, char *name)
@@ -609,21 +777,21 @@ Toperand *op_init(int type, char *name)
 }
 bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1)
 {
-    if(instruc_init(list, DEFMOVE, dest, op1, NULL))
+    if(instruc_init(list, DEFMOVE, dest, op1, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_while(TTacList *list)
 {
-    if(instruc_init(list, WHILE, NULL, NULL, NULL))
+    if(instruc_init(list, WHILE, NULL, NULL, NULL, NULL))
         return true;
     return false;
 }
 
 bool tac_endwhile(TTacList *list)
 {
-    if(instruc_init(list, ENDWHILE, NULL, NULL, NULL))
+    if(instruc_init(list, ENDWHILE, NULL, NULL, NULL, NULL))
         return true;
     return false;
 }
