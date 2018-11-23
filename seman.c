@@ -16,6 +16,7 @@
  *	      V simulovanych testech vsechno fungovalo dobre.
 */
 #include "seman.h"
+#include <stdio.h>
 
 
 TTacList *TAC_init()
@@ -265,7 +266,7 @@ void op_delete_buffer(Ttac_buffer *buffer)
 }
 
 
-bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2)
+bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[])
 {
     TThreeAC *I1 = malloc(sizeof(TThreeAC));
     if(I1 == NULL)
@@ -277,22 +278,29 @@ bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1
     I1->prev = NULL;
     I1->next = NULL;
     TAC_insert(list, I1);
+    if(names == NULL)
+        I1->names[0] = NULL;
+    else
+    {
+        for (int i = 0; i < MAX_NAMES; i++)
+            I1->names[i] = names[i];
+    }
     return true;
 }
 
 bool tac_defvar(TTacList *list, Toperand *op1)
 {
-    if (instruc_init(list, DEFVAR, NULL, op1, NULL))
+    if (instruc_init(list, DEFVAR, NULL, op1, NULL, NULL))
         return true;
     return false;
 }
 bool tac_move(TTacList *list, Toperand *dest, Toperand *op1)
 {
-    if(instruc_init(list, MOVE, dest, op1, NULL))
+    if(instruc_init(list, MOVE, dest, op1, NULL, NULL))
         return true;
     return false;
 }
-
+/*
 bool tac_createframe(TTacList *list)
 {
     if(instruc_init(list, CREATEFRAME, NULL, NULL, NULL))
@@ -313,9 +321,14 @@ bool tac_popframe(TTacList *list)
         return true;
     return false;
 }
-
+*/
 bool tac_loadparam(TTacList *list, Toperand *dest)
 {
+    char *names[MAX_NAMES];
+    for (int i = 0; i < MAX_NAMES; i++)
+        names[i] = NULL;
+    //names[0] =
+
     if (instruc_init(list, LOADPARAM, dest, NULL, NULL))
         return true;
     return false;
@@ -613,4 +626,14 @@ bool tac_endwhile(TTacList *list)
     if(instruc_init(list, ENDWHILE, NULL, NULL, NULL))
         return true;
     return false;
+}
+
+char *codegen_temp_id_generator()
+{
+    static unsigned long long cnt = 0;
+    char *name = (char *) malloc(sizeof(char)*32);
+    if(name == NULL)
+        return NULL;
+    sprintf(name, "&codegen%llu", cnt++);
+    return name;
 }
