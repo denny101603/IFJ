@@ -91,7 +91,7 @@ Toperand *op_init(int type, char *name);
  * @brief Struktura pro seznam triadresnych instrukci, kde instrukce na odkaze oznacenem jako "first" je prvni instrukci programu.
  * @author Jan Beran
  */
-typedef struct tac_list{
+typedef struct tac_list{/**/
     TThreeAC *first;
     TThreeAC *last;
 }TTacList;
