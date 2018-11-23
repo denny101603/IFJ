@@ -609,6 +609,7 @@ void gen_return(TThreeAC *instruct)
     printf("PUSHS LF@%s\n", instruct->op_1->name);
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL %s\n", instruct->op_2->name);
 }
 
 void gen_int2float(TThreeAC *instruct)
@@ -675,9 +676,10 @@ void gen_lable(TThreeAC *instruct)
 
 void gen_deffunc(TThreeAC *instruct)
 {
-    printf("LABEL %s\n"
+    printf("JUMP %s\n"
+           "LABEL %s\n"
            "CREATEFRAME\n"
-           "PUSHFRAME\n",instruct->op_1->name);
+           "PUSHFRAME\n",instruct->op_1->name, instruct->op_2->name);
 }
 
 void gen_jump(TThreeAC *instruct)
@@ -1216,11 +1218,11 @@ void gen_eq(TThreeAC *instruct)
     char *eqabool = codegen_temp_id_generator(); //label skoku když a je float
     char *eqanil = codegen_temp_id_generator(); //label skoku když a je float
     char *eqaretype = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
-    char *eqfloatsame = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
     char *eqbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
     char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
-    char *eqintsame = codegen_temp_id_generator();
+    char *eqfalse = codegen_temp_id_generator();
+
 
     if ((eqafloat == NULL)||
         (eqaint == NULL)||
@@ -1228,11 +1230,9 @@ void gen_eq(TThreeAC *instruct)
         (eqabool == NULL)||
         (eqanil == NULL)||
         (eqaretype == NULL)||
-        (eqfloatsame == NULL)||
         (eqbretype == NULL)||
         (eqend == NULL)||
-        (eqerrorend == NULL)||
-        (eqintsame == NULL))
+        (eqerrorend == NULL))
     {
         free(atype);
         free(atmp);
@@ -1247,8 +1247,6 @@ void gen_eq(TThreeAC *instruct)
         free(eqbretype);
         free(eqend);
         free(eqerrorend);
-        free(eqfloatsame);
-        free(eqintsame);
         return;
     }
 
@@ -1265,46 +1263,52 @@ void gen_eq(TThreeAC *instruct)
 
     printf("LABEL %s\n", eqafloat); //A JE FLOAT
     printf("JUMPIFEQ %s LF@%s string@int\n", eqbretype, btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n", eqfloatsame, btype);
-    printf("JUMP %s \n", eqerrorend);
-
-    printf("LABEL %s\n", eqfloatsame); //OBA JSOU FLOAT
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@float\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", eqbretype); //A JE FLOAT B JE INT
-    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
+    printf("LABEL %s\n", eqbretype);
+    printf("INT2FLOAT %s %s", btmp, instruct->op_2->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", eqaint); //A JE INT
-    printf("JUMPIFEQ %s LF@%s string@int\n", eqintsame, btype);
+    printf("LABEL %s\n", eqaint); //A JE FLOAT
     printf("JUMPIFEQ %s LF@%s string@float\n", eqaretype, btype);
-    printf("JUMP %s \n", eqerrorend);
-
-    printf("LABEL %s\n", eqintsame); //OBA INT
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@int\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", eqaretype); //PŘETYPOVAT A
-    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
-    printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, atmp, instruct->op_2->name);
+    printf("LABEL %s\n", eqaretype);
+    printf("INT2FLOAT %s %s", atmp, instruct->op_1->name);
+    printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name,atmp , instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", eqanil); //POROVNÁNÍ NILŮ
-    printf("JUMPIFNEQ %s LF@%s string@nil\n", eqerrorend, btype);
+    printf("LABEL %s\n", eqastring);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@string\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", eqabool); //POROVNÁNÍ BOOLŮ
+    printf("LABEL %s\n", eqabool);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
     printf("JUMPIFNEQ %s LF@%s string@bool\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", eqastring); //POROVNÁNÍ STRINGŮ
-    printf("JUMPIFNEQ %s LF@%s string@string\n", eqerrorend, btype);
+
+    printf("LABEL %s\n", eqanil);
+    printf("JUMPIFNEQ %s LF@%s string@bool\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s \n", eqend);
+
+    printf("LABEL %s\n", eqfalse);
+    printf("MOVE LF@%s bool@false\n", instruct->destination->name);
+    printf("JUMP %s \n", eqend);
+
+    printf("LABEL %s \n", eqerrorend);
+    printf("EXIT int@4 \n", eqend);
 
     printf("LABEL %s\n", eqend);
 
@@ -1321,8 +1325,6 @@ void gen_eq(TThreeAC *instruct)
     free(eqbretype);
     free(eqend);
     free(eqerrorend);
-    free(eqfloatsame);
-    free(eqintsame);
 }
 
 void gen_gt(TThreeAC *instruct)
@@ -1847,134 +1849,120 @@ void gen_neq(TThreeAC *instruct)
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
 
-    char *neqastring = codegen_temp_id_generator(); //label skoku když a je string
-    char *neqabool = codegen_temp_id_generator(); //label skoku když a je bool
-    char *neqanil = codegen_temp_id_generator(); //label skoku když a je nil
-    char *neqaint = codegen_temp_id_generator(); //label skoku když a je int
-    char *neqaintretype = codegen_temp_id_generator(); //label skoku když intretype
-    char *neqaintsame = codegen_temp_id_generator(); //label skoku když intsame
-    char *neqafloat = codegen_temp_id_generator(); //label skoku když a je float
-    char *neqafloatretype = codegen_temp_id_generator(); //label skoku když floatretype
-    char *neqafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
-    char *neqerror = codegen_temp_id_generator(); //label skoku když error
-    char *neqend = codegen_temp_id_generator(); //label skoku když end
+    char *eqaint = codegen_temp_id_generator(); //label skoku když a je int
+    char *eqafloat = codegen_temp_id_generator(); //label skoku když a je float
+    char *eqastring = codegen_temp_id_generator(); //label skoku když a je float
+    char *eqabool = codegen_temp_id_generator(); //label skoku když a je float
+    char *eqanil = codegen_temp_id_generator(); //label skoku když a je float
+    char *eqaretype = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
+    char *eqbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
+    char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
+    char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
+    char *eqfalse = codegen_temp_id_generator();
 
-    if ((neqafloat == NULL)||
-        (neqaint == NULL)||
-        (neqastring == NULL)||
-        (neqabool == NULL)||
-        (neqanil == NULL)||
-        (neqaintretype == NULL)||
-        (neqafloatsame == NULL)||
-        (neqafloatretype == NULL)||
-        (neqend == NULL)||
-        (neqerror == NULL)||
-        (neqaintsame == NULL))
+
+    if ((eqafloat == NULL)||
+        (eqaint == NULL)||
+        (eqastring == NULL)||
+        (eqabool == NULL)||
+        (eqanil == NULL)||
+        (eqaretype == NULL)||
+        (eqbretype == NULL)||
+        (eqend == NULL)||
+        (eqerrorend == NULL))
     {
-        free(atmp);
         free(atype);
-        free(btmp);
+        free(atmp);
         free(btype);
-        free(neqabool);
-        free(neqafloat);
-        free(neqaint);
-        free(neqanil);
-        free(neqaintretype);
-        free(neqafloatretype);
-        free(neqafloatsame);
-        free(neqaintsame);
-        free(neqerror);
-        free(neqend);
-        free(neqastring);
+        free(btmp);
+        free(eqabool);
+        free(eqafloat);
+        free(eqaint);
+        free(eqanil);
+        free(eqaretype);
+        free(eqastring);
+        free(eqbretype);
+        free(eqend);
+        free(eqerrorend);
         return;
     }
 
+    //printf("DEFVAR LF@%s\n", tmp);
+
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
+    printf("JUMPIFEQ %s LF@%s string@float\n", eqafloat, atype);
+    printf("JUMPIFEQ %s LF@%s string@int\n", eqaint, atype);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqanil, atype);
+    printf("JUMPIFEQ %s LF@%s string@string\n", eqastring, atype);
+    printf("JUMPIFEQ %s LF@%s string@bool\n", eqabool, atype);
+    printf("JUMP %s \n", eqerrorend);
 
-    printf("JUMPIFEQ %s LF@%s string@string\n",neqastring, atype);
-    printf("JUMPIFEQ %s LF@%s string@int\n",neqaint, atype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",neqafloat , atype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",neqabool , atype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",neqanil , atype);
-    printf("JUMP %s\n",neqerror);
-
-
-    printf("LABEL %s\n", neqafloat);
-    printf("JUMPIFEQ %s LF@%s string@int\n",neqafloatretype , btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",neqafloatsame , btype);
-    printf("JUMP %s\n",neqerror);
-
-    printf("LABEL %s\n", neqafloatsame);
+    printf("LABEL %s\n", eqafloat); //A JE FLOAT
+    printf("JUMPIFEQ %s LF@%s string@int\n", eqbretype, btype);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@float\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", neqafloatretype);
-    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
+    printf("LABEL %s\n", eqbretype);
+    printf("INT2FLOAT %s %s", btmp, instruct->op_2->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("JUMP %s \n", eqend);
 
-
-    printf("LABEL %s\n", neqaint);
-    printf("JUMPIFEQ %s LF@%s string@int\n",neqaintsame , btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",neqaintretype , btype);
-    printf("JUMP %s\n",neqerror);
-
-    printf("LABEL %s\n", neqaintsame);
+    printf("LABEL %s\n", eqaint); //A JE FLOAT
+    printf("JUMPIFEQ %s LF@%s string@float\n", eqaretype, btype);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@int\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", neqaintretype);
-    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
-    printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, atmp, instruct->op_2->name);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("LABEL %s\n", eqaretype);
+    printf("INT2FLOAT %s %s", atmp, instruct->op_1->name);
+    printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name,atmp , instruct->op_2->name);
+    printf("JUMP %s \n", eqend);
 
-
-    printf("LABEL %s\n", neqastring);
-    printf("JUMPIFNEQ %s LF@%s string@string\n",neqerror , btype);
+    printf("LABEL %s\n", eqastring);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@string\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("JUMP %s \n", eqend);
 
-
-    printf("LABEL %s\n", neqabool);
-    printf("JUMPIFNEQ %s LF@%s string@bool\n",neqerror , btype);
+    printf("LABEL %s\n", eqabool);
+    printf("JUMPIFEQ %s LF@%s string@nil\n", eqfalse, btype);
+    printf("JUMPIFNEQ %s LF@%s string@bool\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("JUMP %s \n", eqend);
 
 
-    printf("LABEL %s\n", neqanil);
-    printf("JUMPIFNEQ %s LF@%s string@nil\n",neqerror , btype);
+    printf("LABEL %s\n", eqanil);
+    printf("JUMPIFNEQ %s LF@%s string@bool\n", eqerrorend, btype);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-    printf("NOT LF@%s LF@%s\n",instruct->destination->name, instruct->destination->name);
-    printf("JUMP %s\n",neqend);
+    printf("JUMP %s \n", eqend);
 
+    printf("LABEL %s\n", eqfalse);
+    printf("MOVE LF@%s bool@false\n", instruct->destination->name);
+    printf("JUMP %s \n", eqend);
 
-    printf("LABEL %s\n", neqerror);
-    printf("EXIT int@4\n");
+    printf("LABEL %s \n", eqerrorend);
+    printf("EXIT int@4 \n", eqend);
 
-    printf("LABEL %s\n", neqend);
+    printf("LABEL %s\n", eqend);
+    printf("NOT LF@%s LF@%s\n", instruct->destination->name, instruct->destination->name);
 
-    free(atmp);
     free(atype);
-    free(btmp);
+    free(atmp);
     free(btype);
-    free(neqabool);
-    free(neqafloat);
-    free(neqaint);
-    free(neqanil);
-    free(neqaintretype);
-    free(neqafloatretype);
-    free(neqafloatsame);
-    free(neqaintsame);
-    free(neqerror);
-    free(neqend);
-    free(neqastring);
+    free(btmp);
+    free(eqabool);
+    free(eqafloat);
+    free(eqaint);
+    free(eqanil);
+    free(eqaretype);
+    free(eqastring);
+    free(eqbretype);
+    free(eqend);
+    free(eqerrorend);
 }
 
 void GEN_start(TTacList *list)
