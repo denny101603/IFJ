@@ -1269,7 +1269,7 @@ void gen_eq(TThreeAC *instruct)
     printf("JUMP %s \n", eqend);
 
     printf("LABEL %s\n", eqbretype);
-    printf("INT2FLOAT %s %s", btmp, instruct->op_2->name);
+    printf("INT2FLOAT LF@%s LF@%s", btmp, instruct->op_2->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s \n", eqend);
 
@@ -1281,7 +1281,7 @@ void gen_eq(TThreeAC *instruct)
     printf("JUMP %s \n", eqend);
 
     printf("LABEL %s\n", eqaretype);
-    printf("INT2FLOAT %s %s", atmp, instruct->op_1->name);
+    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name,atmp , instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
@@ -1906,7 +1906,7 @@ void gen_neq(TThreeAC *instruct)
     printf("JUMP %s \n", eqend);
 
     printf("LABEL %s\n", eqbretype);
-    printf("INT2FLOAT %s %s", btmp, instruct->op_2->name);
+    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s \n", eqend);
 
@@ -1918,7 +1918,7 @@ void gen_neq(TThreeAC *instruct)
     printf("JUMP %s \n", eqend);
 
     printf("LABEL %s\n", eqaretype);
-    printf("INT2FLOAT %s %s", atmp, instruct->op_1->name);
+    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name,atmp , instruct->op_2->name);
     printf("JUMP %s \n", eqend);
 
