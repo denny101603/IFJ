@@ -821,15 +821,14 @@ bool savo(TSynCommon *sa_vars)
        //kontrola, zda, pokud prisel token s ID_2, je ID_2 v tabulce symbolu. pokud symtab_find == NULL, pak neni => err
         if (input_token->type== ID_2 && (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL))
         {
-            err = ERR_SEM_DEF;
-            action = '?';
+            err = action_err(stack, sa_vars, ERR_SEM_DEF, internal_buffer);
+            action = 'E';
         }
 
        switch (action) {
            /*Ladici vypis*/
            //fprintf(stderr, "Rozhodnuti, jaka se provede akce. Momentalne se jedna o: %c \n", action);
            /*Konec l.v.*/
-           default:
            case '?': //err
                err = action_err(stack, sa_vars, ERR_SYN, internal_buffer);
                break;
@@ -850,6 +849,8 @@ bool savo(TSynCommon *sa_vars)
                if(input_token == NULL)
                    err = 1;
                break;
+            default:
+                break;
        }
    }//end while
 

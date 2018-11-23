@@ -366,7 +366,7 @@ Ttoken *get_token(Tarray *token_value)
                 if(type == NUM || type == SMALL || type == CAPITAL || c == '_') //actual state zustava
                     ;
                 else if(c == '!' || c == '?')
-                    next_state = ID_2;
+                    next_state = ID_FCE;
                 else
                 {
                     next_state = ID_1;
@@ -408,6 +408,24 @@ Ttoken *get_token(Tarray *token_value)
                 }
                 token_set_type(token, actual_state); //token ready
                 final_state = true;
+                break;
+            case ID_FCE:
+                c = get_next_char(token_value);
+                if(c == '(' || c == '#' || c == ' ' || c == EOL || c == EOF || c == '\t') //validne ukoncene ID
+                {
+                    arr_set_buffer(token_value, c);
+                    if(token_set_attribute(token, token_value) == ERR_INTERNAL)
+                    {
+                        token_set_type(token, ERR_INTERNAL);
+                        return token;
+                    }
+                    token_set_type(token, actual_state); //token ready
+                    final_state = true;
+                }
+                else
+                {
+                 next_state = LEX_ERROR;
+                }
                 break;
             case KEY_WORD: //TODO by denny asi pryc, poreseno na prasaka v ID_1
                 break;
