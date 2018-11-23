@@ -13,6 +13,7 @@
 #include "sax.h"
 #include "seman.h"
 #include "code_gen.h"
+#include "err_codes.h"
 
 char *enum2string(int num){
     enum {DEFVAR,MOVE,CREATEFRAME,PUSHFRAME,POPFRAME,PUSH,POP,ADD,SUB,MUL,DIV,INPUTI,INPUTS,INPUTF,PRINT,LENGTH,SUBSTR,ORD,CHR,CALL,
@@ -192,7 +193,8 @@ int main() {
     }*/
     //odmazat nad
     /*printf("navrat SA: %i", i);*/
-    GEN_start(tac_list);
+    if(i == SUCCESS) //== 0
+        GEN_start(tac_list);
 /*
     TAC_delete_list(tac_list);
     TS_stack_free(symtabs_bin);
