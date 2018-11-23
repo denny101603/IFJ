@@ -1,4 +1,3 @@
-
 /***************************************
 * 	IFJ projekt 2018                   *
 * 						               *
@@ -16,7 +15,7 @@
 */
 
 #ifndef IFJ2018_CODE_GEN_H
-#define IFJ2018_CODE_GEN_H
+#define IFJ2018_CODE_GEN_H/**/
 
 #include "seman.h"
 #include "stdio.h"
@@ -113,24 +112,8 @@ void gen_lteq(TThreeAC *instruct);
 
 void gen_neq(TThreeAC *instruct);
 
+char *codegen_temp_id_generator();
+
 char *whatType(int x);
-
-typedef struct gen_add_struct
-{
-    char *atype; //proměnná LF@atype
-    char *atmp; //proměnná LF@atmp
-
-    char *btype; //proměnná LF@btype
-    char *btmp; //proměnná LF@btmp
-
-    char *addastring; //label skoku když a je string
-    char *addaint;  //label skoku když a je int
-    char *addafloat; //label skoku když a je float
-    char *addaintaretype; //label skoku když a je int "b" float -> nutno přetypovat a na float
-    char *addafloatbretype; //label skoku když a je float a b int -> nutno přetypovat b na float
-    char *addend; //label skoku na konec instrukce add (po provedení add)
-    char *adderrorend; //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
-    char *addasametypestring; //label skoku když je a i b string a chceme konkatenovat
-}Tgen_add_struct;
 
 #endif //IFJ2018_CODE_GEN_H

@@ -1,4 +1,3 @@
-
 /***************************************
 * 	IFJ projekt 2018                   *
 * 						               *
@@ -37,17 +36,17 @@ void TAC_insert(TTacList *list, TThreeAC *inserted)
     //prazdny seznam
     if(list->first == NULL && list->last == NULL) // pokud se rovna NULL jen jeden, nekdo si s tim hral a je to chyba (neosetrovano, pri pouzivani fci se to nestane)
     {
-       inserted->next = NULL;
-       inserted->prev = NULL; //pro jistotu
-       list->first = inserted;
-       list->last = inserted;
+        inserted->next = NULL;
+        inserted->prev = NULL; //pro jistotu
+        list->first = inserted;
+        list->last = inserted;
     }
     else
     {
-     inserted->next = NULL;
-     list->last->next = inserted;
-     inserted->prev = list->last;
-     list->last = inserted;
+        inserted->next = NULL;
+        list->last->next = inserted;
+        inserted->prev = list->last;
+        list->last = inserted;
     }
 }
 
@@ -89,14 +88,14 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
     if(elem == list->first)
         list->first = inserted;*/
 
-
+/**/
     inserted->next = elem->next;
     if(elem->next != NULL)
         elem->next->prev = inserted;
     elem->next = inserted;
     inserted->prev = elem;
     if(elem == list->last)
-         list->last = inserted;
+        list->last = inserted;
 
 
 }
@@ -158,17 +157,17 @@ void TThreeAC_delete(TThreeAC* tac)
 {
     if(tac != NULL)
     {
-       if(tac->destination != NULL)
-       {
-           if(tac->destination->name != NULL)
-           {
-               if(tac->destination->name[0] == '&')
-               {
-                   free(tac->destination->name);
-               }
-           }
-           free(tac->destination);
-       }
+        if(tac->destination != NULL)
+        {
+            if(tac->destination->name != NULL)
+            {
+                if(tac->destination->name[0] == '&')
+                {
+                    free(tac->destination->name);
+                }
+            }
+            free(tac->destination);
+        }
         if(tac->op_2 != NULL)
         {
             if(tac->op_2->name != NULL)
@@ -191,7 +190,7 @@ void TThreeAC_delete(TThreeAC* tac)
             }
             free(tac->op_1);
         }
-    free(tac);
+        free(tac);
     }
 }
 
@@ -200,13 +199,13 @@ void TAC_delete_list(TTacList *list)
     while(list->first != NULL)
     {
         /**Ladici vypisy, pred pouzitim zakomentovat**/
-       /* TThreeAC *item = list->first;
-        while(item != NULL)
-        {
-            printf("%d\n", item->name);
-            item = item->next;
-        }
-        printf("_________________________\n");*/
+        /* TThreeAC *item = list->first;
+         while(item != NULL)
+         {
+             printf("%d\n", item->name);
+             item = item->next;
+         }
+         printf("_________________________\n");*/
         /**konec ladiciho vypisu**/
         TThreeAC* temp= TAC_remove(list);
         //zkontrolovat, ze temp i operandy z temp != NULL;
@@ -338,7 +337,6 @@ bool tac_pop(TTacList *list, Toperand *dest)
 
 bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
 {
-
     if(instruc_init(list, ADD, dest, op1, op2))
         return true;
     return false;
@@ -615,13 +613,4 @@ bool tac_endwhile(TTacList *list)
     if(instruc_init(list, ENDWHILE, NULL, NULL, NULL))
         return true;
     return false;
-}
-char *codegen_temp_id_generator()
-{
-    static unsigned long long cnt = 0;
-    char *name = (char *) malloc(sizeof(char)*32);
-    if(name == NULL)
-        return NULL;
-    sprintf(name, "&codegen%llu", cnt++);
-    return name;
 }
