@@ -118,8 +118,6 @@ void gen_lteq(TThreeAC *instruct);
 
 void gen_neq(TThreeAC *instruct);
 
-char *codegen_temp_id_generator();
-
 char *whatType(int x);
 
 #endif //IFJ2018_CODE_GEN_H

@@ -15,20 +15,12 @@
 */
 
 #include "code_gen.h"
-//#include "seman.h"
+#include "seman.h"
 #include "fsm.h"     /**/
 //#include <stdio.h>
 //#include <stdbool.h>
 
-char *codegen_temp_id_generator()
-{
-    static unsigned long long cnt = 0;
-    char *name = (char *) malloc(sizeof(char)*32);
-    if(name == NULL)
-        return NULL;
-    sprintf(name, "&codegen%llu", cnt++);
-    return name;
-}
+
 
 char *whatType(int x)
 {
@@ -460,11 +452,11 @@ void gen_mul(TThreeAC *instruct)
     printf("MUL LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s\n",mulend);
 
-    printf("LABEL %s", mulaintaretype);
+    printf("LABEL %s\n", mulaintaretype);
     printf("INT2FLOAT LF@%s LF@%s\n",atmp, instruct->op_1->name);
 
 
-    printf("MUL LF@%s LF@%s LF@%s", instruct->destination->name, atmp, instruct->op_2->name);
+    printf("MUL LF@%s LF@%s LF@%s\n", instruct->destination->name, atmp, instruct->op_2->name);
     printf("JUMP %s\n", mulend);
 
 
@@ -483,9 +475,9 @@ void gen_mul(TThreeAC *instruct)
     printf("JUMP %s\n", mulend);
 
     printf("LABEl %s\n", mulerrorend) ;
-    printf("EXIT int@4");
+    printf("EXIT int@4\n");
 
-    printf("LABEL mul$end");
+    printf("LABEL mul$end\n");
 
     free(mulafloat);
     free(mulaint);

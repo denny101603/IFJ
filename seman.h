@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define MAX_NAMES 6 //do struktury TThreeAC
 /**
 *	@brief struktura operandu
  *	@author Matej Jelinek
@@ -59,7 +60,7 @@ typedef struct three_ac{
     Toperand *destination;
     Toperand *op_1;
     Toperand *op_2;
-    char *names[6]; //max pocet predavanych nazvu
+    char *names[MAX_NAMES]; //max pocet predavanych nazvu
     struct three_ac *next;
     struct three_ac *prev;
 }TThreeAC;
@@ -169,7 +170,7 @@ void TAC_delete_list(TTacList *list);
  * @param op2
  * @return tf
  */
-bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2);
+bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[]);
 
 /**
  * @brief do seznamu list vlozi triadresnou instrukci defvar s operandem op1
@@ -274,7 +275,7 @@ bool tac_while(TTacList *list);
 
 bool tac_endwhile(TTacList *list);
 
-
+char *codegen_temp_id_generator();
 
 
 /**
