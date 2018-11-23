@@ -592,7 +592,14 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         case 3: //{0,0,STRING_1}, //3
         case 5: //{0,0,KEY_NIL},//5
             dest = op_init(rule_tokens[0]->type, savo_name_generator());
-            operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute); //todo pokud nebude fungovat float 2e-1, tak to tady konvertovat.
+            if(rule_tokens[0]->type == KEY_NIL)
+            {
+                operand1 = op_init(rule_tokens[0]->type, "nil");
+            }
+            else
+            {
+                operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute);
+            }
             tac_defmove_const(sa_vars->tac_list, dest, operand1);
             break;
         case 1: //{0,0,EXPRESSION}, //1 //todo mozna neni potreba - DIVNY
