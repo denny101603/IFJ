@@ -230,10 +230,14 @@ void gen_popframe(TThreeAC *instruct)
     printf("POPFRAME\n");
 }
 
+void gen_loadparam_def(TThreeAC *instruct)
+{
+    printf("DEFVAR LF@%s\n", );
+}
+
 void gen_loadparam(TThreeAC *instruct)
 {
-    printf("DEFVAR LF@%s\n"
-           "POPS LF@%s\n", instruct->destination->name, instruct->destination->name);
+    printf("POPS LF@%s\n", instruct->destination->name, instruct->destination->name);
 }
 
 void gen_push(TThreeAC *instruct)
@@ -251,13 +255,19 @@ void gen_add_def()
 
 }
 
-void gen_add(TThreeAC *instruct)
+void gen_add_def(TThreeAC *instruct, )
 {
     char *atype = codegen_temp_id_generator(); //proměnná LF@atype
     char *atmp = codegen_temp_id_generator(); //proměnná LF@atmp
 
     char *btype = codegen_temp_id_generator(); //proměnná LF@btype
-    char *btmp = codegen_temp_id_generator(); //proměnná LF@btmp
+    char *btmp = codegen_temp_id_generator(); //proměnná LF@btm
+
+}
+
+void gen_add(TThreeAC *instruct)
+{
+
 
     char *addastring = codegen_temp_id_generator(); //label skoku když a je string
     char *addaint = codegen_temp_id_generator(); //label skoku když a je int
