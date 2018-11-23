@@ -592,7 +592,14 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         case 3: //{0,0,STRING_1}, //3
         case 5: //{0,0,KEY_NIL},//5
             dest = op_init(rule_tokens[0]->type, savo_name_generator());
-            operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute); //todo pokud nebude fungovat float 2e-1, tak to tady konvertovat.
+            if(rule_tokens[0]->type == KEY_NIL)
+            {
+                operand1 = op_init(rule_tokens[0]->type, "nil");
+            }
+            else
+            {
+                operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute);
+            }
             tac_defmove_const(sa_vars->tac_list, dest, operand1);
             break;
         case 1: //{0,0,EXPRESSION}, //1 //todo mozna neni potreba - DIVNY
@@ -821,15 +828,14 @@ bool savo(TSynCommon *sa_vars)
        //kontrola, zda, pokud prisel token s ID_2, je ID_2 v tabulce symbolu. pokud symtab_find == NULL, pak neni => err
         if (input_token->type== ID_2 && (symtab_find(sa_vars->local_tables->top->data, input_token->attribute) == NULL))
         {
-            err = ERR_SEM_DEF;
-            action = '?';
+            err = action_err(stack, sa_vars, ERR_SEM_DEF, internal_buffer);
+            action = 'E';
         }
 
        switch (action) {
            /*Ladici vypis*/
            //fprintf(stderr, "Rozhodnuti, jaka se provede akce. Momentalne se jedna o: %c \n", action);
            /*Konec l.v.*/
-           default:
            case '?': //err
                err = action_err(stack, sa_vars, ERR_SYN, internal_buffer);
                break;
@@ -850,6 +856,8 @@ bool savo(TSynCommon *sa_vars)
                if(input_token == NULL)
                    err = 1;
                break;
+            default:
+                break;
        }
    }//end while
 
