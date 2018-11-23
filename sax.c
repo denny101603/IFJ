@@ -209,6 +209,9 @@ int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backu
 
 bool progr(TSynCommon *sa_vars)
 {
+    sa_vars->dest = NULL;
+    sa_vars->ret = NULL;
+
     Ttoken *token = get_next_token(sa_vars);
     if(!err_check(token, sa_vars))
         return false;
@@ -322,7 +325,32 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
             }
             tac_deffunc(sa_vars->tac_list, op, label);
-            //******KONEC TVORBY KODU****************************************/
+
+
+            char *nil_str = sax_temp_id_generator();
+            if(nil_str == NULL)
+                return false;
+            Toperand *op_nil = op_init(KEY_NIL, nil_str);
+
+            char *nil_const_str = (char *) malloc(sizeof(char)*4); //nil\0
+            if(nil_const_str == NULL)
+                return false;
+            strcpy(nil_const_str, "nil");
+            Toperand *op_nil_const = op_init(KEY_NIL, nil_const_str);
+
+            //vytvorim promennou kam mohou prikazy vracet svou navratovou hodnotu
+            char *ret_str = sax_temp_id_generator();
+            if(ret_str == NULL)
+                return false;
+            Toperand *ret = op_init(KEY_NIL, ret_str);
+            if(ret == NULL)
+            {
+                sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
+                return false;
+            }
+            tac_defmove_const(sa_vars->tac_list, ret, op_nil_const);
+            sa_vars->ret = ret; //z tohodle operandu si vezmu navratovou hodnotu
+            //******KONEC TVORBY KODU******************************************************************/
 
             if (!nt_params(sa_vars))
                 return false;
@@ -355,19 +383,10 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
 
             //*****ZACATEK TVORBY KODU **************************************/
-            char *nil_str = sax_temp_id_generator();
-            if(nil_str == NULL)
-                return false;
-            Toperand *op_nil = op_init(KEY_NIL, nil_str);
 
-            char *nil_const_str = (char *) malloc(sizeof(char)*4); //nil\0
-            if(nil_const_str == NULL)
-                return false;
-            strcpy(nil_const_str, "nil");
-            Toperand *op_nil_const = op_init(KEY_NIL, nil_const_str);
 
-            tac_defmove_const(sa_vars->tac_list, op_nil, op_nil_const);
-            tac_return(sa_vars->tac_list, op_nil, label);
+            //tac_defmove_const(sa_vars->tac_list, op_nil, op_nil_const);
+            tac_return(sa_vars->tac_list, sa_vars->ret, label);
             //******KONEC TVORBY KODU****************************************/
 
             //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
@@ -548,10 +567,34 @@ bool nt_eolf(TSynCommon *sa_vars)
 
 bool nt_expression(TSynCommon *sa_vars)
 {
+    bool dest = sa_vars->dest == NULL;
+    if(dest)
+    {
+        char *temp = sax_temp_id_generator();
+        if(temp == NULL)
+        {
+            sa_vars->err_code = ERR_INTERNAL;
+            return false;
+        }
+        sa_vars->dest = op_init(NOBODY_KNOWS, temp);
+        if(sa_vars->dest == NULL)
+        {
+            sa_vars->err_code = ERR_INTERNAL;
+            return false;
+        }
+    }
+
     if(!savo(sa_vars))
     {
         return false;
     }
+
+    if(sa_vars->ret != NULL)
+        tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
+
+    if(dest) //vracim zpet na null
+        sa_vars->dest = NULL;
+
     return nt_eolf(sa_vars);
 }
 
@@ -820,6 +863,8 @@ bool nt_right(TSynCommon *sa_vars)
             buffer_push_bottom(sa_vars->buffer, t1);
             if(nt_callfce(sa_vars))
             {
+                if(sa_vars->ret != NULL)
+                    tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest); //navratovou hodnotu z fce, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
                 return true;
             }
             else
@@ -832,6 +877,8 @@ bool nt_right(TSynCommon *sa_vars)
     buffer_push_bottom(sa_vars->buffer, t1);
     if(savo(sa_vars))
     {
+        if(sa_vars->ret != NULL) //tedy nekdo chce abych to tam dal
+            tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
         if(nt_eolf(sa_vars))                //eolf
         {
             return true;
@@ -1095,6 +1142,22 @@ bool nt_callfce(TSynCommon *sa_vars)
         tac_defmove_const(sa_vars->tac_list, new_op, cons);
         tac_push(sa_vars->tac_list, new_op); //pushnuti informace o poctu argumentu na zasobnik
     }
+    //**********ZACATEK TVORBY KODU ************************************************************//
+    if(sa_vars->dest == NULL) //nikoho nezajima kam to hodim
+    {
+        char *temp = sax_temp_id_generator();
+        if(temp == NULL)
+        {
+            sa_vars->err_code = ERR_INTERNAL;
+            return false;
+        }
+        sa_vars->dest = op_init(NOBODY_KNOWS, temp);
+        if(sa_vars->dest == NULL)
+        {
+            sa_vars->err_code = ERR_INTERNAL;
+            return false;
+        }
+    }
 
     Toperand *label = op_init(t1->type,t1->attribute);
     if(label == NULL)
@@ -1103,6 +1166,10 @@ bool nt_callfce(TSynCommon *sa_vars)
     }
 
     tac_call(sa_vars->tac_list, sa_vars->dest, label);
+
+    if(sa_vars->ret != NULL)
+        tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
+    //***********KONEC TVORBY KODU****************************************************************//
 
     if(!nt_eolf(sa_vars))
         return false;
@@ -1203,8 +1270,11 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     {
         buffer_push_bottom(sa_vars->buffer, t1);
         return true;
-    } else{
-        return false;
+    }
+    else
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return nt_expression(sa_vars); //zbyva snad jen vyraz z konstanty
     }
 }
 
@@ -1292,8 +1362,11 @@ bool nt_bodywhif(TSynCommon *sa_vars)
     {
         buffer_push_bottom(sa_vars->buffer, t1);
         return true;
-    } else{
-        return false;
+    }
+    else
+    {
+        buffer_push_bottom(sa_vars->buffer, t1);
+        return nt_expression(sa_vars); //zbyva snad jen vyraz z konstanty
     }
 }
 
@@ -1426,6 +1499,7 @@ TSynCommon *alloc_sa()
     sa_vars->boolean = false; //vychozi stav
     //sa_vars->tac_list = tac_list; //todo denny uprava
     sa_vars->dest = NULL;
+    sa_vars->ret = NULL;
 
     TS_push(sa_vars->local_tables, symtab_local);
     return sa_vars;
