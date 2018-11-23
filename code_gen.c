@@ -679,7 +679,7 @@ void gen_deffunc(TThreeAC *instruct)
     printf("JUMP %s\n"
            "LABEL %s\n"
            "CREATEFRAME\n"
-           "PUSHFRAME\n",instruct->op_1->name, instruct->op_2->name);
+           "PUSHFRAME\n", instruct->op_2->name ,instruct->op_1->name);
 }
 
 void gen_jump(TThreeAC *instruct)
