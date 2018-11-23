@@ -205,7 +205,6 @@ void gen_defmove_const(TThreeAC *instruct)
     {
         printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
     }
-    free(typ);
     free(hodnota);
 }
 
@@ -1446,10 +1445,10 @@ void gen_gt(TThreeAC *instruct)
 
 void gen_lt(TThreeAC *instruct)
 {
-    char *atype = codegen_temp_id_generator(); //promìnná LF@atype
-    char *atmp = codegen_temp_id_generator(); //promìnná LF@atmp
-    char *btype = codegen_temp_id_generator(); //promìnná LF@btype
-    char *btmp = codegen_temp_id_generator(); //promìnná LF@btmp
+    char *atype = instruct->names[0]; //promìnná LF@atype
+    char *atmp = instruct->names[1]; //promìnná LF@atmp
+    char *btype = instruct->names[2]; //promìnná LF@btype
+    char *btmp = instruct->names[3]; //promìnná LF@btmp
 
     char *ltastring = codegen_temp_id_generator(); //label skoku když a je string
     char *ltabool = codegen_temp_id_generator(); //label skoku když a je bool
