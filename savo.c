@@ -579,9 +579,9 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             }
         }
     }
-    operands[0] = operand1;
+    operands[0] = operand3;
     operands[1] = operand2;
-    operands[2] = operand3;
+    operands[2] = operand1;
 
     switch (rule)
     {
@@ -852,7 +852,7 @@ bool savo(TSynCommon *sa_vars)
                break;
        }
    }//end while
-    //todo pri x EOL = to misto lex erroru vraci syn_error. Jak to?
+
    if (err != 0)
    {
        return false;
