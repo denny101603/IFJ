@@ -1,0 +1,93 @@
+print "ZAKLADNI TESTY\n\n""
+
+print "1\n\n"
+
+a = 42
+print a, "= 42?\n"
+
+print "Konec1\n\n"
+
+print "2 test matematickych operaci\n\n" 
+
+a = 42
+b = 12
+c = a +b
+print a, "+", b, "=", c, "\n"
+c = a -b
+print a, "-", b, "=", c, "\n"
+c = a *b
+print a, "*", b, "=", c, "\n"
+c = a /b
+print a, "/", b, "=", c, "\n"
+
+a = "vyhozen"
+b = "z FIT"
+c = a+b
+print c, "\n"
+
+print " konec 2 test matematickych operaci\n\n"
+print "3 test matematickych operaci - float\n\n"
+a = 42.0
+b = 12.1
+c = a +b
+print a, "+", b, "=", c, "\n"
+c = a -b
+print a, "-", b, "=", c, "\n"
+c = a *b
+print a, "*", b, "=", c, "\n"
+c = a /b
+print a, "/", b, "=", c, "\n"
+print " konec 3 test matematickych operaci - float\n\n"
+print "4 test matematickych operaci - pretypovani\n\n"
+a = 42.0
+b = 12
+c = a +b
+print a, "+", b, "=", c, "\n"
+c = a -b
+print a, "-", b, "=", c, "\n"
+c = a *b
+print a, "*", b, "=", c, "\n"
+c = a /b
+print a, "/", b, "=", c, "\n"
+print "konec 4 test matematickych operaci - pretypovani\n\n"
+
+print "5 test if a logicke operatory\n\n"
+a = 1
+if a > 2 then
+print "spatne\n"
+else
+print "ok\n"
+end
+
+if a < 2 then
+print "ok\n"
+else
+print "spatne\n"
+end
+
+if a == 1 then
+print "ok\n"
+else
+print "spatne\n"
+end
+
+if a == 2 then
+print "spatne\n"
+else
+print "ok\n"
+end
+
+if a != 1 then
+print "spatne\n"
+else
+print "ok\n"
+end
+
+if a != 2 then
+print "ok\n"
+else
+print "spatne\n"
+end
+print " konec 5 test if a logicke operatory\n\n"
+
+print "KONEC ZAKLADNICH TESTU\n"
