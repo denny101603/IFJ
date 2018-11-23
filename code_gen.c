@@ -1217,8 +1217,10 @@ void gen_eq(TThreeAC *instruct)
     char *eqastring = codegen_temp_id_generator(); //label skoku když a je float
     char *eqabool = codegen_temp_id_generator(); //label skoku když a je float
     char *eqanil = codegen_temp_id_generator(); //label skoku když a je float
+
     char *eqaretype = codegen_temp_id_generator(); //label skoku když a je int "b" float -> nutno přetypovat a na float
     char *eqbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
+
     char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *eqfalse = codegen_temp_id_generator();
@@ -1229,22 +1231,28 @@ void gen_eq(TThreeAC *instruct)
         (eqastring == NULL)||
         (eqabool == NULL)||
         (eqanil == NULL)||
+
         (eqaretype == NULL)||
         (eqbretype == NULL)||
         (eqend == NULL)||
+        (eqfalse == NULL)||
         (eqerrorend == NULL))
     {
         free(atype);
         free(atmp);
         free(btype);
         free(btmp);
+
         free(eqabool);
         free(eqafloat);
         free(eqaint);
         free(eqanil);
-        free(eqaretype);
         free(eqastring);
+
+        free(eqaretype);
         free(eqbretype);
+
+        free(eqfalse);
         free(eqend);
         free(eqerrorend);
         return;
@@ -1316,13 +1324,17 @@ void gen_eq(TThreeAC *instruct)
     free(atmp);
     free(btype);
     free(btmp);
+
     free(eqabool);
     free(eqafloat);
     free(eqaint);
     free(eqanil);
-    free(eqaretype);
     free(eqastring);
+
+    free(eqaretype);
     free(eqbretype);
+
+    free(eqfalse);
     free(eqend);
     free(eqerrorend);
 }
@@ -1866,22 +1878,28 @@ void gen_neq(TThreeAC *instruct)
         (eqastring == NULL)||
         (eqabool == NULL)||
         (eqanil == NULL)||
+
         (eqaretype == NULL)||
         (eqbretype == NULL)||
         (eqend == NULL)||
+        (eqfalse == NULL)||
         (eqerrorend == NULL))
     {
         free(atype);
         free(atmp);
         free(btype);
         free(btmp);
+
         free(eqabool);
         free(eqafloat);
         free(eqaint);
         free(eqanil);
-        free(eqaretype);
         free(eqastring);
+
+        free(eqaretype);
         free(eqbretype);
+
+        free(eqfalse);
         free(eqend);
         free(eqerrorend);
         return;
@@ -1954,13 +1972,17 @@ void gen_neq(TThreeAC *instruct)
     free(atmp);
     free(btype);
     free(btmp);
+
     free(eqabool);
     free(eqafloat);
     free(eqaint);
     free(eqanil);
-    free(eqaretype);
     free(eqastring);
+
+    free(eqaretype);
     free(eqbretype);
+
+    free(eqfalse);
     free(eqend);
     free(eqerrorend);
 }
