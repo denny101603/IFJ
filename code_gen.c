@@ -258,7 +258,7 @@ void gen_add_def(TThreeAC *instruct)
 void gen_add(TThreeAC *instruct)
 {
 
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO CARBIK dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
@@ -355,7 +355,7 @@ void gen_add(TThreeAC *instruct)
 
 void gen_sub(TThreeAC *instruct)
 {
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO CARBIK dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
@@ -437,7 +437,7 @@ void gen_sub(TThreeAC *instruct)
 
 void gen_mul(TThreeAC *instruct)
 {
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO CARBIK dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
@@ -523,7 +523,7 @@ void gen_mul(TThreeAC *instruct)
 
 void gen_div(TThreeAC *instruct)
 {
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO CARBIK dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
@@ -699,7 +699,7 @@ void gen_jumpifeq_def(TThreeAC *instruct)
 
 void gen_jumpifeq(TThreeAC *instruct)
 {
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO CARBIK dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
@@ -827,7 +827,7 @@ void gen_jumpifeq(TThreeAC *instruct)
 void gen_jumpifneq(TThreeAC *instruct)
 {
 
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO carbik dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
@@ -955,7 +955,7 @@ void gen_jumpifneq(TThreeAC *instruct)
 
 void gen_jumpifgt(TThreeAC *instruct)
 {
-    char *atype = instruct->names[0]; //promìnná LF@atype TODO Carbik dodelat free
+    char *atype = instruct->names[0]; //promìnná LF@atype
     char *atmp = instruct->names[1]; //promìnná LF@atmp
     char *btype = instruct->names[2]; //promìnná LF@btype
     char *btmp = instruct->names[3]; //promìnná LF@btmp
