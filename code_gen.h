@@ -40,6 +40,8 @@ void gen_loadparam_def(TThreeAC *instruct);
 
 void gen_add_def(TThreeAC *instruct);
 
+void gen_gteq_def(TThreeAC *instruct);
+
 void gen_jumpifeq_def(TThreeAC *instruct);
 
 void gen_defvar(TThreeAC *instruct);

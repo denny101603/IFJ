@@ -1243,11 +1243,7 @@ void gen_gt(TThreeAC *instruct)
     char *gterror = codegen_temp_id_generator(); //label skoku když error
     char *gtend = codegen_temp_id_generator(); //label skoku když end
 
-    if ((atype == NULL)||
-        (atmp == NULL)||
-        (btype == NULL)||
-        (btmp == NULL)||
-        (gtastring == NULL)||
+    if ((gtastring == NULL)||
         (gtabool == NULL)||
         (gtaintretype == NULL)||
         (gtafloatsame == NULL)||
@@ -1256,10 +1252,6 @@ void gen_gt(TThreeAC *instruct)
         (gterror == NULL)||
         (gtaintsame == NULL))
     {
-        free(atmp);
-        free(atype);
-        free(btmp);
-        free(btype);
         free(gtabool);
         free(gtafloat);
         free(gtaint);
@@ -1273,11 +1265,6 @@ void gen_gt(TThreeAC *instruct)
         return;
     }
 
-
-    printf("DEFVAR LF@%s\n", atype);
-    printf("DEFVAR LF@%s\n", atmp);
-    printf("DEFVAR LF@%s\n", btype);
-    printf("DEFVAR LF@%s\n", btmp);
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1370,11 +1357,7 @@ void gen_lt(TThreeAC *instruct)
     char *lterror = codegen_temp_id_generator(); //label skoku když error
     char *ltend = codegen_temp_id_generator(); //label skoku když end
 
-    if ((atype == NULL)||
-        (atmp == NULL)||
-        (btype == NULL)||
-        (btmp == NULL)||
-        (ltastring == NULL)||
+    if ((ltastring == NULL)||
         (ltabool == NULL)||
         (ltaintretype == NULL)||
         (ltafloatsame == NULL)||
@@ -1399,11 +1382,6 @@ void gen_lt(TThreeAC *instruct)
         free(ltastring);
         return;
     }
-
-    printf("DEFVAR LF@%s\n", atype);
-    printf("DEFVAR LF@%s\n", atmp);
-    printf("DEFVAR LF@%s\n", btype);
-    printf("DEFVAR LF@%s\n", btmp);
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1476,6 +1454,11 @@ void gen_lt(TThreeAC *instruct)
     free(lterror);
     free(ltend);
     free(ltastring);
+}
+
+void gen_gteq_def(TThreeAC *instruct)
+{
+
 }
 
 void gen_gteq(TThreeAC *instruct)
