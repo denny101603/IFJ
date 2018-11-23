@@ -205,7 +205,7 @@ void gen_defmove_const(TThreeAC *instruct)
     {
         printf("MOVE LF@%s %s@%s\n", instruct->destination->name, typ, instruct->op_1->name);
     }
-    free(hodnota);
+//    free(hodnota);
 }
 
 void gen_createframe(TThreeAC *instruct)
@@ -265,7 +265,7 @@ void gen_add(TThreeAC *instruct)
     char *addend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *adderrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *addasametypestring = codegen_temp_id_generator(); //label skoku když je a i b string a chceme konkatenovat
-
+/*
     if ((addafloat == NULL)||
         (addaint == NULL)||
         (addastring == NULL)||
@@ -289,6 +289,7 @@ void gen_add(TThreeAC *instruct)
         free(adderrorend);
         return;
     }
+  */
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -333,7 +334,7 @@ void gen_add(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", addend);
-
+/*
     free(atype);
     free(btype);
     free(atmp);
@@ -346,6 +347,7 @@ void gen_add(TThreeAC *instruct)
     free(addasametypestring);
     free(addend);
     free(adderrorend);
+*/
 }
 
 void gen_sub(TThreeAC *instruct)
@@ -360,7 +362,7 @@ void gen_sub(TThreeAC *instruct)
     char *subafloatbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
     char *subend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *suberrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
-
+/*
     if ((subafloat == NULL)||
         (subaint == NULL)||
         (subaintaretype == NULL)||
@@ -380,7 +382,7 @@ void gen_sub(TThreeAC *instruct)
         free(suberrorend);
         return;
     }
-
+*/
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -417,7 +419,7 @@ void gen_sub(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", subend);
-
+/*
     free(atype);
     free(btype);
     free(atmp);
@@ -428,6 +430,7 @@ void gen_sub(TThreeAC *instruct)
     free(subaintaretype);
     free(subend);
     free(suberrorend);
+*/
 }
 
 void gen_mul(TThreeAC *instruct)
@@ -442,7 +445,7 @@ void gen_mul(TThreeAC *instruct)
     char* mulerrorend = codegen_temp_id_generator();
     char* mulend = codegen_temp_id_generator();
     char* mulafloatbretype = codegen_temp_id_generator();
-
+/*
     if ((mulafloat == NULL)||
         (mulaint == NULL)||
         (mulaintaretype == NULL)||
@@ -462,7 +465,7 @@ void gen_mul(TThreeAC *instruct)
         free(mulerrorend);
         return;
     }
-
+*/
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -503,7 +506,7 @@ void gen_mul(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", mulend);
-
+/*
     free(atype);
     free(btype);
     free(atmp);
@@ -514,6 +517,7 @@ void gen_mul(TThreeAC *instruct)
     free(mulaintaretype);
     free(mulend);
     free(mulerrorend);
+*/
 }
 
 void gen_div(TThreeAC *instruct)
@@ -528,7 +532,7 @@ void gen_div(TThreeAC *instruct)
     char *divafloatbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
     char *divend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *diverrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
-
+/*
     if ((divafloat == NULL)||
         (divaint == NULL)||
         (divaintaretype == NULL)||
@@ -548,7 +552,7 @@ void gen_div(TThreeAC *instruct)
         free(diverrorend);
         return;
     }
-
+*/
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -584,7 +588,7 @@ void gen_div(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", divend);
-
+/*
     free(atype);
     free(btype);
     free(atmp);
@@ -595,7 +599,7 @@ void gen_div(TThreeAC *instruct)
     free(divaintaretype);
     free(divend);
     free(diverrorend);
-
+*/
 }
 
 void gen_call(TThreeAC *instruct)
@@ -642,7 +646,7 @@ void gen_isint(TThreeAC *instruct) //až zjistím jak funguje generátor jmen
     char *pom = instruct->names[0]; //proměnná LF@pom
     printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
     printf("EQ LF@%s LF@%s string@int\n",instruct->destination->name , pom);
-    free(pom);
+//    free(pom);
 }
 
 void gen_isfloat(TThreeAC *instruct)
@@ -650,7 +654,7 @@ void gen_isfloat(TThreeAC *instruct)
     char *pom = instruct->names[0]; //proměnná LF@pom
     printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
     printf("EQ LF@%s LF@%s string@float\n",instruct->destination->name , pom);
-    free(pom);
+//    free(pom);
 }
 
 void gen_isstring(TThreeAC *instruct)
@@ -658,7 +662,7 @@ void gen_isstring(TThreeAC *instruct)
     char *pom = instruct->names[0]; //proměnná LF@pom
     printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
     printf("EQ LF@%s LF@%s string@string\n",instruct->destination->name , pom);
-    free(pom);
+//    free(pom);
 }
 
 void gen_isbool(TThreeAC *instruct)
@@ -666,7 +670,7 @@ void gen_isbool(TThreeAC *instruct)
     char *pom = instruct->names[0]; //proměnná LF@pom
     printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
     printf("EQ LF@%s LF@%s string@bool\n",instruct->destination->name , pom);
-    free(pom);
+//    free(pom);
 }
 
 void gen_lable(TThreeAC *instruct)
@@ -713,6 +717,7 @@ void gen_jumpifeq(TThreeAC *instruct)
     char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *eqintsame = codegen_temp_id_generator(); //label skoku
+    /*
     if ((eqafloat == NULL)||
         (eqaint == NULL)||
         (eqastring == NULL)||
@@ -744,7 +749,7 @@ void gen_jumpifeq(TThreeAC *instruct)
         free(eqintsame);
         return;
     }
-
+*/
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
     printf("JUMPIFEQ %s LF@%s string@float\n", eqafloat, atype);
@@ -802,7 +807,7 @@ void gen_jumpifeq(TThreeAC *instruct)
 
     printf("LABEL %s\n", eqend);
     printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
-
+/*
     free(atype);
     free(atmp);
     free(btype);
@@ -819,6 +824,7 @@ void gen_jumpifeq(TThreeAC *instruct)
     free(eqerrorend);
     free(eqfloatsame);
     free(eqintsame);
+    */
 }
 
 void gen_jumpifneq(TThreeAC *instruct)
@@ -841,7 +847,7 @@ void gen_jumpifneq(TThreeAC *instruct)
     char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *eqintsame = codegen_temp_id_generator(); //label skoku
-
+/*
     if ((eqafloat == NULL)||
         (eqaint == NULL)||
         (eqastring == NULL)||
@@ -872,7 +878,7 @@ void gen_jumpifneq(TThreeAC *instruct)
         free(eqintsame);
         return;
     }
-
+*/
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -931,7 +937,7 @@ void gen_jumpifneq(TThreeAC *instruct)
 
     printf("LABEL %s\n", eqend);
     printf("JUMPIFNEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
-
+/*
     free(atmp);
     free(atype);
     free(btmp);
@@ -948,6 +954,7 @@ void gen_jumpifneq(TThreeAC *instruct)
     free(eqerrorend);
     free(eqfloatsame);
     free(eqintsame);
+    */
 }
 
 void gen_jumpifgt(TThreeAC *instruct)
@@ -968,7 +975,7 @@ void gen_jumpifgt(TThreeAC *instruct)
     char *gtafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *gterror = codegen_temp_id_generator(); //label skoku když error
     char *gtend = codegen_temp_id_generator(); //label skoku když end
-
+/*
     if ((gtafloat == NULL)||
         (gtaint == NULL)||
         (gtastring == NULL)||
@@ -997,7 +1004,7 @@ void gen_jumpifgt(TThreeAC *instruct)
         free(gtastring);
         return;
     }
-
+*/
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1056,7 +1063,7 @@ void gen_jumpifgt(TThreeAC *instruct)
 
     printf("LABEL %s\n", gtend);
     printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
-
+/*
     free(atype);
     free(atmp);
     free(btype);
@@ -1072,6 +1079,7 @@ void gen_jumpifgt(TThreeAC *instruct)
     free(gterror);
     free(gtend);
     free(gtastring);
+    */
 }
 
 void gen_jumpiflt(TThreeAC *instruct)
@@ -1094,7 +1102,7 @@ void gen_jumpiflt(TThreeAC *instruct)
     char *ltafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *lterror = codegen_temp_id_generator(); //label skoku když error
     char *ltend = codegen_temp_id_generator(); //label skoku když end
-
+/*
     if ((ltafloat == NULL)||
         (ltaint == NULL)||
         (ltastring == NULL)||
@@ -1123,7 +1131,7 @@ void gen_jumpiflt(TThreeAC *instruct)
         free(ltastring);
         return;
     }
-
+*/
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -1181,7 +1189,7 @@ void gen_jumpiflt(TThreeAC *instruct)
 
     printf("LABEL %s\n", ltend);
     printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
-
+/*
     free(atype);
     free(atmp);
     free(btype);
@@ -1197,6 +1205,7 @@ void gen_jumpiflt(TThreeAC *instruct)
     free(lterror);
     free(ltend);
     free(ltastring);
+    */
 }
 
 void gen_dprint(TThreeAC *instruct)
@@ -1225,7 +1234,7 @@ void gen_eq(TThreeAC *instruct)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *eqfalse = codegen_temp_id_generator();
 
-
+/*
     if ((eqafloat == NULL)||
         (eqaint == NULL)||
         (eqastring == NULL)||
@@ -1257,7 +1266,7 @@ void gen_eq(TThreeAC *instruct)
         free(eqerrorend);
         return;
     }
-
+*/
     //printf("DEFVAR LF@%s\n", tmp);
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
@@ -1277,7 +1286,7 @@ void gen_eq(TThreeAC *instruct)
     printf("JUMP %s \n", eqend);
 
     printf("LABEL %s\n", eqbretype);
-    printf("INT2FLOAT LF@%s LF@%s", btmp, instruct->op_2->name);
+    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
     printf("EQ LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s \n", eqend);
 
@@ -1319,7 +1328,7 @@ void gen_eq(TThreeAC *instruct)
     printf("EXIT int@4 \n");
 
     printf("LABEL %s\n", eqend);
-
+/*
     free(atype);
     free(atmp);
     free(btype);
@@ -1337,6 +1346,7 @@ void gen_eq(TThreeAC *instruct)
     free(eqfalse);
     free(eqend);
     free(eqerrorend);
+    */
 }
 
 void gen_gt(TThreeAC *instruct)
@@ -1356,7 +1366,7 @@ void gen_gt(TThreeAC *instruct)
     char *gtafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *gterror = codegen_temp_id_generator(); //label skoku když error
     char *gtend = codegen_temp_id_generator(); //label skoku když end
-
+/*
     if ((gtastring == NULL)||
         (gtabool == NULL)||
         (gtaintretype == NULL)||
@@ -1382,7 +1392,7 @@ void gen_gt(TThreeAC *instruct)
         free(gtastring);
         return;
     }
-
+*/
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1440,7 +1450,7 @@ void gen_gt(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", gtend);
-
+/*
     free(atmp);
     free(atype);
     free(btmp);
@@ -1455,7 +1465,8 @@ void gen_gt(TThreeAC *instruct)
     free(gterror);
     free(gtend);
     free(gtastring);
-}
+*/
+ }
 
 void gen_lt(TThreeAC *instruct)
 {
@@ -1474,7 +1485,7 @@ void gen_lt(TThreeAC *instruct)
     char *ltafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *lterror = codegen_temp_id_generator(); //label skoku když error
     char *ltend = codegen_temp_id_generator(); //label skoku když end
-
+/*
     if ((ltastring == NULL)||
         (ltabool == NULL)||
         (ltaintretype == NULL)||
@@ -1500,7 +1511,7 @@ void gen_lt(TThreeAC *instruct)
         free(ltastring);
         return;
     }
-
+*/
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -1557,7 +1568,7 @@ void gen_lt(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", ltend);
-
+/*
     free(atmp);
     free(atype);
     free(btmp);
@@ -1572,7 +1583,8 @@ void gen_lt(TThreeAC *instruct)
     free(lterror);
     free(ltend);
     free(ltastring);
-}
+*/
+ }
 
 void gen_gteq_def(TThreeAC *instruct)
 {
@@ -1601,7 +1613,7 @@ void gen_gteq(TThreeAC *instruct)
     char *gteqafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *gteqerror = codegen_temp_id_generator(); //label skoku když error
     char *gteqend = codegen_temp_id_generator(); //label skoku když end
-
+/*
     if ((gteqastring == NULL)||
         (gteqabool == NULL)||
         (gteqaintretype == NULL)||
@@ -1629,7 +1641,7 @@ void gen_gteq(TThreeAC *instruct)
         free(gteqastring);
         return;
     }
-
+*/
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
@@ -1699,7 +1711,7 @@ void gen_gteq(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", gteqend);
-
+/*
     free(atmp);
     free(atype);
     free(btmp);
@@ -1716,7 +1728,8 @@ void gen_gteq(TThreeAC *instruct)
     free(gteqerror);
     free(gteqend);
     free(gteqastring);
-}
+*/
+ }
 
 void gen_lteq(TThreeAC *instruct)
 {
@@ -1738,7 +1751,7 @@ void gen_lteq(TThreeAC *instruct)
     char *lteqafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
     char *lteqerror = codegen_temp_id_generator(); //label skoku když error
     char *lteqend = codegen_temp_id_generator(); //label skoku když end
-
+/*
     if ((lteqastring == NULL)||
         (lteqabool == NULL)||
         (lteqaintretype == NULL)||
@@ -1766,7 +1779,7 @@ void gen_lteq(TThreeAC *instruct)
         free(lteqastring);
         return;
     }
-
+*/
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
     printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
 
@@ -1835,7 +1848,7 @@ void gen_lteq(TThreeAC *instruct)
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", lteqend);
-
+/*
     free(atmp);
     free(atype);
     free(btmp);
@@ -1852,7 +1865,8 @@ void gen_lteq(TThreeAC *instruct)
     free(lteqerror);
     free(lteqend);
     free(lteqastring);
-}
+*/
+ }
 
 void gen_neq(TThreeAC *instruct)
 {
@@ -1871,7 +1885,7 @@ void gen_neq(TThreeAC *instruct)
     char *eqend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *eqerrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
     char *eqfalse = codegen_temp_id_generator();
-
+/*
 
     if ((eqafloat == NULL)||
         (eqaint == NULL)||
@@ -1904,7 +1918,7 @@ void gen_neq(TThreeAC *instruct)
         free(eqerrorend);
         return;
     }
-
+*/
     //printf("DEFVAR LF@%s\n", tmp);
 
     printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
@@ -1967,7 +1981,7 @@ void gen_neq(TThreeAC *instruct)
 
     printf("LABEL %s\n", eqend);
     printf("NOT LF@%s LF@%s\n", instruct->destination->name, instruct->destination->name);
-
+/*
     free(atype);
     free(atmp);
     free(btype);
@@ -1985,7 +1999,8 @@ void gen_neq(TThreeAC *instruct)
     free(eqfalse);
     free(eqend);
     free(eqerrorend);
-}
+*/
+ }
 
 void GEN_start(TTacList *list)
 {
