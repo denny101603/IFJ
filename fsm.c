@@ -285,9 +285,12 @@ Ttoken *get_token(Tarray *token_value)
                     }
                     c = get_next_char(token_value);
                     if(comm_begin[i] == 'n')
+                    {
+                        arr_reset(token_value);
                         begin_compared_successfully =1;
+                    }
                 }
-                if ((c == ' ' || c == '\t' || c == EOL) && begin_compared_successfully) //c == whitespace, musi byt za =begin
+                if ((c == ' ' || c == '\t' || c == '\n') && begin_compared_successfully) //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
                     arr_set_buffer(token_value, c);
@@ -347,7 +350,8 @@ Ttoken *get_token(Tarray *token_value)
                         break;
                     }
                 }
-                next_state = START;
+                token_set_type(token, EOL_1);
+                final_state = true;
                 break;
             case ONE_LINE_COMMENT://DONE
                 c = get_next_char(token_value);
