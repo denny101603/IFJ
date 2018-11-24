@@ -1,0 +1,11 @@
+a = 0
+while a < 5 do
+print a,"\n"
+a = a+1
+end
+
+a = 5
+while a > 0 do
+print a,"\n"
+a = a-1
+end
