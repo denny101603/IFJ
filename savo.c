@@ -465,6 +465,7 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
             fprintf(stderr, MESSAGE_SYN);
             break;
         case ERR_SEM_DEF:
+            fprintf(stderr, "input: %d, stack: %d\n", internal_buffer->top->data->type, stack->top->data->type);
             fprintf(stderr, MESSAGE_SEM_DEF);
             break;
         case ERR_SEM_TYPE:
