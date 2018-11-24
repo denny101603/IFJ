@@ -15,7 +15,7 @@ void buffer_init(TBuffer *buffer_stack)
 
 bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
 {
-    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
     if (temp == NULL)
         return false;
     temp->data = token;
@@ -37,7 +37,7 @@ bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na d
 
 bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 {
-    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
     if (temp == NULL)
         return false;
     temp->data = token;
@@ -137,7 +137,7 @@ void TS_stack_init(TSymtables_stack *stack)
 
 bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
 {
-    TLTElem *temp = malloc(sizeof(TLTElem));
+    TLTElem *temp = (TLTElem *) malloc(sizeof(TLTElem));
     if(temp == NULL)
         return false;
     temp->data = table;
