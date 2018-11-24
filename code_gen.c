@@ -223,13 +223,14 @@ void gen_popframe(TThreeAC *instruct)
     printf("POPFRAME\n");
 }
 
-void gen_loadparam_def(TThreeAC *instruct)
+void gen_loadparam_def(TThreeAC *instruct) //TODO zahodit tuto fci
 {
     printf("DEFVAR LF@%s\n", instruct->names[0]);
 }
 
 void gen_loadparam(TThreeAC *instruct)
 {
+    printf("DEFVAR LF@%s\n", instruct->destination->name);
     printf("POPS LF@%s\n", instruct->destination->name);
 }
 
