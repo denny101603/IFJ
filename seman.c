@@ -797,6 +797,20 @@ bool tac_endwhile(TTacList *list)
     return false;
 }
 
+bool ta_startif(TTacList *list)
+{
+    if(instruc_init(list, STARTIF, NULL, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool ta_endif(TTacList *list)
+{
+    if(instruc_init(list, ENDIF, NULL, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
 char *codegen_temp_id_generator()
 {
     static unsigned long long cnt = 0;

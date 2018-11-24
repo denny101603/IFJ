@@ -274,6 +274,10 @@ bool tac_while(TTacList *list);
 
 bool tac_endwhile(TTacList *list);
 
+bool ta_startif(TTacList *list);
+
+bool ta_endif(TTacList *list);
+
 char *codegen_temp_id_generator();
 
 
@@ -333,7 +337,9 @@ enum instructions{
     LOADPARAM_DEF,
     ADD_DEF,
     JUMPIFEQ_DEF,
-    GTEQ_DEF
+    GTEQ_DEF,
+    STARTIF,
+    ENDIF
 };
 
 
