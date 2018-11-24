@@ -223,13 +223,14 @@ void gen_popframe(TThreeAC *instruct)
     printf("POPFRAME\n");
 }
 
-void gen_loadparam_def(TThreeAC *instruct)
+void gen_loadparam_def(TThreeAC *instruct) //TODO zahodit tuto fci
 {
     printf("DEFVAR LF@%s\n", instruct->names[0]);
 }
 
 void gen_loadparam(TThreeAC *instruct)
 {
+    printf("DEFVAR LF@%s\n", instruct->destination->name);
     printf("POPS LF@%s\n", instruct->destination->name);
 }
 
@@ -2004,7 +2005,7 @@ void gen_neq(TThreeAC *instruct)
 
 void GEN_start(TTacList *list)
 {
-    TThreeAC *I2 = list->first;
+    TThreeAC *inst = list->first;
     TThreeAC *temp = NULL;
     TThreeAC *tmp = NULL;
 
@@ -2015,205 +2016,236 @@ void GEN_start(TTacList *list)
     //generace .IFJcode18 a podobné píčoviny
     pream();
 
-    while(I2 != NULL)
+    while(inst != NULL) //vyhozeni defvaru pred if
     {
-        if(I2->name == WHILE)
+        if(inst->name == STARTIF)
         {
             if(while_count == 0)
-                first_while = I2->prev;
+                first_while = inst->prev;
             while_count++;
         }
-        if(I2->name == ENDWHILE)
+        if(inst->name == ENDIF)
         {
             if(while_count != 0)
                 while_count--;
         }
-        if((I2->name == DEFVAR && while_count != 0) || (I2->name == DEFMOVE && while_count != 0) || (I2->name == ADD_DEF && while_count != 0)
-        || (I2->name == LOADPARAM_DEF && while_count != 0) || (I2->name == JUMPIFEQ_DEF && while_count != 0) || (I2->name == GTEQ_DEF && while_count != 0))
+        if((inst->name == DEFVAR && while_count != 0) || (inst->name == DEFMOVE && while_count != 0))
         {
-            tmp = I2->next;
-            temp = TAC_remove_this(list, I2);
+            tmp = inst->next;
+            temp = TAC_remove_this(list, inst);
             TAC_insert_post(list, first_while, temp);
-            I2 = tmp;
+            inst = tmp;
             continue;
         }
-        I2 = I2->next;
+        inst = inst->next;
     }
-    I2 = TAC_remove(list);
-    while (I2 != NULL)
+
+    inst = list->first;
+    tmp = NULL;
+    temp = NULL;
+    first_while = NULL;
+    while_count = 0;
+
+
+    while(inst != NULL) //vyhozeni defvaru pred while
     {
-        switch (I2->name) {
+        if(inst->name == WHILE)
+        {
+            if(while_count == 0)
+                first_while = inst->prev;
+            while_count++;
+        }
+        if(inst->name == ENDWHILE)
+        {
+            if(while_count != 0)
+                while_count--;
+        }
+        if((inst->name == DEFVAR && while_count != 0) || (inst->name == DEFMOVE && while_count != 0) || (inst->name == ADD_DEF && while_count != 0)
+        || (inst->name == LOADPARAM_DEF && while_count != 0) || (inst->name == JUMPIFEQ_DEF && while_count != 0) || (inst->name == GTEQ_DEF && while_count != 0))
+        {
+            tmp = inst->next;
+            temp = TAC_remove_this(list, inst);
+            TAC_insert_post(list, first_while, temp);
+            inst = tmp;
+            continue;
+        }
+        inst = inst->next;
+    }
+    inst = TAC_remove(list);
+    while (inst != NULL)
+    {
+        switch (inst->name) {
             case DEFVAR:
                 printf("#_________toto je DEFVAR_____\n");
-                gen_defvar(I2);
+                gen_defvar(inst);
                 break;
             case MOVE:
                 printf("#_________toto je MOVE_____\n");
-                gen_move(I2);
+                gen_move(inst);
                 break;
             case DEFMOVE:
                 printf("#_________toto je DEFMOVE_____\n");
-                gen_defmove_const(I2);
+                gen_defmove_const(inst);
                 break;
             case CREATEFRAME:
                 printf("#_________toto je CREATEFRAME_____\n");
-                gen_createframe(I2);
+                gen_createframe(inst);
                 break;
             case PUSHFRAME:
                 printf("#_________toto je PUSHFRAME_____\n");
-                gen_pushframe(I2);
+                gen_pushframe(inst);
                 break;
             case POPFRAME:
                 printf("#_________toto je POPFRAME_____\n");
-                gen_popframe(I2);
+                gen_popframe(inst);
                 break;
             case LOADPARAM:
                 printf("#_________toto je LOADPARAM_____\n");
-                gen_loadparam(I2);
+                gen_loadparam(inst);
                 break;
             case PUSH:
                 printf("#_________toto je PUSH_____\n");
-                gen_push(I2);
+                gen_push(inst);
                 break;
             case POP:
                 printf("#_________toto je POP _____\n");
-                gen_pop(I2);
+                gen_pop(inst);
                 break;
             case ADD:
                 printf("#_________toto je ADD _____\n");
-                gen_add(I2);
+                gen_add(inst);
                 break;
             case SUB:
                 printf("#_________toto je SUB _____\n");
-                gen_sub(I2);
+                gen_sub(inst);
                 break;
             case MUL:
                 printf("#_________toto je MUL _____\n");
-                gen_mul(I2);
+                gen_mul(inst);
                 break;
             case DIV:
                 printf("#_________toto je DIV _____\n");
-                gen_div(I2);
+                gen_div(inst);
                 break;
             case CALL:
                 printf("#_________toto je CALL _____\n");
-                gen_call(I2);
+                gen_call(inst);
                 break;
             case RETURN:
                 printf("#_________toto je RETURN _____\n");
-                gen_return(I2);
+                gen_return(inst);
                 break;
             case INT2FLOAT:
                 printf("#_________toto je INT2FLOAT _____\n");
-                gen_int2float(I2);
+                gen_int2float(inst);
                 break;
             case FLOAT2INT:
                 printf("#_________toto je FLOAT2INT _____\n");
-                gen_float2int(I2);
+                gen_float2int(inst);
                 break;
             case INT2CHAR:
                 printf("#_________toto je INT2CHAR _____\n");
-                gen_int2char(I2);
+                gen_int2char(inst);
                 break;
             case CONCAT:
                 printf("#_________toto je CONCAT _____\n");
-                gen_concat(I2);
+                gen_concat(inst);
                 break;
             case SETCHAR:
                 printf("#_________toto je SETCHAR _____\n");
-                gen_setchar(I2);
+                gen_setchar(inst);
                 break;
             case ISINT:
                 printf("#_________toto je ISINT _____\n");
-                gen_isint(I2);
+                gen_isint(inst);
                 break;
             case ISFLOAT:
                 printf("#_________toto je ISFLOAT _____\n");
-                gen_isfloat(I2);
+                gen_isfloat(inst);
                 break;
             case ISSTRING:
                 printf("#_________toto je ISSTRING _____\n");
-                gen_isstring(I2);
+                gen_isstring(inst);
                 break;
             case ISBOOL:
                 printf("#_________toto je ISBOOL _____\n");
-                gen_isbool(I2);
+                gen_isbool(inst);
                 break;
             case LABLE:
                 printf("#_________toto je LA BLEEEE _____\n");
-                gen_lable(I2);
+                gen_lable(inst);
                 break;
             case DEFFUNC:
                 printf("#_________toto je DEFFUNC _____\n");
-                gen_deffunc(I2);
+                gen_deffunc(inst);
                 break;
             case JUMP:
                 printf("#_________toto je JUMP _____\n");
-                gen_jump(I2);
+                gen_jump(inst);
                 break;
             case JUMPIFEQ:
                 printf("#_________toto je JUMPIFEQ _____\n");
-                gen_jumpifeq(I2);
+                gen_jumpifeq(inst);
                 break;
             case JUMPIFNEQ:
                 printf("#_________toto je JUMPIFNEQ _____\n");
-                gen_jumpifneq(I2);
+                gen_jumpifneq(inst);
                 break;
             case JUMPIFGT:
                 printf("#_________toto je JUMPIFGT _____\n");
-                gen_jumpifgt(I2);
+                gen_jumpifgt(inst);
                 break;
             case JUMPIFLT:
                 printf("#_________toto je JUMPIFLT _____\n");
-                gen_jumpiflt(I2);
+                gen_jumpiflt(inst);
                 break;
             case DPRINT:
                 printf("#_________toto je DPRINT _____\n");
-                gen_dprint(I2);
+                gen_dprint(inst);
                 break;
             case EQ:
                 printf("#_________toto je EQ _____\n");
-                gen_eq(I2);
+                gen_eq(inst);
                 break;
             case GT:
                 printf("#_________toto je GT _____\n");
-                gen_gt(I2);
+                gen_gt(inst);
                 break;
             case LT:
                 printf("#_________toto je LT _____\n");
-                gen_lt(I2);
+                gen_lt(inst);
                 break;
             case GTEQ:
                 printf("#_________toto je GTEQ _____\n");
-                gen_gteq(I2);
+                gen_gteq(inst);
                 break;
             case LTEQ:
                 printf("#_________toto je LTEQ _____\n");
-                gen_lteq(I2);
+                gen_lteq(inst);
                 break;
             case NEQ:
                 printf("#_________toto je NEQ _____\n");
-                gen_neq(I2);
+                gen_neq(inst);
                 break;
             case LOADPARAM_DEF:
                 printf("#_________toto je LOADPARAM_DEF_____\n");
-                gen_loadparam_def(I2);
+                gen_loadparam_def(inst);
                 break;
             case ADD_DEF:
                 printf("#_________toto je ADD_DEF_____\n");
-                gen_add_def(I2);
+                gen_add_def(inst);
                 break;
             case JUMPIFEQ_DEF:
                 printf("#_________toto je JUMPIFEQ_DEF_____\n");
-                gen_jumpifeq_def(I2);
+                gen_jumpifeq_def(inst);
                 break;
             case GTEQ_DEF:
                 printf("#_________toto je GTEQ_DEF_____\n");
-                gen_gteq_def(I2);
+                gen_gteq_def(inst);
                 break;
         }
-        //TThreeAC_delete(I2);
+        //TThreeAC_delete(inst);
         fflush(stdout);
-        I2 = TAC_remove(list);
+        inst = TAC_remove(list);
     }
 }

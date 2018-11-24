@@ -324,6 +324,7 @@ bool tac_popframe(TTacList *list)
 */
 bool tac_loadparam(TTacList *list, Toperand *dest)
 {
+    /*
     char *names[MAX_NAMES];
     for (int i = 0; i < MAX_NAMES; i++)
         names[i] = NULL;
@@ -332,8 +333,8 @@ bool tac_loadparam(TTacList *list, Toperand *dest)
         return false;
 
     if(!instruc_init(list, LOADPARAM_DEF, NULL, NULL, NULL, names))
-        return false;
-    if (!instruc_init(list, LOADPARAM, dest, NULL, NULL, names))
+        return false;*/
+    if (!instruc_init(list, LOADPARAM, dest, NULL, NULL, NULL))
         return false;
     return true;
 }
@@ -792,6 +793,20 @@ bool tac_while(TTacList *list)
 bool tac_endwhile(TTacList *list)
 {
     if(instruc_init(list, ENDWHILE, NULL, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool ta_startif(TTacList *list)
+{
+    if(instruc_init(list, STARTIF, NULL, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool ta_endif(TTacList *list)
+{
+    if(instruc_init(list, ENDIF, NULL, NULL, NULL, NULL))
         return true;
     return false;
 }
