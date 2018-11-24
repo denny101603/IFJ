@@ -602,6 +602,8 @@ bool nt_expression(TSynCommon *sa_vars)
 bool nt_ifthenelse(TSynCommon *sa_vars)
 {
     //ZACATEK TVORBY KODU*************************************//
+    ta_startif(sa_vars->tac_list); //zarazka
+
     char *bool_str = sax_temp_id_generator();
     if(bool_str == NULL)
     {
@@ -745,6 +747,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
 
     tac_lable(sa_vars->tac_list, label2);
+    ta_endif(sa_vars->tac_list); //konec zarazky
 
     if(nt_eolf(sa_vars))                //EOLF
     {
