@@ -1,0 +1,15 @@
+a = 42
+b = 12
+c = a +b
+print a, "+", b, "=", c, "\n"
+c = a -b
+print a, "-", b, "=", c, "\n"
+c = a *b
+print a, "*", b, "=", c, "\n"
+c = a /b
+print a, "/", b, "=", c, "\n"
+
+a = "vyhozen "
+b = "z FIT"
+c = a+b
+print c, "\n"

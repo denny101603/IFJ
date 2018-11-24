@@ -388,7 +388,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
 //action change = akce <
 Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
-    Ttoken *mensitko = malloc(sizeof(Ttoken));
+    Ttoken *mensitko =(Ttoken *)malloc(sizeof(Ttoken));
     if(mensitko == NULL)
         return NULL;
     mensitko->type = ACTION_MENSITKO;
@@ -536,10 +536,10 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     Toperand *operands[RULE_LENGTH] = {NULL, NULL, NULL};
 
     //operandy pro semanticke akce
-    Toperand *operand1 = malloc(sizeof(Toperand));
-    Toperand *operand2 = malloc(sizeof(Toperand));
-    Toperand *operand3 = malloc(sizeof(Toperand));
-    Toperand *dest = malloc(sizeof(Toperand));
+    Toperand *operand1 =(Toperand *) malloc(sizeof(Toperand));
+    Toperand *operand2 = (Toperand *)malloc(sizeof(Toperand));
+    Toperand *operand3 = (Toperand *)malloc(sizeof(Toperand));
+    Toperand *dest = (Toperand *)malloc(sizeof(Toperand));
     Tsymbol_table_item *item = NULL;
 
     //syntakticka predkontrola, protoze syntakticka analyza je destruktivni
@@ -704,7 +704,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     if(temp->type != ACTION_MENSITKO) //pokud jsem jako dalsi znak nepopnul mensitko, tak je nekde chyba - u me ne, takze hazim ERR_SEM
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
     token_free(temp);
-    Ttoken *expr_token = malloc(sizeof(Ttoken));
+    Ttoken *expr_token = (Ttoken *)malloc(sizeof(Ttoken));
     if (expr_token == NULL)
         return false;
     token_init(expr_token);
@@ -766,7 +766,7 @@ bool savo(TSynCommon *sa_vars)
     //fprintf(stderr, "Stack vytvoren\n");
     /*Konec l.v.*/
 
-    TBuffer *internal_buffer = malloc(sizeof(TBuffer));
+    TBuffer *internal_buffer = (TBuffer *)malloc(sizeof(TBuffer));
     if(internal_buffer == NULL)
     {
         action_err(stack, sa_vars, ERR_INTERNAL, NULL);
