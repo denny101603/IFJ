@@ -388,9 +388,11 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
 //action change = akce <
 Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
-    Ttoken *mensitko =(Ttoken *)malloc(sizeof(Ttoken));
+    Ttoken *mensitko = NULL;
+    mensitko = (Ttoken *)malloc(sizeof(Ttoken));
     if(mensitko == NULL)
         return NULL;
+    token_init(mensitko);
     mensitko->type = ACTION_MENSITKO;
 
     push(stack,get_first_terminal(stack), mensitko, NULL); //pushneme mensitko za prvni terminal
@@ -400,7 +402,7 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
     Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
     {
-        if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        if(strtof(ret->attribute, NULL) < 0)
         {
             action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
             return  NULL;
@@ -447,12 +449,12 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
     if (stack != NULL)
     {
         delete_stack(stack);
-        free(stack);
+        //free(stack); //todo znovu zacit freeovat
     }
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
     delete_buffer(internal_buffer);
-    free(internal_buffer);
+   //free(internal_buffer); //todo znovu zacit freeovat
 
     switch (error) // err_sem_param nenastane
     {
@@ -703,7 +705,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
     Ttoken *temp = pop(stack); // popnuti mensitka
     if(temp->type != ACTION_MENSITKO) //pokud jsem jako dalsi znak nepopnul mensitko, tak je nekde chyba - u me ne, takze hazim ERR_SEM
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
-    token_free(temp);
+    //token_free(temp);
     Ttoken *expr_token = (Ttoken *)malloc(sizeof(Ttoken));
     if (expr_token == NULL)
         return false;
