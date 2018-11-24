@@ -1117,14 +1117,51 @@ bool nt_callfce(TSynCommon *sa_vars)
         return false;
     }
     //todo denny poresit volitelne zavorky
-
+//////////
+/*
+    Ttoken *t2 = get_next_token(sa_vars);
+    if(!err_check(t2, sa_vars))
+        return false;
+    bool brackets = true;
+    if(t2->type != LEFT_BRACKET) //zkusim sezrat levou zavorku a zavolat to znovu
+    {
+        brackets = false;
+        buffer_push_bottom(sa_vars->buffer, t2);
+    }*/
+//////////////
     long num_of_args = 0; //pocitadlo argumentu pro overeni s TS
     if(!nt_args(sa_vars, &num_of_args)) //nepovedlo se, zkusim tedy jestli nebyla zavorka, pokud ano, zkusim to znovu
     {
-        Ttoken *t2 = get_next_token(sa_vars); //todo denny dodelat
-        //if(err_check())
-        return false;
-    }
+
+        num_of_args = 0;
+        Ttoken *t2 = get_next_token(sa_vars);
+        if(!err_check(t2, sa_vars))
+            return false;
+        if(t2->type != LEFT_BRACKET) //zkusim sezrat levou zavorku a zavolat to znovu
+            return false;
+        if(!nt_args(sa_vars, &num_of_args))
+            return false;
+
+        t2 = get_next_token(sa_vars);
+        if(!err_check(t2, sa_vars))
+            return false;
+
+        if(t2->type != RIGHT_BRACKET) //pokud neprisla i prava zavorka, fakt to nepujde...
+            return false;
+    } //muzu pokraovat normalne
+
+    ///////////
+    /*
+    if(brackets)
+    {
+        t2 = get_next_token(sa_vars);
+        if (!err_check(t2, sa_vars))
+            return false;
+
+        if (t2->type != RIGHT_BRACKET) //pokud neprisla i prava zavorka, fakt to nepujde...
+            return false;
+    }*/
+    //////////////
 
     if(!check_num_of_params(sa_vars->ts_fun, t1, num_of_args)) //nesedi pocet parametru s definici
     {
