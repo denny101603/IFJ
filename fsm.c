@@ -262,7 +262,7 @@ Ttoken *get_token(Tarray *token_value)
                 token_set_type(token, actual_state);
                 final_state = true;
                 break;
-            case BLOCK_COMMENT_0: //DONE //TODO ALL by Berry: musi byt za =begin jen mezera/tabulator, nebo i EOL? ze zadání nejasné, Ruby sežere i EOL. Momentálně verze EOL
+            case BLOCK_COMMENT_0: //DONE
             {
                 c = get_next_char(token_value);
                 char comm_begin[] = "begin";
@@ -293,7 +293,7 @@ Ttoken *get_token(Tarray *token_value)
                 if ((c == ' ' || c == '\t' || c == '\n') && begin_compared_successfully) //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
-                    arr_set_buffer(token_value, c);
+                   // arr_set_buffer(token_value, c);
                 }
                 else
                     next_state = LEX_ERROR;}
@@ -304,15 +304,18 @@ Ttoken *get_token(Tarray *token_value)
                 {
                     c = get_next_char(token_value);
                 }
-                if(c == EOL)
-                    next_state = BLOCK_COMMENT_2;
-                else //else if (c == EOF)
+                if(c == EOF)
                     next_state = LEX_ERROR;
+                else if(c == EOL) //muze nasledovat =end
+                    next_state = BLOCK_COMMENT_2;
+                else
+                    next_state = BLOCK_COMMENT_1;
                 break;//konec BLOCK_COMMENT_1
             case BLOCK_COMMENT_2:
             {
                 c = get_next_char(token_value);
                 char comm_end[] = "=end";
+                int end_compared_successfully = 0;
                 for (int i = 0; comm_end[i] != '\0'; i++)
                 {
                     if(comm_end[i] != c)
@@ -322,6 +325,7 @@ Ttoken *get_token(Tarray *token_value)
                     }
                     else
                     {
+                        end_compared_successfully++;
                         if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
@@ -330,7 +334,7 @@ Ttoken *get_token(Tarray *token_value)
                     }
                     c = get_next_char(token_value);
                 }
-                if (c == ' ' || c == '\t' || c == EOL)
+                if ((c == ' ' || c == '\t' || c == EOL) && end_compared_successfully == 4)
                 {
                     next_state = BLOCK_COMMMENT_3;
                     arr_set_buffer(token_value, c);
