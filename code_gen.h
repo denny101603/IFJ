@@ -16,11 +16,11 @@
 */
 
 #ifndef IFJ2018_CODE_GEN_H
-#define IFJ2018_CODE_GEN_H/**/
+#define IFJ2018_CODE_GEN_H
 
 #include "seman.h"
-#include "stdio.h"
-#include "stdbool.h"
+#include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 /**
@@ -28,7 +28,7 @@
  * @author Matej Jelinek, Jan Carba
  * @param list seznam triadresnych instrukci ke generaci kodu
  */
-void GEN_start(TTacList *list);
+void GEN_start(TTacList *list, Tgarbage_collector *collector);
 
 /**
  * @brief na stdou vlozi podobu triadresne instrukce v ifjcode2018

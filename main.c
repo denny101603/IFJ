@@ -9,6 +9,7 @@
 * Matej Jelinek xjelin49
 *******************************/
 #include <stdio.h>
+#include "garbage_collector.h"
 #include "fsm.h"
 #include "sax.h"
 #include "seman.h"
@@ -168,71 +169,32 @@ char *enum2string(int num){
 
 }
 
-//Funkce a struktury pro garbage collector
-typedef struct gce{
-    void *ptr;
-    struct gce *previous;
-} GC_elem;
 
-typedef struct gc{
-    GC_elem *last_added;
-} garbage_collector;
-
-void gc_add_garbage(void *ptr, garbage_collector *gc)
-{
-    GC_elem *elem = malloc(sizeof(GC_elem));
-    elem->ptr = ptr;
-    elem->previous = gc->last_added;
-    gc->last_added = elem;
-}
-
-void valar_morghulis(garbage_collector *gc)
-{
-    while(gc->last_added != NULL)
-    {
-        //nacteni jednoho prvku z gc
-        GC_elem *temp = gc->last_added;
-        gc->last_added = gc->last_added->previous;
-
-        free(temp->ptr);
-        free(temp);
-    }
-}
 
 int main() {
 
+    Tgarbage_collector *collector = malloc(sizeof(collector));
+    collector->last_added = NULL;
 
 
-    //ahoj, já jsem carbik a posilam comit
-    //Galantní Jelen
-    //Berry was here!
-
-    //z toho by se jeden posral(hlavně denny)
-    //printf("Hell, World!\n");
-    TTacList *tac_list = TAC_init();
+    TTacList *tac_list = TAC_init(collector);
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
-    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu
+
+    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer));
     buffer_init(tokens_backup);
     TS_stack_init(symtabs_bin);
 
-    int i = startSA(tac_list, symtabs_bin, tokens_backup);
-    //odmazat pod
-/*    TThreeAC *tt = tac_list->first;
-    while(tt != NULL)
-    {
-        printf("%i\n", tt->name);
-        tt = tt->next;
-    }*/
-    //odmazat nad
-    /*printf("navrat SA: %i", i);*/
+    int i = startSA(tac_list, symtabs_bin, tokens_backup, collector);
+
     if(i == SUCCESS) //== 0
-        GEN_start(tac_list);
+        GEN_start(tac_list, collector);
 
     TAC_delete_list(tac_list);
     TS_stack_free(symtabs_bin);
     free(symtabs_bin);
 
     delete_buffer(tokens_backup);
+    valar_morghulis(collector);
 
     return i;
 }

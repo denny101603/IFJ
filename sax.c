@@ -18,6 +18,7 @@ bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na d
     TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
     if (temp == NULL)
         return false;
+
     temp->data = token;
     temp->prev = NULL;
     if(buffer->bottom == NULL) //zasobnik prazdny
@@ -170,13 +171,13 @@ Ttoken *get_next_token(TSynCommon *sa_vars)
         ret = buffer_popBottom(sa_vars->buffer);
     else
     {
-        ret = get_token(sa_vars->arr);
+        ret = get_token(sa_vars->arr, sa_vars->gc);
         buffer_push_top(sa_vars->tokens_backup, ret);
     }
     return ret;
 }
 
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup)
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup, Tgarbage_collector *gc)
 {
     TSynCommon *sa_vars = alloc_sa();
     if(sa_vars == NULL)

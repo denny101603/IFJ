@@ -18,8 +18,11 @@
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
 
+typedef struct gc Tgarbage_collector;
+
 #include <stdlib.h>
 #include <stdbool.h>
+//#include "garbage_collector.h"
 
 #define MAX_NAMES 6 //do struktury TThreeAC
 /**
@@ -91,7 +94,7 @@ typedef struct tac_list{/**/
  * @author Jan Beran
  * @return Ukazatel na nove vytvoreny seznam typu TTacList nebo NULL pri neuspesne alokaci
  */
-TTacList *TAC_init();
+TTacList *TAC_init(Tgarbage_collector *collector);
 
 
 /**

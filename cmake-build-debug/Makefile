@@ -47,10 +47,10 @@ RM = "C:\Program Files\JetBrains\CLion 2018.2.4\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\danbu\CLionProjects\ifjprojektspravny
+CMAKE_SOURCE_DIR = C:\Users\janbe\Desktop\IFJ
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\janbe\Desktop\IFJ\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -79,9 +79,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles\progress.marks
 	$(MAKE) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -175,6 +175,33 @@ fsm.s: fsm.c.s
 fsm.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.s
 .PHONY : fsm.c.s
+
+garbage_collector.obj: garbage_collector.c.obj
+
+.PHONY : garbage_collector.obj
+
+# target to build an object file
+garbage_collector.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/garbage_collector.c.obj
+.PHONY : garbage_collector.c.obj
+
+garbage_collector.i: garbage_collector.c.i
+
+.PHONY : garbage_collector.i
+
+# target to preprocess a source file
+garbage_collector.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/garbage_collector.c.i
+.PHONY : garbage_collector.c.i
+
+garbage_collector.s: garbage_collector.c.s
+
+.PHONY : garbage_collector.s
+
+# target to generate assembly for a file
+garbage_collector.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/garbage_collector.c.s
+.PHONY : garbage_collector.c.s
 
 main.obj: main.c.obj
 
@@ -326,6 +353,9 @@ help:
 	@echo ... fsm.obj
 	@echo ... fsm.i
 	@echo ... fsm.s
+	@echo ... garbage_collector.obj
+	@echo ... garbage_collector.i
+	@echo ... garbage_collector.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

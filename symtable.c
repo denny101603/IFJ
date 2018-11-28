@@ -75,7 +75,7 @@ Tsymbol_table_item *symtab_find(Tsymbol_table *t, const char *key)
             return tmp; //vracim ukazatel na zaznam
     return NULL;
 }
-
+//
 void symtab_clear(Tsymbol_table *t)
 {
     for(unsigned long i = 0; (i < t->arr_size) && t->size != 0; i++) //pro cele pole nebo dokud neni size 0
@@ -86,7 +86,7 @@ void symtab_clear(Tsymbol_table *t)
             while(item != NULL)
             {
                 Tsymbol_table_item *tmp = item->next; //zaloha pristi
-                //free(item->key); toto nedealokuji, dealokuje se to v tokenech
+                //free(item->key); toto nedealokuji, dealokuje se to jinde
                 free(item);
                 (t->size)--;
                 item=tmp;

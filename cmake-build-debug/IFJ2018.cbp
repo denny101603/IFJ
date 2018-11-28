@@ -8,18 +8,18 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug"/>
+				<Option working_dir="C:/Users/janbe/Desktop/IFJ/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="IFJ2018">
-				<Option output="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/IFJ2018.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug"/>
+				<Option output="C:/Users/janbe/Desktop/IFJ/cmake-build-debug/IFJ2018.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/janbe/Desktop/IFJ/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -30,15 +30,15 @@
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 IFJ2018"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 IFJ2018"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="IFJ2018/fast">
-				<Option output="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/IFJ2018.exe" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug"/>
+				<Option output="C:/Users/janbe/Desktop/IFJ/cmake-build-debug/IFJ2018.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/janbe/Desktop/IFJ/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -49,76 +49,82 @@
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/../../../../mingw32/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 IFJ2018/fast"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 IFJ2018/fast"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug"/>
+				<Option working_dir="C:/Users/janbe/Desktop/IFJ/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug"/>
+				<Option working_dir="C:/Users/janbe/Desktop/IFJ/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/janbe/Desktop/IFJ/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/code_gen.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/code_gen.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/code_gen.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/code_gen.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/err_codes.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/err_codes.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/fsm.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/fsm.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/fsm.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/fsm.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/main.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/garbage_collector.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/savo.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/garbage_collector.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/savo.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/main.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/sax.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/savo.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/sax.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/savo.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/seman.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/sax.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/seman.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/sax.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.c">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/seman.c">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.h">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/seman.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/CMakeLists.txt">
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/symtable.c">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/symtable.h">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/janbe/Desktop/IFJ/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

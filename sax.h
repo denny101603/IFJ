@@ -56,7 +56,7 @@ typedef struct local_tables{
 //|______|________________|___|______
 //|bottom|................|top|  ><sem se vkladaji nove prvky
 //|______|________________|___|______
-
+//
 /**
  * @brief Struktura, slouzici pro komunikaci mezi scannerem, savem a saxem.
  * @authors Jan Beran, Daniel Bubenicek
@@ -73,9 +73,10 @@ typedef struct SynCommon
     int err_code; //pro uchovani pripadne chyby
     bool boolean; //info o tom, jestli sestaveny vyraz muze byt typu bool (true = muze byt typu bool) (vychozi stav je false)
     Toperand *dest; //operand kam se ma ulozit soucasne reseny vyraz
-    Toperand *ret; //kazda provedena akce se sem priradi, aby poznal navratovou hodnotu fce //todo denny zaridit v SA_alloc
+    Toperand *ret; //kazda provedena akce se sem priradi, aby poznal navratovou hodnotu fce
     TSymtables_stack *local_tables;
     TSymtables_stack *symtabs_bin;
+    Tgarbage_collector *gc;
 } TSynCommon;
 
 /********************************/
@@ -177,7 +178,7 @@ Ttoken *get_next_token(TSynCommon *sa_vars);
  *	@param [in, out] list alokuje list a v prubehu SA ho naplni triadresnymi instrukcemi
 *	@return kod chyby/uspechu prekladu
 */
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup);
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup, Tgarbage_collector *gc);
 
 /**
 *	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)
