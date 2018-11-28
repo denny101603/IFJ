@@ -19,7 +19,8 @@
 #include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
-//#include "garbage_collector.h"
+#include "garbage_collector.h"
+
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
 Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
@@ -393,7 +394,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 break;
             case ID_1: //DONE
                 ;
-                char *str = arr_get_value(token_value); //pozor, dynamicky alokovane
+                char *str = arr_get_value(token_value, collector); //pozor, dynamicky alokovane
                 if(str == NULL) //chyba alokace
                 {
                     token_set_type(token, ERR_INTERNAL);
@@ -412,7 +413,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 free(str);
                 break;
             case ID_2: //DONE
-                if(token_set_attribute(token, token_value) == ERR_INTERNAL)
+                if(token_set_attribute(token, token_value, collector) == ERR_INTERNAL)
                 {
                     token_set_type(token, ERR_INTERNAL);
                     return token;
@@ -425,7 +426,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 if(c == '(' || c == '#' || c == ' ' || c == EOL || c == EOF || c == '\t') //validne ukoncene ID
                 {
                     arr_set_buffer(token_value, c);
-                    if(token_set_attribute(token, token_value) == ERR_INTERNAL)
+                    if(token_set_attribute(token, token_value, collector) == ERR_INTERNAL)
                     {
                         token_set_type(token, ERR_INTERNAL);
                         return token;
@@ -514,7 +515,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 break; //konec STRING_0
             case STRING_1: //DONE
                 token_set_type(token, STRING_1);
-                token_set_attribute(token, token_value); //token ready
+                token_set_attribute(token, token_value, collector); //token ready
                 final_state = true;
                 break;
             case ESCAPE_0:
@@ -756,7 +757,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 }
                 break;
             case INTEGER: //DONE
-                if(token_set_attribute(token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                if(token_set_attribute(token, token_value, collector) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
                     token_set_type(token, ERR_INTERNAL);
                     return token;
@@ -802,6 +803,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 arr_add_char(token_value, '\0');
                 sscanf(token_value->array, "%f", &num);
                 char *temp = malloc(sizeof(char)*128);
+                gc_add_garbage(collector, temp);
                 //sprintf(token_value->array, "%a", num);
                 sprintf(temp, "%.20a", num);
 
@@ -810,7 +812,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 {
                     arr_add_char(token_value, temp[i]);
                 }
-                if(token_set_attribute(token, token_value) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
+                if(token_set_attribute(token, token_value, collector) == ERR_INTERNAL) //nahrani atributu do tokeny a soucasne kontrola
                 {
                     token_set_type(token, ERR_INTERNAL);
                     return token;
@@ -871,7 +873,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
     return token;
 }//konec get_token()
 
-int arr_init(Tarray *arr)
+int arr_init(Tarray *arr) //nepřidáváme do GC protože sigseg is coming :) řeší SAX
 {
     arr->array = (char *) malloc(sizeof(char) * INIT_SIZE);
     if(arr->array == NULL)
@@ -886,7 +888,7 @@ int arr_init(Tarray *arr)
     return SUCCESS;
 }
 
-int arr_add_char(Tarray *arr, char c)
+int arr_add_char(Tarray *arr, char c) //nepřidáváme do GC protože sigseg is coming :) řeší SAX
 {
     if(arr->lenght > arr->used) //pokud je misto
     {
@@ -953,9 +955,10 @@ void arr_free(Tarray *arr)
     free(arr->array);
 }
 
-char *arr_get_value(Tarray *arr)
+char *arr_get_value(Tarray *arr, Tgarbage_collector *collector)
 {
     char *output = (char *) malloc(sizeof(char) * (arr->used + 1)); //alokace pro predavany retezec, jedno misto navic pro \0
+    gc_add_garbage(collector, output);
     if(output == NULL)
     {
         fprintf(stderr, MESSAGE_ALLOCATION);
@@ -983,9 +986,9 @@ int token_set_type(Ttoken *token, int token_type)
     return SUCCESS;
 }
 
-int token_set_attribute(Ttoken *token, Tarray *arr)
+int token_set_attribute(Ttoken *token, Tarray *arr, Tgarbage_collector *collector)
 {
-    char *attribute = arr_get_value(arr);
+    char *attribute = arr_get_value(arr, collector);
     if (attribute == NULL)
     {
         return ERR_INTERNAL;
