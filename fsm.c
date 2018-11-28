@@ -973,27 +973,6 @@ int token_init(Ttoken *token)
     return SUCCESS;
 }
 
-int token_get_type(Ttoken *token) //todo berry/denny by denny: zapomnel jsem to pouzivat, zatim bych se na predelani vysral a pak pripadne tohle smazal
-{
-    return token->type;
-}
-
-
-char *token_get_attribute(Ttoken *token) //TODO ALL bude to syntaktak potrebovat? Zatim to vypada, ze ne :D
-{
-    /* char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
-     if(output == NULL)
-     {
-         fprintf(stderr, MESSAGE_ALLOCATION);
-         return NULL;
-     }
-     for(int i = 0; i < token->a_used; i++) //kopirovani pole
-         output[i] = token->attribute[i];
-     output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
-     return output;*/
-    return NULL;
-}
-
 
 int token_set_type(Ttoken *token, int token_type)
 {
@@ -1057,3 +1036,26 @@ int is_keyword(const char *str)
     }
     return false; //nenasel
 }
+/*
+
+int token_get_type(Ttoken *token)
+{
+    return token->type;
+}
+
+
+char *token_get_attribute(Ttoken *token)
+{
+     char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
+     if(output == NULL)
+     {
+         fprintf(stderr, MESSAGE_ALLOCATION);
+         return NULL;
+     }
+     for(int i = 0; i < token->a_used; i++) //kopirovani pole
+         output[i] = token->attribute[i];
+     output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
+     return output;
+    return NULL;
+}
+*/
