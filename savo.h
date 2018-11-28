@@ -48,8 +48,8 @@ typedef struct StackElem{
 }TStack;
 
  /**
-  * @brief Funkce vraci jmeno pro docasnou promennou
-  * @return
+  * @brief Funkce vraci jmeno pro docasnou promennou. Nutne pri sestavovani vysledneho kodu
+  * @return vygenerovane jmeno pro promennou typu char *.
   */
  char *savo_name_generator();
 /**
@@ -61,10 +61,11 @@ typedef struct StackElem{
 TStack *stack_init();
 
 /**
- * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TStackElem a pote ho vlozi.
+ * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TStackElem a pote ho vlozi. Zaroven do struktury TStackElem zahrne operand op
  * @param stack Ukazatel na zasobik, kam se ma token vlozit.
  * @param input_token Ukazatel na token, ktery se ma vlozit na zasobik.
  * @param stack_elem ukazatel na polozku s tokenem, ZA ktery se ma prvek vlozit
+ * @param op operand, spjaty s tokenem
  * @return true nebo false, podle vysledku alokace.
  */
 bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op);
@@ -116,9 +117,10 @@ bool is_terminus(Ttoken *token);
 TStackElem *get_first_terminal(TStack *stack);
 
 /**
- *
- * @param elem
- * @return
+ * @brief Funkce nacte token z elementu elem a vrati odkaz na nej (nemodifikuje, pouze vraci odkaz)
+ * @param elem Element zasobniku, ze ktereho potrebujeme token
+ * @return okazatel na dany token
+ * @warning Funkce nic neoveruje, v pripade elem == NULL nedefinovane chovani (err).
  */
 Ttoken *get_token_from_elem(TStackElem *elem);
 
@@ -131,9 +133,9 @@ Ttoken *get_token_from_elem(TStackElem *elem);
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //=
 
 /**
- *
- * @param token
- * @return
+ * @brief Funkce zjisti, zda je dany token tzv "pseudotoken", token vytvoreny pro potreby sy. anal. vyrazu (SAVO).
+ * @param token vstupni token
+ * @return true, pokud token je pseudotoken, false, pokud se jedna o standardní token (získaný ze scanneru).
  */
 bool is_pseudotoken(Ttoken *token);
 /**
@@ -161,10 +163,10 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
 bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer); //>
 
 /**
- *
- * @param src
- * @param dst
- * @return
+ *@brief Funkce kopíruje obsah bufferu src do bufferu dst
+ * @param src source buffer
+ * @param dst destination buffer
+ * @return t/f, podle úspěšnosti
  */
 bool copy_buffer(TBuffer *src, TBuffer *dst);
 
@@ -190,16 +192,19 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
 int find_rule(TStack *stack);
 
 /**
- *
- * @param rule
- * @param stack
+ *@brief Funkce provadi pravidlo, ziskane z precedencni tabulky pomoci fce find_rule. Provadi jak syntakticke akce (predkontrola a samotna kontrola, ktera je destruktivní), tak semanticke akce.
+ * @param rule pravidlo, ktere ma byt provedeno
+ * @param stack zasobnik syntakticke analyzy vyrazu
+ * @param sa_vars spolecne promenne syn. analyzy
+ * @param internal_buffer interni buffer pro zalohu tokenu v pripade nepovedene analyzy a nutnosti je vratit
  */
 bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer);
 
 /**
- *
- * @param input_token
- * @return
+ *@brief Zakladni funkce, kterou se zapiná syntakticka analyza vyrazu.
+ * @author Jan Beran
+ * @param sa_vars spolecne promenne pro oba syntakticke analyzatory
+ * @return true/false podle uspesnosti analyzy vyrazu
  */
 bool savo(TSynCommon *sa_vars);
 

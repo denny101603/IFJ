@@ -15,7 +15,7 @@ void buffer_init(TBuffer *buffer_stack)
 
 bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
 {
-    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
     if (temp == NULL)
         return false;
     temp->data = token;
@@ -37,7 +37,7 @@ bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na d
 
 bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
 {
-    TBufferElem *temp = malloc(sizeof(TBufferElem));
+    TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
     if (temp == NULL)
         return false;
     temp->data = token;
@@ -137,7 +137,7 @@ void TS_stack_init(TSymtables_stack *stack)
 
 bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
 {
-    TLTElem *temp = malloc(sizeof(TLTElem));
+    TLTElem *temp = (TLTElem *) malloc(sizeof(TLTElem));
     if(temp == NULL)
         return false;
     temp->data = table;
@@ -486,6 +486,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false;
     }
     sa_vars->boolean = false; //vracim do vychoziho stavu
+    sa_vars->dest = NULL; //vracim do vychoziho stavu
 
     //ZACATEK TVORBY KODU*************************************//
     char *temp_label2_str = sax_temp_id_generator();
@@ -568,7 +569,7 @@ bool nt_eolf(TSynCommon *sa_vars)
 bool nt_expression(TSynCommon *sa_vars)
 {
     bool dest = sa_vars->dest == NULL;
-    if(dest)
+    if(dest) //pokud nikdo nepotrebuje vysledek, musim stejne nejaky vyrobit kvuli savu a pripadne navratove hodnote fce
     {
         char *temp = sax_temp_id_generator();
         if(temp == NULL)
@@ -592,7 +593,7 @@ bool nt_expression(TSynCommon *sa_vars)
     if(sa_vars->ret != NULL)
         tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
 
-    if(dest) //vracim zpet na null
+    if(dest) //vracim zpet na null jen pokud to byl null i predtim
         sa_vars->dest = NULL;
 
     return nt_eolf(sa_vars);
@@ -601,6 +602,8 @@ bool nt_expression(TSynCommon *sa_vars)
 bool nt_ifthenelse(TSynCommon *sa_vars)
 {
     //ZACATEK TVORBY KODU*************************************//
+    ta_startif(sa_vars->tac_list); //zarazka
+
     char *bool_str = sax_temp_id_generator();
     if(bool_str == NULL)
     {
@@ -641,7 +644,6 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false; //todo denny dealokace?
     }
     tac_defvar(sa_vars->tac_list, temp_cond); //promenna pro podminku
-    sa_vars->dest = temp_cond; //sem mi da savo vysledek vyrazu
 
     char *temp_label = sax_temp_id_generator(); //label1
     if(temp_label == NULL)
@@ -655,7 +657,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-   // tac_lable(sa_vars->tac_list, label1); /////////////////////////////////////////////////////////////////////////////todo odkomentovat, nez na to denny prijde
+   // tac_lable(sa_vars->tac_list, label1); ///////////////////////////////////////todo odkomentovat, nez na to denny prijde
 
     char *temp_label2_str = sax_temp_id_generator(); //priprava pro label2
     if(temp_label2_str == NULL)
@@ -671,6 +673,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
 
     //KONEC TVORBY KODU*************************************//
+    sa_vars->dest = temp_cond; //sem mi da savo vysledek vyrazu
 
     Ttoken *t1 = get_next_token(sa_vars);
     if(!err_check(t1, sa_vars))
@@ -686,6 +689,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false;
     }
     sa_vars->boolean = false; //vracim do vychoziho stavu
+    sa_vars->dest = NULL; //vravcim do vychoziho stavu
 
     t1 = get_next_token(sa_vars);
     if(!err_check(t1, sa_vars))
@@ -743,6 +747,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
 
     tac_lable(sa_vars->tac_list, label2);
+    ta_endif(sa_vars->tac_list); //konec zarazky
 
     if(nt_eolf(sa_vars))                //EOLF
     {
@@ -766,6 +771,8 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     }
     buffer_push_bottom(sa_vars->buffer, t1);
 
+    //***************ZACATEK TVROBY KODU*****************************************************************//
+    Toperand *backup = sa_vars->dest; //zaloha operandu v dest, at uz null nebo neco konkretniho
     char *temp_id = sax_temp_id_generator();
     if(temp_id == NULL)
     {
@@ -781,12 +788,16 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     }
 
     tac_defvar(sa_vars->tac_list, op);
+    //**********KONEC TVORBY KODU*******************************************************************//
+
     sa_vars->dest = op; //reknu savu, aby mi ulozilo vyraz do teto promenne
 
     if(!savo(sa_vars))
     {
         return false;
     }
+    sa_vars->dest = backup; //vracim do vychoziho stavu
+
     (*num_of_args)++; //pribyl argument
     if(nt_nextargs(sa_vars, num_of_args))
     {
@@ -804,6 +815,8 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         return false;
     if(t1->type == OP_COMMA) //RULE33
     {
+        //***************ZACATEK TVROBY KODU*****************************************************************//
+        Toperand *backup = sa_vars->dest; //zaloha operandu v dest, at uz null nebo neco konkretniho
         //vygeneruju nejakou docasnou promennou a predam ji savu
         char *temp_id = sax_temp_id_generator();
         if(temp_id == NULL)
@@ -819,12 +832,15 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         }
         tac_defvar(sa_vars->tac_list, op);
         sa_vars->dest = op; //reknu savu aby mi to dal do te docasne promenne
+        //**********KONEC TVORBY KODU*******************************************************************//
 
         if(!savo(sa_vars))
         {
             buffer_push_bottom(sa_vars->buffer, t1);
             return false;
         }
+        sa_vars->dest = backup; //vracim do vychoziho stavu
+
         (*num_of_args)++; //pribyl argument
         if(nt_nextargs(sa_vars, num_of_args))
         {
@@ -863,8 +879,6 @@ bool nt_right(TSynCommon *sa_vars)
             buffer_push_bottom(sa_vars->buffer, t1);
             if(nt_callfce(sa_vars))
             {
-                if(sa_vars->ret != NULL)
-                    tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest); //navratovou hodnotu z fce, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
                 return true;
             }
             else
@@ -877,8 +891,6 @@ bool nt_right(TSynCommon *sa_vars)
     buffer_push_bottom(sa_vars->buffer, t1);
     if(savo(sa_vars))
     {
-        if(sa_vars->ret != NULL) //tedy nekdo chce abych to tam dal
-            tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
         if(nt_eolf(sa_vars))                //eolf
         {
             return true;
@@ -940,6 +952,8 @@ bool nt_assignment(TSynCommon *sa_vars)
 
             if(nt_right(sa_vars))           //right
             {
+                if(sa_vars->ret != NULL)
+                    tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest); //navratovou hodnotu z fce/vyrazu, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
                 return true;
             }
             else
@@ -1103,14 +1117,51 @@ bool nt_callfce(TSynCommon *sa_vars)
         return false;
     }
     //todo denny poresit volitelne zavorky
-
+//////////
+/*
+    Ttoken *t2 = get_next_token(sa_vars);
+    if(!err_check(t2, sa_vars))
+        return false;
+    bool brackets = true;
+    if(t2->type != LEFT_BRACKET) //zkusim sezrat levou zavorku a zavolat to znovu
+    {
+        brackets = false;
+        buffer_push_bottom(sa_vars->buffer, t2);
+    }*/
+//////////////
     long num_of_args = 0; //pocitadlo argumentu pro overeni s TS
     if(!nt_args(sa_vars, &num_of_args)) //nepovedlo se, zkusim tedy jestli nebyla zavorka, pokud ano, zkusim to znovu
     {
-        Ttoken *t2 = get_next_token(sa_vars); //todo denny dodelat
-        //if(err_check())
-        return false;
-    }
+
+        num_of_args = 0;
+        Ttoken *t2 = get_next_token(sa_vars);
+        if(!err_check(t2, sa_vars))
+            return false;
+        if(t2->type != LEFT_BRACKET) //zkusim sezrat levou zavorku a zavolat to znovu
+            return false;
+        if(!nt_args(sa_vars, &num_of_args))
+            return false;
+
+        t2 = get_next_token(sa_vars);
+        if(!err_check(t2, sa_vars))
+            return false;
+
+        if(t2->type != RIGHT_BRACKET) //pokud neprisla i prava zavorka, fakt to nepujde...
+            return false;
+    } //muzu pokraovat normalne
+
+    ///////////
+    /*
+    if(brackets)
+    {
+        t2 = get_next_token(sa_vars);
+        if (!err_check(t2, sa_vars))
+            return false;
+
+        if (t2->type != RIGHT_BRACKET) //pokud neprisla i prava zavorka, fakt to nepujde...
+            return false;
+    }*/
+    //////////////
 
     if(!check_num_of_params(sa_vars->ts_fun, t1, num_of_args)) //nesedi pocet parametru s definici
     {
@@ -1119,6 +1170,7 @@ bool nt_callfce(TSynCommon *sa_vars)
         return false;
     }
 
+    //*********************************ZACATEK TVORBY KODU ************************************************************//
     if(!strcmp(t1->attribute, "print")) //specialne pro fci print pushuju i pocet paramatru se kterymi je volana
     {
         char *temp_id = sax_temp_id_generator();
@@ -1142,8 +1194,8 @@ bool nt_callfce(TSynCommon *sa_vars)
         tac_defmove_const(sa_vars->tac_list, new_op, cons);
         tac_push(sa_vars->tac_list, new_op); //pushnuti informace o poctu argumentu na zasobnik
     }
-    //**********ZACATEK TVORBY KODU ************************************************************//
-    if(sa_vars->dest == NULL) //nikoho nezajima kam to hodim
+    bool dest_bool = sa_vars->dest == NULL;
+    if(dest_bool) //nikoho nezajima kam to hodim, presto musim nejakou dest. vytvorit protoze nase CALL vzdy popne zasobnik
     {
         char *temp = sax_temp_id_generator();
         if(temp == NULL)
@@ -1157,6 +1209,7 @@ bool nt_callfce(TSynCommon *sa_vars)
             sa_vars->err_code = ERR_INTERNAL;
             return false;
         }
+        tac_defvar(sa_vars->tac_list, sa_vars->dest);
     }
 
     Toperand *label = op_init(t1->type,t1->attribute);
@@ -1170,6 +1223,9 @@ bool nt_callfce(TSynCommon *sa_vars)
     if(sa_vars->ret != NULL)
         tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
     //***********KONEC TVORBY KODU****************************************************************//
+
+    if(dest_bool) //vratim do vychoziho stavu, pokus to nikoho nezajimalo
+        sa_vars->dest = NULL;
 
     if(!nt_eolf(sa_vars))
         return false;
@@ -1513,7 +1569,8 @@ void dealloc_sa(TSynCommon *sa_vars)
     //TS_stack_free(sa_vars->local_tables); //todo denny odkomentovat oba radky
     //free(sa_vars->local_tables);
 
-    delete_buffer(sa_vars->buffer);
+    //delete_buffer(sa_vars->buffer); //todo denny upravit na dealokaci jen skorapky pro tokeny, tokeny jako takove nedealokovat
+    free(sa_vars->buffer);
 
     //symtab_free(sa_vars->ts_fun);
 

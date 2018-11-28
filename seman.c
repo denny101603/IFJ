@@ -21,7 +21,7 @@
 
 TTacList *TAC_init()
 {
-    TTacList *new = malloc(sizeof(TTacList));
+    TTacList *new = (TTacList *) malloc(sizeof(TTacList));
     if(new == NULL)
         return NULL; //err
     new->first = NULL;
@@ -223,7 +223,7 @@ void TAC_delete_list(TTacList *list)
 
 Ttac_buffer *op_buffer_init()
 {
-    Ttac_buffer *buffer = malloc(sizeof(Ttac_buffer));
+    Ttac_buffer *buffer = (Ttac_buffer *) malloc(sizeof(Ttac_buffer));
     if(buffer == NULL)
         return NULL;
     buffer->top = NULL;
@@ -235,7 +235,7 @@ void op_push(Ttac_buffer *buffer, Toperand *operand)
     if(buffer == NULL || operand == NULL)
         return;
 
-    TTAC_Elem *elem = malloc(sizeof(TTAC_Elem));
+    TTAC_Elem *elem = (TTAC_Elem *) malloc(sizeof(TTAC_Elem));
     if(elem == NULL)
         return;
 
@@ -268,7 +268,7 @@ void op_delete_buffer(Ttac_buffer *buffer)
 
 bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[])
 {
-    TThreeAC *I1 = malloc(sizeof(TThreeAC));
+    TThreeAC *I1 = (TThreeAC *) malloc(sizeof(TThreeAC));
     if(I1 == NULL)
         return false;
     I1->name = name;
@@ -324,6 +324,7 @@ bool tac_popframe(TTacList *list)
 */
 bool tac_loadparam(TTacList *list, Toperand *dest)
 {
+    /*
     char *names[MAX_NAMES];
     for (int i = 0; i < MAX_NAMES; i++)
         names[i] = NULL;
@@ -332,8 +333,8 @@ bool tac_loadparam(TTacList *list, Toperand *dest)
         return false;
 
     if(!instruc_init(list, LOADPARAM_DEF, NULL, NULL, NULL, names))
-        return false;
-    if (!instruc_init(list, LOADPARAM, dest, NULL, NULL, names))
+        return false;*/
+    if (!instruc_init(list, LOADPARAM, dest, NULL, NULL, NULL))
         return false;
     return true;
 }
@@ -792,6 +793,20 @@ bool tac_while(TTacList *list)
 bool tac_endwhile(TTacList *list)
 {
     if(instruc_init(list, ENDWHILE, NULL, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool ta_startif(TTacList *list)
+{
+    if(instruc_init(list, STARTIF, NULL, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool ta_endif(TTacList *list)
+{
+    if(instruc_init(list, ENDIF, NULL, NULL, NULL, NULL))
         return true;
     return false;
 }
