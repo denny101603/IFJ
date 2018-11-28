@@ -5,6 +5,7 @@
 #include "sax.h"
 #include "savo.h"
 #include "err_codes.h"
+#include "garbage_collector.c"
 #include <string.h>
 
 void buffer_init(TBuffer *buffer_stack)
@@ -18,6 +19,7 @@ bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na d
     TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
     if (temp == NULL)
         return false;
+
     temp->data = token;
     temp->prev = NULL;
     if(buffer->bottom == NULL) //zasobnik prazdny
@@ -176,7 +178,7 @@ Ttoken *get_next_token(TSynCommon *sa_vars)
     return ret;
 }
 
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup)
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup, Tgarbage_collector *gc)
 {
     TSynCommon *sa_vars = alloc_sa();
     if(sa_vars == NULL)
