@@ -76,7 +76,7 @@ char prec_table[16][16] = {              //in
 };
 //TODO ALL Zkontrolovat to po Janu Carbovi :). By Berry: pokud bude savo naoko fungovat, ale jinak, mrknout se sem.
 
-
+//todo u vsech tac_funkci kontrolovat t/f a pripadne vratit err internal
 char get_action(Ttoken *input_token, Ttoken *stack_token)
 {
     int stack_terminal = -1;
