@@ -15,6 +15,7 @@
 #include "code_gen.h"
 #include "err_codes.h"
 
+//pomocna funkce, ke konci jde smazat nebo dat nekam do pryc
 char *enum2string(int num){
     enum {DEFVAR,MOVE,CREATEFRAME,PUSHFRAME,POPFRAME,PUSH,POP,ADD,SUB,MUL,DIV,INPUTI,INPUTS,INPUTF,PRINT,LENGTH,SUBSTR,ORD,CHR,CALL,
         RETURN,INT2FLOAT,FLOAT2INT,INT2CHAR,CONCAT,SETCHAR,ISINT,ISFLOAT,ISSTRING,ISBOOL,LABLE,JUMP,JUMPIFEQ,JUMPIFNEQ,JUMPIFGT,JUMPIFLT,DPRINT,
@@ -167,6 +168,37 @@ char *enum2string(int num){
 
 }
 
+//Funkce a struktury pro garbage collector
+typedef struct gce{
+    void *ptr;
+    struct gce *previous;
+} GC_elem;
+
+typedef struct gc{
+    GC_elem *last_added;
+} garbage_collector;
+
+void gc_add_garbage(void *ptr, garbage_collector *gc)
+{
+    GC_elem *elem = malloc(sizeof(GC_elem));
+    elem->ptr = ptr;
+    elem->previous = gc->last_added;
+    gc->last_added = elem;
+}
+
+void valar_morghulis(garbage_collector *gc)
+{
+    while(gc->last_added != NULL)
+    {
+        //nacteni jednoho prvku z gc
+        GC_elem *temp = gc->last_added;
+        gc->last_added = gc->last_added->previous;
+
+        free(temp->ptr);
+        free(temp);
+    }
+}
+
 int main() {
 
 
@@ -195,12 +227,12 @@ int main() {
     /*printf("navrat SA: %i", i);*/
     if(i == SUCCESS) //== 0
         GEN_start(tac_list);
-/*
+
     TAC_delete_list(tac_list);
     TS_stack_free(symtabs_bin);
     free(symtabs_bin);
 
     delete_buffer(tokens_backup);
-*/
+
     return i;
 }
