@@ -193,6 +193,7 @@ void TAC_delete_list(TTacList *list)
     list = NULL;
 }
 
+
 bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[], Tgarbage_collector *collector)
 {
     TThreeAC *I1 = (TThreeAC *) malloc(sizeof(TThreeAC));

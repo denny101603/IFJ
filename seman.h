@@ -226,6 +226,7 @@ bool ta_endif(TTacList *list, Tgarbage_collector *collector);
 char *codegen_temp_id_generator(Tgarbage_collector *collector);
 
 
+
 /**
  *  @brief Vycet vsech triadresnych instrukci
 *   @author Matej Jelinek
