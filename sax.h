@@ -8,6 +8,7 @@
 #include "fsm.h"
 #include "symtable.h"
 #include "seman.h"
+#include "garbage_collector.h"
 
 #define TS_SIZE 127ul //TODO domluvit se na nejake velikosti. Musi to byt prvocislo. A stastne cislo (viz wiki).
 #define ZERO_TO_INF -10 //specialni hodnota znacici pocet parametru pro fci print - tedy libovolny nezaporny
@@ -96,7 +97,7 @@ void buffer_init(TBuffer *buffer_buffer);
  * @param token Ukazatel na token, ktery se ma vlozit na zasobik.
  * @return true nebo false, podle vysledku alokace.
  */
-bool buffer_push_top(TBuffer *buffer, Ttoken *token);
+bool buffer_push_top(TBuffer *buffer, Ttoken *token, TSynCommon *sa_vars);
 
 /**
  * @brief Funkce, ktera pridava token na dno zasobniku. Token nejprve obali do struktury TBufferElem a pote ho vlozi.
@@ -105,7 +106,7 @@ bool buffer_push_top(TBuffer *buffer, Ttoken *token);
  * @param token Ukazatel na token, ktery se ma vlozit na zasobik.
  * @return true nebo false, podle vysledku alokace.
  */
-bool buffer_push_bottom(TBuffer *buffer, Ttoken *token);
+bool buffer_push_bottom(TBuffer *buffer, Ttoken *token, TSynCommon *sa_vars);
 
 /**
  * @brief Funkce popne vrchni polozku TBufferElem ze zasobniku buffer a vrati hodnotu tokenu.
@@ -178,7 +179,7 @@ Ttoken *get_next_token(TSynCommon *sa_vars);
  *	@param [in, out] list alokuje list a v prubehu SA ho naplni triadresnymi instrukcemi
 *	@return kod chyby/uspechu prekladu
 */
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup, Tgarbage_collector *gc);
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, Tgarbage_collector *gc);
 
 /**
 *	@brief zkousi prelozit cast programu ktery muze stat samostatne (cast hlavniho tela)
@@ -322,7 +323,7 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars);
 *	@author Daniel Bubenicek
 *	@return strukturu pripravenou k pouziti nebo NULL pri chybe alokace
 */
-TSynCommon *alloc_sa();
+TSynCommon *alloc_sa(Tgarbage_collector *gc);
 
 /**
 *	@brief dealokuje vse ze struktury sa_vars s vyjimkou tac_list (ocekava se predani jinam), dealokuje i sa_vars jako takove
@@ -352,14 +353,14 @@ bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params);
 *	@author Daniel Bubenicek
  *	@return dynalokovany string, pri neuspesne alokaci NULL
 */
-char *sax_temp_id_generator();
+char *sax_temp_id_generator(Tgarbage_collector *gc);
 
 /**
 *	@brief z longu udela string napr. 654 -> "564"
 *	@author Daniel Bubenicek
  *	@return string, pri neuspesne alokaci NULL
 */
-char *long_to_string(long num);
+char *long_to_string(long num, Tgarbage_collector *gc);
 
 
 #endif //IFJ2018_SAX_H

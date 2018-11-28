@@ -13,11 +13,13 @@ void buffer_init(TBuffer *buffer_stack)
     buffer_stack->bottom = NULL;
 }
 
-bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na dno. Pouzivat opatrne
+bool buffer_push_bottom(TBuffer *buffer, Ttoken *token, TSynCommon *sa_vars) //push na bottom == na dno. Pouzivat opatrne
 {
     TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
+    gc_add_garbage(sa_vars->gc, temp);
     if (temp == NULL)
         return false;
+
 
     temp->data = token;
     temp->prev = NULL;
@@ -36,9 +38,10 @@ bool buffer_push_bottom(TBuffer *buffer, Ttoken *token) //push na bottom == na d
     return true;
 }
 
-bool buffer_push_top(TBuffer *buffer, Ttoken *token) //pushnuti na top
+bool buffer_push_top(TBuffer *buffer, Ttoken *token, TSynCommon *sa_vars) //pushnuti na top
 {
     TBufferElem *temp = (TBufferElem *) malloc(sizeof(TBufferElem));
+    gc_add_garbage(sa_vars->gc, temp);
     if (temp == NULL)
         return false;
     temp->data = token;
@@ -138,7 +141,7 @@ void TS_stack_init(TSymtables_stack *stack)
 
 bool TS_push(TSymtables_stack *stack, Tsymbol_table *table)
 {
-    TLTElem *temp = (TLTElem *) malloc(sizeof(TLTElem));
+    TLTElem *temp = (TLTElem *) malloc(sizeof(TLTElem));  //TS si dealokaci resi sama
     if(temp == NULL)
         return false;
     temp->data = table;
@@ -172,20 +175,18 @@ Ttoken *get_next_token(TSynCommon *sa_vars)
     else
     {
         ret = get_token(sa_vars->arr, sa_vars->gc);
-        buffer_push_top(sa_vars->tokens_backup, ret);
     }
     return ret;
 }
 
-int startSA(TTacList *list, TSymtables_stack *symtabs_bin, TBuffer *tokens_backup, Tgarbage_collector *gc)
+int startSA(TTacList *list, TSymtables_stack *symtabs_bin, Tgarbage_collector *gc)
 {
-    TSynCommon *sa_vars = alloc_sa();
+    TSynCommon *sa_vars = alloc_sa(gc);
     if(sa_vars == NULL)
         return ERR_INTERNAL;
 
     sa_vars->tac_list = list;
     sa_vars->symtabs_bin = symtabs_bin;
-    sa_vars->tokens_backup = tokens_backup;
 
     sa_vars->err_code = IN_PROGRESS;
     while(sa_vars->err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
@@ -219,22 +220,22 @@ bool progr(TSynCommon *sa_vars)
 
     if(token->type == KEY_DEF)
     {
-        buffer_push_bottom(sa_vars->buffer, token);
+        buffer_push_bottom(sa_vars->buffer, token, sa_vars);
         return nt_deffunc(sa_vars);
     }
     else if(token->type == EOL_1 || token->type == EOF_STATE)
     {
-        buffer_push_bottom(sa_vars->buffer, token);
+        buffer_push_bottom(sa_vars->buffer, token, sa_vars);
         return nt_eolf(sa_vars);
     }
     else if(token->type == KEY_WHILE)
     {
-        buffer_push_bottom(sa_vars->buffer, token);
+        buffer_push_bottom(sa_vars->buffer, token, sa_vars);
         return nt_cycl(sa_vars);
     }
     else if(token->type == KEY_IF)
     {
-        buffer_push_bottom(sa_vars->buffer, token);
+        buffer_push_bottom(sa_vars->buffer, token, sa_vars);
         return nt_ifthenelse(sa_vars);
     }
     else if(token->type == ID_2) //prislo ID: hrozi expression, assignment, callfce
@@ -246,20 +247,20 @@ bool progr(TSynCommon *sa_vars)
         }
        if(look_ahead->type == OP_EQAL_2) //prislo "=" tedy jednoznacne assignment
        {
-           buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-           buffer_push_bottom(sa_vars->buffer, token);
+           buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+           buffer_push_bottom(sa_vars->buffer, token, sa_vars);
            return nt_assignment(sa_vars);
        }
        else if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
        { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
-           buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-           buffer_push_bottom(sa_vars->buffer, token);
+           buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+           buffer_push_bottom(sa_vars->buffer, token, sa_vars);
            return nt_expression(sa_vars);
        }
        else //ostatni jsem vyloucil, takze zbyva moznost volani fce
        {
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, token);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, token, sa_vars);
             return nt_callfce(sa_vars);
        }
     }
@@ -267,18 +268,18 @@ bool progr(TSynCommon *sa_vars)
     {
         if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
-            buffer_push_bottom(sa_vars->buffer, token);
+            buffer_push_bottom(sa_vars->buffer, token, sa_vars);
             return false; //TODO denny mozna to neni chyba
         }
         else
         {
-            buffer_push_bottom(sa_vars->buffer, token);
+            buffer_push_bottom(sa_vars->buffer, token, sa_vars);
             return nt_callfce(sa_vars);
         }
     }
     else //zbyva snad uz jen vyraz
     {
-        buffer_push_bottom(sa_vars->buffer, token);
+        buffer_push_bottom(sa_vars->buffer, token, sa_vars);
         return nt_expression(sa_vars);
     }
 }
@@ -309,7 +310,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
                 return false;
 
             //*****ZACATEK TVORBY KODU **************************************/
-            char *label_str = sax_temp_id_generator();
+            char *label_str = sax_temp_id_generator(sa_vars->gc);
             if(label_str == NULL)
                 return false;
             Toperand *label = op_init(KEY_NIL, label_str);
@@ -328,19 +329,20 @@ bool nt_deffunc(TSynCommon *sa_vars)
             tac_deffunc(sa_vars->tac_list, op, label);
 
 
-            char *nil_str = sax_temp_id_generator();
+            char *nil_str = sax_temp_id_generator(sa_vars->gc);
             if(nil_str == NULL)
                 return false;
             Toperand *op_nil = op_init(KEY_NIL, nil_str);
 
             char *nil_const_str = (char *) malloc(sizeof(char)*4); //nil\0
+            gc_add_garbage(sa_vars->gc, nil_const_str);
             if(nil_const_str == NULL)
                 return false;
             strcpy(nil_const_str, "nil");
             Toperand *op_nil_const = op_init(KEY_NIL, nil_const_str);
 
             //vytvorim promennou kam mohou prikazy vracet svou navratovou hodnotu
-            char *ret_str = sax_temp_id_generator();
+            char *ret_str = sax_temp_id_generator(sa_vars->gc);
             if(ret_str == NULL)
                 return false;
             Toperand *ret = op_init(KEY_NIL, ret_str);
@@ -422,7 +424,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     //ZACATEK TVORBY KODU*************************************//
     tac_while(sa_vars->tac_list); //"zarazka" pro zacatek while
 
-    char *bool_str = sax_temp_id_generator();
+    char *bool_str = sax_temp_id_generator(sa_vars->gc);
     if(bool_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -435,7 +437,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false; //todo denny dealokace?
     }
 
-    char *cons_str = long_to_string(1); //todo denny kdyby zbyl cas: poresit leakovani te jednicky, na 98% ji nikde nedealokuju
+    char *cons_str = long_to_string(1, sa_vars->gc); //todo denny kdyby zbyl cas: poresit leakovani te jednicky, na 98% ji nikde nedealokuju
     if(cons_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -449,7 +451,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     }
     tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp); //true konstanta, kvuli urceni skoku
 
-    char *temp_cond_str = sax_temp_id_generator();
+    char *temp_cond_str = sax_temp_id_generator(sa_vars->gc);
     if(temp_cond_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -463,7 +465,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     }
     tac_defvar(sa_vars->tac_list, temp_cond);
 
-    char *temp_label = sax_temp_id_generator();
+    char *temp_label = sax_temp_id_generator(sa_vars->gc);
     if(temp_label == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -490,7 +492,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     sa_vars->dest = NULL; //vracim do vychoziho stavu
 
     //ZACATEK TVORBY KODU*************************************//
-    char *temp_label2_str = sax_temp_id_generator();
+    char *temp_label2_str = sax_temp_id_generator(sa_vars->gc);
     if(temp_label2_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -572,7 +574,7 @@ bool nt_expression(TSynCommon *sa_vars)
     bool dest = sa_vars->dest == NULL;
     if(dest) //pokud nikdo nepotrebuje vysledek, musim stejne nejaky vyrobit kvuli savu a pripadne navratove hodnote fce
     {
-        char *temp = sax_temp_id_generator();
+        char *temp = sax_temp_id_generator(sa_vars->gc);
         if(temp == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
@@ -605,7 +607,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     //ZACATEK TVORBY KODU*************************************//
     ta_startif(sa_vars->tac_list); //zarazka
 
-    char *bool_str = sax_temp_id_generator();
+    char *bool_str = sax_temp_id_generator(sa_vars->gc);
     if(bool_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -618,7 +620,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false; //todo denny dealokace?
     }
 
-    char *cons_str = long_to_string(1);
+    char *cons_str = long_to_string(1, sa_vars->gc);
     if(cons_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -632,7 +634,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
     tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp); //true konstanta, kvuli urceni skoku
 
-    char *temp_cond_str = sax_temp_id_generator();
+    char *temp_cond_str = sax_temp_id_generator(sa_vars->gc);
     if(temp_cond_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -646,7 +648,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
     tac_defvar(sa_vars->tac_list, temp_cond); //promenna pro podminku
 
-    char *temp_label = sax_temp_id_generator(); //label1
+    char *temp_label = sax_temp_id_generator(sa_vars->gc); //label1
     if(temp_label == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -660,7 +662,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     }
    // tac_lable(sa_vars->tac_list, label1); ///////////////////////////////////////todo odkomentovat, nez na to denny prijde
 
-    char *temp_label2_str = sax_temp_id_generator(); //priprava pro label2
+    char *temp_label2_str = sax_temp_id_generator(sa_vars->gc); //priprava pro label2
     if(temp_label2_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -767,14 +769,14 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
         return false;
     if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE))
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return true;
     }
-    buffer_push_bottom(sa_vars->buffer, t1);
+    buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
 
     //***************ZACATEK TVROBY KODU*****************************************************************//
     Toperand *backup = sa_vars->dest; //zaloha operandu v dest, at uz null nebo neco konkretniho
-    char *temp_id = sax_temp_id_generator();
+    char *temp_id = sax_temp_id_generator(sa_vars->gc);
     if(temp_id == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -819,7 +821,7 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         //***************ZACATEK TVROBY KODU*****************************************************************//
         Toperand *backup = sa_vars->dest; //zaloha operandu v dest, at uz null nebo neco konkretniho
         //vygeneruju nejakou docasnou promennou a predam ji savu
-        char *temp_id = sax_temp_id_generator();
+        char *temp_id = sax_temp_id_generator(sa_vars->gc);
         if(temp_id == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
@@ -837,7 +839,7 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
 
         if(!savo(sa_vars))
         {
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             return false;
         }
         sa_vars->dest = backup; //vracim do vychoziho stavu
@@ -851,18 +853,18 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         }
         else
         {
-            buffer_push_bottom(sa_vars->buffer, t1); //nepovedlo se, musim vratit pro pripadny dalsi pokus
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars); //nepovedlo se, musim vratit pro pripadny dalsi pokus
             return false;
         }
     }
     else if((t1->type == RIGHT_BRACKET) || (t1->type == EOL_1) || (t1->type == EOF_STATE)) //RULE 32
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return true;
     }
     else
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return false;
     }
 }
@@ -877,7 +879,7 @@ bool nt_right(TSynCommon *sa_vars)
         if (symtab_find(sa_vars->ts_fun, t1->attribute) != NULL)
         {
             //je to id_fce
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_callfce(sa_vars))
             {
                 return true;
@@ -889,7 +891,7 @@ bool nt_right(TSynCommon *sa_vars)
         }
     }
     //cekam EXPR
-    buffer_push_bottom(sa_vars->buffer, t1);
+    buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
     if(savo(sa_vars))
     {
         if(nt_eolf(sa_vars))                //eolf
@@ -964,13 +966,13 @@ bool nt_assignment(TSynCommon *sa_vars)
         }
         else //neni to validni leva strana prirazeni
         {
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             return false;
         }
     }
     else //neni to ID_2
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return false;
     }
 }
@@ -984,7 +986,7 @@ bool nt_nextparams(TSynCommon *sa_vars)
     {
         if(t1->type == RIGHT_BRACKET)
         {
-            buffer_push_bottom(sa_vars->buffer,t1);
+            buffer_push_bottom(sa_vars->buffer,t1, sa_vars);
             return true;
         }
         else
@@ -1050,7 +1052,7 @@ bool nt_params(TSynCommon *sa_vars)
         return false;
     if(t1->type == RIGHT_BRACKET)
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return true;
     }
     else
@@ -1174,7 +1176,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     //*********************************ZACATEK TVORBY KODU ************************************************************//
     if(!strcmp(t1->attribute, "print")) //specialne pro fci print pushuju i pocet paramatru se kterymi je volana
     {
-        char *temp_id = sax_temp_id_generator();
+        char *temp_id = sax_temp_id_generator(sa_vars->gc);
         if (temp_id == NULL) {
             return false; //todo denny dealokace neceho?
         }
@@ -1183,7 +1185,7 @@ bool nt_callfce(TSynCommon *sa_vars)
             return false; //todo denny dealokace neceho?
         }
 
-        char *str_num_of_args = long_to_string(num_of_args);
+        char *str_num_of_args = long_to_string(num_of_args, sa_vars->gc);
         if (str_num_of_args == NULL) {
             return false; //todo denny dealokace neceho?
         }
@@ -1198,7 +1200,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     bool dest_bool = sa_vars->dest == NULL;
     if(dest_bool) //nikoho nezajima kam to hodim, presto musim nejakou dest. vytvorit protoze nase CALL vzdy popne zasobnik
     {
-        char *temp = sax_temp_id_generator();
+        char *temp = sax_temp_id_generator(sa_vars->gc);
         if(temp == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
@@ -1249,7 +1251,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     }
     else if(t1->type == KEY_DEF) //RULE 6
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         if(!nt_deffunc(sa_vars))
         {
             return false;
@@ -1258,7 +1260,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     }
     else if(t1->type == KEY_IF) //RULE10
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         if(!nt_ifthenelse(sa_vars))
         {
             return false;
@@ -1267,7 +1269,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     }
     else if(t1->type == KEY_WHILE) //RULE9
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         if(!nt_cycl(sa_vars))
         {
             return false;
@@ -1281,8 +1283,8 @@ bool nt_bodyfce(TSynCommon *sa_vars)
             return false;
         if(look_ahead->type == OP_EQAL_2) //prislo "=" tedy jednoznacne assignment
         {
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(!nt_assignment(sa_vars))
             {
                 return false;
@@ -1291,8 +1293,8 @@ bool nt_bodyfce(TSynCommon *sa_vars)
         }
         else if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
         { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_expression(sa_vars))
             {
                 return nt_bodyfce(sa_vars);
@@ -1301,8 +1303,8 @@ bool nt_bodyfce(TSynCommon *sa_vars)
         }
         else //ostatni jsem vyloucil, takze zbyva moznost volani fce
         {
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_callfce(sa_vars))
             {
                 return nt_bodyfce(sa_vars);
@@ -1314,23 +1316,23 @@ bool nt_bodyfce(TSynCommon *sa_vars)
     {
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             return false; //TODO denny mozna to neni chyba
         }
         else
         {
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             return nt_callfce(sa_vars);
         }
     }
     else if(t1->type == KEY_END)
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return true;
     }
     else
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return nt_expression(sa_vars); //zbyva snad jen vyraz z konstanty
     }
 }
@@ -1350,7 +1352,7 @@ bool nt_bodywhif(TSynCommon *sa_vars)
     }
     else if(t1->type == KEY_IF) //RULE10
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         if(!nt_ifthenelse(sa_vars))
         {
             return false;
@@ -1359,7 +1361,7 @@ bool nt_bodywhif(TSynCommon *sa_vars)
     }
     else if(t1->type == KEY_WHILE) //RULE9
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         if(!nt_cycl(sa_vars))
         {
             return false;
@@ -1373,8 +1375,8 @@ bool nt_bodywhif(TSynCommon *sa_vars)
             return false;
         if(look_ahead->type == OP_EQAL_2) //prislo "=" tedy jednoznacne assignment
         {
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(!nt_assignment(sa_vars))
             {
                 return false;
@@ -1383,8 +1385,8 @@ bool nt_bodywhif(TSynCommon *sa_vars)
         }
         else if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
         { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_expression(sa_vars))
             {
                 return nt_bodywhif(sa_vars);
@@ -1393,8 +1395,8 @@ bool nt_bodywhif(TSynCommon *sa_vars)
         }
         else //ostatni jsem vyloucil, takze zbyva moznost volani fce
         {
-            buffer_push_bottom(sa_vars->buffer, look_ahead); //vraceni tokenu ve spravnem poradi
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_callfce(sa_vars))
             {
                 return nt_bodywhif(sa_vars);
@@ -1406,23 +1408,23 @@ bool nt_bodywhif(TSynCommon *sa_vars)
     {
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             return false; //TODO denny mozna to neni chyba
         }
         else
         {
-            buffer_push_bottom(sa_vars->buffer, t1);
+            buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             return nt_callfce(sa_vars);
         }
     }
     else if(t1->type == KEY_END  || t1->type == KEY_ELSE)
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return true;
     }
     else
     {
-        buffer_push_bottom(sa_vars->buffer, t1);
+        buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
         return nt_expression(sa_vars); //zbyva snad jen vyraz z konstanty
     }
 }
@@ -1431,8 +1433,10 @@ bool nt_bodywhif(TSynCommon *sa_vars)
 bool init_ts_fun(TSynCommon *sa_vars)
 {
     sa_vars->ts_fun = symtab_init(TS_SIZE);
+    sa_vars->gc->others->ts_func = sa_vars->ts_fun;
     if(sa_vars->ts_fun == NULL) //chyba alokace
         return false;
+
 
     char *inputs = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *inputi = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
@@ -1443,9 +1447,19 @@ bool init_ts_fun(TSynCommon *sa_vars)
     char *ord = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *chr = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
 
+    gc_add_garbage(sa_vars->gc, inputs);
+    gc_add_garbage(sa_vars->gc, inputi);
+    gc_add_garbage(sa_vars->gc, inputf);
+    gc_add_garbage(sa_vars->gc, print);
+    gc_add_garbage(sa_vars->gc, lenght);
+    gc_add_garbage(sa_vars->gc, substr);
+    gc_add_garbage(sa_vars->gc, ord);
+    gc_add_garbage(sa_vars->gc, chr);
+
     if(inputs == NULL || inputi == NULL || inputf == NULL || print == NULL
         || lenght == NULL || substr == NULL || ord == NULL || chr == NULL) //nepovedena alokace
     {
+        /*
         free(inputs);
         free(inputi);
         free(inputf);
@@ -1454,7 +1468,7 @@ bool init_ts_fun(TSynCommon *sa_vars)
         free(substr);
         free(ord);
         free(chr);
-        symtab_free(sa_vars->ts_fun);
+        symtab_free(sa_vars->ts_fun);*/
         return false;
     }
 
@@ -1478,6 +1492,7 @@ bool init_ts_fun(TSynCommon *sa_vars)
 
     if(a == NULL || b == NULL || c == NULL || d == NULL || e == NULL || f == NULL || g == NULL || h == NULL) //neuspesna alokace
     {
+        /*
         free(inputs);
         free(inputi);
         free(inputf);
@@ -1494,7 +1509,7 @@ bool init_ts_fun(TSynCommon *sa_vars)
         free(f);
         free(g);
         free(h);
-        free(sa_vars->ts_fun);
+        free(sa_vars->ts_fun);*/
         return false;
     }
 
@@ -1515,36 +1530,35 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars)
     return false; //chyba
 }
 
-TSynCommon *alloc_sa()
+TSynCommon *alloc_sa(Tgarbage_collector *gc)
 {
     TSynCommon *sa_vars = (TSynCommon *) malloc(sizeof(TSynCommon)); //struktura s promennymi pro komunikaci mezi castmi prekladace
-    Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener
+    Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener //arr nema prijit do garbage collectoru
     TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
     TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
-    //TTacList *tac_list = TAC_init(); //todo denny uprava + v ifu dole
+
+
 
     if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
-    { //dealokace
-        free(sa_vars);
+    {
+        /*free(sa_vars);
         free(arr);
         free(buffer);
         free(local_tables);
-        symtab_free(symtab_local);
-        //TAC_delete_list(tac_list); //todo denny uprava
+        symtab_free(symtab_local);*/
         return NULL;
     }
 
     if(arr_init(arr) == ERR_INTERNAL || !init_ts_fun(sa_vars)) //neuspesna alokace
     { //dealokace
-        if(arr_init(arr) != ERR_INTERNAL)
+        /*if(arr_init(arr) != ERR_INTERNAL)
             arr_free(arr);
         free(sa_vars);
         free(arr);
         free(buffer);
         free(local_tables);
-        symtab_free(symtab_local);
-        //TAC_delete_list(tac_list); //todo denny uprava
+        symtab_free(symtab_local);*/
         return NULL;
     }
     buffer_init(buffer);
@@ -1554,28 +1568,32 @@ TSynCommon *alloc_sa()
     sa_vars->buffer = buffer;
     sa_vars->arr = arr;
     sa_vars->boolean = false; //vychozi stav
-    //sa_vars->tac_list = tac_list; //todo denny uprava
     sa_vars->dest = NULL;
     sa_vars->ret = NULL;
 
     TS_push(sa_vars->local_tables, symtab_local);
+
+    gc_add_garbage(gc, sa_vars);
+    gc_add_garbage(gc, buffer);
+    gc->others->sym_stack = local_tables;
+
     return sa_vars;
 }
 
 void dealloc_sa(TSynCommon *sa_vars)
 {
-    arr_free(sa_vars->arr);
+    arr_free(sa_vars->arr); //jedine arr se ma dealokovat podle dohody
     free(sa_vars->arr);
 
-    //TS_stack_free(sa_vars->local_tables); //todo denny odkomentovat oba radky
+    //TS_stack_free(sa_vars->local_tables);
     //free(sa_vars->local_tables);
 
-    //delete_buffer(sa_vars->buffer); //todo denny upravit na dealokaci jen skorapky pro tokeny, tokeny jako takove nedealokovat
-    free(sa_vars->buffer);
+    //delete_buffer(sa_vars->buffer);
+    //free(sa_vars->buffer);
 
     //symtab_free(sa_vars->ts_fun);
 
-    free(sa_vars);
+    //free(sa_vars);
 }
 
 void TS_stack_free(TSymtables_stack *ts_stack)
@@ -1600,19 +1618,21 @@ bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params)
         return false;
 }
 
-char *sax_temp_id_generator()
+char *sax_temp_id_generator(Tgarbage_collector *gc)
 {
     static unsigned long long cnt = 0;
     char *name = (char *) malloc(sizeof(char)*32);
+    gc_add_garbage(gc, name);
     if(name == NULL)
         return NULL;
     sprintf(name, "&sax%llu", cnt++);
     return name;
 }
 
-char *long_to_string(long num)
+char *long_to_string(long num, Tgarbage_collector *gc)
 {
     char *name = (char *) malloc(sizeof(char)*22); //22 znaku by melo bohate stacit pro delku longu
+    gc_add_garbage(gc, name);
     if(name == NULL)
         return NULL;
     sprintf(name, "%li", num);
