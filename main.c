@@ -177,7 +177,7 @@ int main() {
     collector->last_added = NULL;
 
 
-    TTacList *tac_list = TAC_init();
+    TTacList *tac_list = TAC_init(collector);
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu
     buffer_init(tokens_backup);

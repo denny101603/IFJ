@@ -16,12 +16,14 @@
  *	      V simulovanych testech vsechno fungovalo dobre.
 */
 #include "seman.h"
+#include "garbage_collector.h"
 #include <stdio.h>
 
 
-TTacList *TAC_init()
+TTacList *TAC_init(Tgarbage_collector *collector)
 {
     TTacList *new = (TTacList *) malloc(sizeof(TTacList));
+    gc_add_garbage(collector, new);
     if(new == NULL)
         return NULL; //err
     new->first = NULL;

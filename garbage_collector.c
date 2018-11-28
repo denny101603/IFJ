@@ -7,7 +7,7 @@
 
 
 
-void gc_add_garbage(void *ptr, garbage_collector *gc)
+void gc_add_garbage(Tgarbage_collector *gc, void *ptr)
 {
     GC_elem *elem = malloc(sizeof(GC_elem));
     elem->ptr = ptr;
@@ -15,7 +15,7 @@ void gc_add_garbage(void *ptr, garbage_collector *gc)
     gc->last_added = elem;
 }
 
-void valar_morghulis(garbage_collector *gc)
+void valar_morghulis(Tgarbage_collector *gc)
 {
     while(gc->last_added != NULL)
     {
