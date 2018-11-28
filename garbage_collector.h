@@ -1,0 +1,8 @@
+//
+// Created by janbe on 28.11.2018.
+//
+
+#ifndef IFJ2018_GARBAGE_COLLECTOR_H
+#define IFJ2018_GARBAGE_COLLECTOR_H
+
+#endif //IFJ2018_GARBAGE_COLLECTOR_H
