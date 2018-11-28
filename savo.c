@@ -75,7 +75,6 @@ char prec_table[16][16] = {              //in
         /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','<','?'}
 };
 
-//
 //todo u vsech tac_funkci kontrolovat t/f a pripadne vratit err internal
 char get_action(Ttoken *input_token, Ttoken *stack_token)
 {
@@ -296,17 +295,17 @@ Ttoken *pop_extended(TStack *stack, Toperand *op)
     return output;
 }
 
-bool copy_buffer(TBuffer *src, TBuffer *dst)
+bool copy_buffer(TBuffer *src, TBuffer *dst, TSynCommon *sa_vars)
 {
     if(src == NULL)
         return true;
     Ttoken *tempsrc = buffer_popTop(src);
     while(src->top != NULL) //updated via poptop
     {
-        buffer_push_bottom(dst, tempsrc);
+        buffer_push_bottom(dst, tempsrc, sa_vars);
         tempsrc = buffer_popTop(src);
     }
-    buffer_push_bottom(dst, tempsrc);
+    buffer_push_bottom(dst, tempsrc, sa_vars);
     return true;
 }
 
@@ -374,7 +373,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
         action_err(stack, sa_vars, LEX_ERROR, internal_buffer);
         return  NULL;
     }
-    buffer_push_top(internal_buffer, ret);
+    buffer_push_top(internal_buffer, ret, sa_vars);
     //pokud jsem dostal nil jako dalsi token v poradi A pred nim neni zavorka NEBO je nil na topu (byl dostan) A soucasny znak neni ukoncovaci
     /*if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
     {
@@ -419,7 +418,7 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
         action_err(stack, sa_vars, LEX_ERROR, internal_buffer);
         return  NULL;
     }
-    buffer_push_top(internal_buffer, ret);
+    buffer_push_top(internal_buffer, ret, sa_vars);
     //pokud jsem dostal nil jako dalsi token v poradi A pred nim neni zavorka NEBO je nil na topu (byl dostan) A soucasny znak neni ukoncovaci
     /*if ((ret->type == KEY_NIL && stack->top->data->type != LEFT_BRACKET)|| (stack->top->data->type == KEY_NIL && !is_terminus(ret)))
     {
@@ -453,7 +452,7 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
 
     }
 
-    copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
+    copy_buffer(internal_buffer, sa_vars->buffer, sa_vars); //presunuti interniho bufferu do spolecneho se sax
     //delete_buffer(internal_buffer);
    //free(internal_buffer); //todo znovu zacit freeovat
 /*
@@ -593,16 +592,16 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         case 2: //{0,0,FLOAT_2}, //2
         case 3: //{0,0,STRING_1}, //3
         case 5: //{0,0,KEY_NIL},//5
-            dest = op_init(rule_tokens[0]->type, savo_name_generator(sa_vars->gc));
+            dest = op_init(rule_tokens[0]->type, savo_name_generator(sa_vars->gc), sa_vars->gc);
             if(rule_tokens[0]->type == KEY_NIL)
             {
-                operand1 = op_init(rule_tokens[0]->type, "nil");
+                operand1 = op_init(rule_tokens[0]->type, "nil", sa_vars->gc);
             }
             else
             {
-                operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute);
+                operand1 = op_init(rule_tokens[0]->type, rule_tokens[0]->attribute, sa_vars->gc);
             }
-            tac_defmove_const(sa_vars->tac_list, dest, operand1);
+            tac_defmove_const(sa_vars->tac_list, dest, operand1, sa_vars->gc);
             break;
         case 1: //{0,0,EXPRESSION}, //1 //todo mozna neni potreba - DIVNY
             ;
@@ -613,16 +612,16 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             // item = zaznam o promenne z tokenu z TS
             item = symtab_find(sa_vars->local_tables->top->data,rule_tokens[0]->attribute);
             //vytvarim Toperand, ktery priradim do tokenu Expression
-            dest = op_init(item->type, rule_tokens[0]->attribute);
+            dest = op_init(item->type, rule_tokens[0]->attribute, sa_vars->gc);
             break;
             //triadresna pravidla
         case 6://{LEFT_BRACKET, INTEGER, RIGHT_BRACKET},//6
         case 8://{LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},//8
         case 9: //{LEFT_BRACKET, STRING_1, RIGHT_BRACKET},//9
         case 21: //{LEFT_BRACKET, KEY_NIL, RIGHT_BRACKET},//6
-            dest = op_init(rule_tokens[1]->type, savo_name_generator(sa_vars->gc));
-            operand1 = op_init(rule_tokens[1]->type, rule_tokens[1]->attribute);
-            tac_defmove_const(sa_vars->tac_list, dest, operand1);
+            dest = op_init(rule_tokens[1]->type, savo_name_generator(sa_vars->gc), sa_vars->gc);
+            operand1 = op_init(rule_tokens[1]->type, rule_tokens[1]->attribute, sa_vars->gc);
+            tac_defmove_const(sa_vars->tac_list, dest, operand1, sa_vars->gc);
             break;
         case 7: //{LEFT_BRACKET, EXPRESSION, RIGHT_BRACKET},//7
             ;
@@ -632,57 +631,57 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             ;// item = zaznam o promenne z tokenu z TS
             item = symtab_find(sa_vars->local_tables->top->prev->data, rule_tokens[1]->attribute);
             //vytvyrim Toperand, ktery priradim do tokenu Expression
-            dest = op_init(item->type, rule_tokens[1]->attribute);
+            dest = op_init(item->type, rule_tokens[1]->attribute, sa_vars->gc);
             break;
         case 11:// {EXPRESSION, OP_PLUS, EXPRESSION},//11
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_add(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_add(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 12: //{EXPRESSION, OP_MINUS, EXPRESSION},//12
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_sub(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_sub(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 13: //{EXPRESSION, OP_MULT, EXPRESSION},//13
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_mul(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_mul(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 14://{EXPRESSION, OP_DIV, EXPRESSION}, //14
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_div(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_div(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 15://{EXPRESSION, OP_MORE_1, EXPRESSION}, //15
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_gt(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_gt(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 16://{EXPRESSION, OP_LESS_1, EXPRESSION},//16
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_lt(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_lt(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 17://{EXPRESSION, OP_EQAL_1, EXPRESSION},//17
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_eq(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_eq(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 18://{EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_lteq(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_lteq(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 19:// {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_gteq(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_gteq(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         case 20://{EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //20
-            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
-            tac_defvar(sa_vars->tac_list, dest);
-            tac_neq(sa_vars->tac_list, dest, operands[2], operands[0]);
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc), sa_vars->gc);
+            tac_defvar(sa_vars->tac_list, dest, sa_vars->gc);
+            tac_neq(sa_vars->tac_list, dest, operands[2], operands[0], sa_vars->gc);
             break;
         default:
             break;//rule == -1
@@ -777,7 +776,7 @@ bool savo(TSynCommon *sa_vars)
     }
     buffer_init(internal_buffer);
 
-    buffer_push_top(internal_buffer, input_token);//pushnuti input_token pro jeho nasledne ulozeni.
+    buffer_push_top(internal_buffer, input_token, sa_vars);//pushnuti input_token pro jeho nasledne ulozeni.
 
     Ttoken *stack_token = NULL;
 
@@ -848,7 +847,7 @@ bool savo(TSynCommon *sa_vars)
                    err = 1;
                break;
            case '>':
-               if(!action_reduce(stack, sa_vars, internal_buffer))//todo refaktorovano
+               if(!action_reduce(stack, sa_vars, internal_buffer))
                {
                    action_err(stack, sa_vars, ERR_SYN, internal_buffer);
                    err= ERR_SYN;
@@ -870,13 +869,12 @@ bool savo(TSynCommon *sa_vars)
    }
    else
    {
-       buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
+       buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer), sa_vars);
 
        //delete_buffer(internal_buffer); //todo dealokovat buffer_elementy. Kvuli saxu musim udelat novou fci :D
 
 
-
-       tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
+       tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand, sa_vars->gc);
 
        delete_stack(stack);
        free(stack);
@@ -884,4 +882,3 @@ bool savo(TSynCommon *sa_vars)
        return true;
    }
 }
-//todo jak freeovat internal buffer struktury elementu?

@@ -168,7 +168,7 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
  * @param dst destination buffer
  * @return t/f, podle úspěšnosti
  */
-bool copy_buffer(TBuffer *src, TBuffer *dst);
+bool copy_buffer(TBuffer *src, TBuffer *dst, TSynCommon *sa_vars);
 
 /**
  *@brief Funkce, ktera resi error v savu. Funkce dealokuje lokalni zasobnik,
