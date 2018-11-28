@@ -176,24 +176,26 @@ int main() {
     Tgarbage_collector *collector = malloc(sizeof(collector));
     collector->last_added = NULL;
 
-
     TTacList *tac_list = TAC_init(collector);
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
-
-    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer));
-    buffer_init(tokens_backup);
+    collector->others->sym_bin = symtabs_bin;
     TS_stack_init(symtabs_bin);
 
-    int i = startSA(tac_list, symtabs_bin, tokens_backup, collector);
+    //asi zrušit??
+    /*TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer));
+    buffer_init(tokens_backup);*/
+
+
+    int i = startSA(tac_list, symtabs_bin, collector);
 
     if(i == SUCCESS) //== 0
         GEN_start(tac_list, collector);
 
-    TAC_delete_list(tac_list);
-    TS_stack_free(symtabs_bin);
-    free(symtabs_bin);
+   // TAC_delete_list(tac_list);
+   // TS_stack_free(symtabs_bin);
+    //free(symtabs_bin);
 
-    delete_buffer(tokens_backup);
+   // delete_buffer(tokens_backup);
     valar_morghulis(collector);
 
     return i;
