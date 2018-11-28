@@ -178,6 +178,8 @@ void pream()
 void gen_defvar(TThreeAC *instruct)
 {
     printf("DEFVAR LF@%s\n", instruct->op_1->name);
+    printf("MOVE LF@%s nil@nil\n", instruct->op_1->name);
+
 }
 
 void gen_move(TThreeAC *instruct)
