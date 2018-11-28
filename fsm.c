@@ -19,7 +19,8 @@
 #include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
-//#include "garbage_collector.h"
+#include "garbage_collector.h"
+
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
 Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
