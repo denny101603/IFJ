@@ -56,7 +56,7 @@ typedef struct local_tables{
 //|______|________________|___|______
 //|bottom|................|top|  ><sem se vkladaji nove prvky
 //|______|________________|___|______
-
+//
 /**
  * @brief Struktura, slouzici pro komunikaci mezi scannerem, savem a saxem.
  * @authors Jan Beran, Daniel Bubenicek

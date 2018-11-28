@@ -18,9 +18,11 @@
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
 
+typedef struct gc Tgarbage_collector;
+
 #include <stdlib.h>
 #include <stdbool.h>
-#include "garbage_collector.h"
+//#include "garbage_collector.h"
 
 #define MAX_NAMES 6 //do struktury TThreeAC
 /**

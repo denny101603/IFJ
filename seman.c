@@ -18,7 +18,7 @@
 #include "seman.h"
 #include "garbage_collector.h"
 #include <stdio.h>
-
+//
 
 TTacList *TAC_init(Tgarbage_collector *collector)
 {

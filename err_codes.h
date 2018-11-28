@@ -6,7 +6,7 @@
  * Datum: 11.10.2018
  * v1.2: doplněna chybová hlášení
  */
-
+//
 #ifndef IFJ2018_ERR_CODES_H
 #define IFJ2018_ERR_CODES_H
 

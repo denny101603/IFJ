@@ -4,8 +4,8 @@
 
 #ifndef IFJ2018_GARBAGE_COLLECTOR_H
 #define IFJ2018_GARBAGE_COLLECTOR_H
-
-#include "sax.h"
+typedef struct local_tables TSymtables_stack;
+typedef struct symbol_table Tsymbol_table;
 
 //Funkce a struktury pro garbage collector
 typedef struct gce{

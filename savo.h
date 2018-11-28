@@ -17,7 +17,7 @@
 #ifndef IFJ2018_SAVO_H
 #define IFJ2018_SAVO_H
 
-
+//
 #include "fsm.h"
 #include "err_codes.h"
 #include "sax.h"
