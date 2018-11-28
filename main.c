@@ -184,16 +184,17 @@ int main() {
     buffer_init(tokens_backup);
     TS_stack_init(symtabs_bin);
 
-    int i = startSA(tac_list, symtabs_bin, tokens_backup);
+    int i = startSA(tac_list, symtabs_bin, tokens_backup, collector);
 
     if(i == SUCCESS) //== 0
-        GEN_start(tac_list);
+        GEN_start(tac_list, collector);
 
     TAC_delete_list(tac_list);
     TS_stack_free(symtabs_bin);
     free(symtabs_bin);
 
     delete_buffer(tokens_backup);
+    valar_morghulis(collector);
 
     return i;
 }
