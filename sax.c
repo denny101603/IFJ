@@ -187,6 +187,7 @@ int startSA(TTacList *list, TSymtables_stack *symtabs_bin, Tgarbage_collector *g
 
     sa_vars->tac_list = list;
     sa_vars->symtabs_bin = symtabs_bin;
+    sa_vars->gc = gc;
 
     sa_vars->err_code = IN_PROGRESS;
     while(sa_vars->err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
@@ -313,45 +314,45 @@ bool nt_deffunc(TSynCommon *sa_vars)
             char *label_str = sax_temp_id_generator(sa_vars->gc);
             if(label_str == NULL)
                 return false;
-            Toperand *label = op_init(KEY_NIL, label_str);
+            Toperand *label = op_init(KEY_NIL, label_str, sa_vars->gc);
             if(label == NULL)
             {
                 sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
                 return false;
             }
 
-            Toperand *op = op_init(t1->type, t1->attribute);
+            Toperand *op = op_init(t1->type, t1->attribute, sa_vars->gc);
             if(op == NULL)
             {
                 sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
                 return false;
             }
-            tac_deffunc(sa_vars->tac_list, op, label);
+            tac_deffunc(sa_vars->tac_list, op, label, sa_vars->gc);
 
 
             char *nil_str = sax_temp_id_generator(sa_vars->gc);
             if(nil_str == NULL)
                 return false;
-            Toperand *op_nil = op_init(KEY_NIL, nil_str);
+            Toperand *op_nil = op_init(KEY_NIL, nil_str, sa_vars->gc);
 
             char *nil_const_str = (char *) malloc(sizeof(char)*4); //nil\0
             gc_add_garbage(sa_vars->gc, nil_const_str);
             if(nil_const_str == NULL)
                 return false;
             strcpy(nil_const_str, "nil");
-            Toperand *op_nil_const = op_init(KEY_NIL, nil_const_str);
+            Toperand *op_nil_const = op_init(KEY_NIL, nil_const_str, sa_vars->gc);
 
             //vytvorim promennou kam mohou prikazy vracet svou navratovou hodnotu
             char *ret_str = sax_temp_id_generator(sa_vars->gc);
             if(ret_str == NULL)
                 return false;
-            Toperand *ret = op_init(KEY_NIL, ret_str);
+            Toperand *ret = op_init(KEY_NIL, ret_str, sa_vars->gc);
             if(ret == NULL)
             {
                 sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
                 return false;
             }
-            tac_defmove_const(sa_vars->tac_list, ret, op_nil_const);
+            tac_defmove_const(sa_vars->tac_list, ret, op_nil_const, sa_vars->gc);
             sa_vars->ret = ret; //z tohodle operandu si vezmu navratovou hodnotu
             //******KONEC TVORBY KODU******************************************************************/
 
@@ -388,8 +389,8 @@ bool nt_deffunc(TSynCommon *sa_vars)
             //*****ZACATEK TVORBY KODU **************************************/
 
 
-            //tac_defmove_const(sa_vars->tac_list, op_nil, op_nil_const);
-            tac_return(sa_vars->tac_list, sa_vars->ret, label);
+            //tac_defmove_const(sa_vars->tac_list, op_nil, op_nil_const, sa_vars->gc);
+            tac_return(sa_vars->tac_list, sa_vars->ret, label, sa_vars->gc);
             //******KONEC TVORBY KODU****************************************/
 
             //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
@@ -422,7 +423,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     }
 
     //ZACATEK TVORBY KODU*************************************//
-    tac_while(sa_vars->tac_list); //"zarazka" pro zacatek while
+    tac_while(sa_vars->tac_list, sa_vars->gc); //"zarazka" pro zacatek while
 
     char *bool_str = sax_temp_id_generator(sa_vars->gc);
     if(bool_str == NULL)
@@ -430,7 +431,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *bool_temp = op_init(BOOLEAN, bool_str);
+    Toperand *bool_temp = op_init(BOOLEAN, bool_str, sa_vars->gc);
     if(bool_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -443,13 +444,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *cons_temp = op_init(BOOLEAN, cons_str);
+    Toperand *cons_temp = op_init(BOOLEAN, cons_str, sa_vars->gc);
     if(cons_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp); //true konstanta, kvuli urceni skoku
+    tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp, sa_vars->gc); //true konstanta, kvuli urceni skoku
 
     char *temp_cond_str = sax_temp_id_generator(sa_vars->gc);
     if(temp_cond_str == NULL)
@@ -457,13 +458,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str);
+    Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str, sa_vars->gc);
     if(temp_cond == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    tac_defvar(sa_vars->tac_list, temp_cond);
+    tac_defvar(sa_vars->tac_list, temp_cond, sa_vars->gc);
 
     char *temp_label = sax_temp_id_generator(sa_vars->gc);
     if(temp_label == NULL)
@@ -471,13 +472,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *label1 = op_init(NOBODY_CARES, temp_label);
+    Toperand *label1 = op_init(NOBODY_CARES, temp_label, sa_vars->gc);
     if(label1 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    tac_lable(sa_vars->tac_list, label1);
+    tac_lable(sa_vars->tac_list, label1, sa_vars->gc);
 
     //KONEC TVORBY KODU*************************************//
 
@@ -498,14 +499,14 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str);
+    Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str, sa_vars->gc);
     if(label2 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
 
-    tac_jumpifneq(sa_vars->tac_list, label2, bool_temp, temp_cond);
+    tac_jumpifneq(sa_vars->tac_list, label2, bool_temp, temp_cond, sa_vars->gc);
     //KONEC TVORBY KODU*************************************//
 
     t1 = get_next_token(sa_vars);
@@ -537,9 +538,9 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
         return false;
     }
 
-    tac_jump(sa_vars->tac_list, label1);
-    tac_lable(sa_vars->tac_list, label2);
-    tac_endwhile(sa_vars->tac_list);
+    tac_jump(sa_vars->tac_list, label1, sa_vars->gc);
+    tac_lable(sa_vars->tac_list, label2, sa_vars->gc);
+    tac_endwhile(sa_vars->tac_list, sa_vars->gc);
 
     if(nt_eolf(sa_vars))                //eolf
     {
@@ -580,7 +581,7 @@ bool nt_expression(TSynCommon *sa_vars)
             sa_vars->err_code = ERR_INTERNAL;
             return false;
         }
-        sa_vars->dest = op_init(NOBODY_KNOWS, temp);
+        sa_vars->dest = op_init(NOBODY_KNOWS, temp, sa_vars->gc);
         if(sa_vars->dest == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
@@ -594,7 +595,7 @@ bool nt_expression(TSynCommon *sa_vars)
     }
 
     if(sa_vars->ret != NULL)
-        tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
+        tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest, sa_vars->gc);
 
     if(dest) //vracim zpet na null jen pokud to byl null i predtim
         sa_vars->dest = NULL;
@@ -605,7 +606,7 @@ bool nt_expression(TSynCommon *sa_vars)
 bool nt_ifthenelse(TSynCommon *sa_vars)
 {
     //ZACATEK TVORBY KODU*************************************//
-    ta_startif(sa_vars->tac_list); //zarazka
+    ta_startif(sa_vars->tac_list, sa_vars->gc); //zarazka
 
     char *bool_str = sax_temp_id_generator(sa_vars->gc);
     if(bool_str == NULL)
@@ -613,7 +614,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *bool_temp = op_init(BOOLEAN, bool_str);
+    Toperand *bool_temp = op_init(BOOLEAN, bool_str, sa_vars->gc);
     if(bool_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -626,13 +627,13 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *cons_temp = op_init(BOOLEAN, cons_str);
+    Toperand *cons_temp = op_init(BOOLEAN, cons_str, sa_vars->gc);
     if(cons_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp); //true konstanta, kvuli urceni skoku
+    tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp, sa_vars->gc); //true konstanta, kvuli urceni skoku
 
     char *temp_cond_str = sax_temp_id_generator(sa_vars->gc);
     if(temp_cond_str == NULL)
@@ -640,13 +641,13 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str);
+    Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str, sa_vars->gc);
     if(temp_cond == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    tac_defvar(sa_vars->tac_list, temp_cond); //promenna pro podminku
+    tac_defvar(sa_vars->tac_list, temp_cond, sa_vars->gc); //promenna pro podminku
 
     char *temp_label = sax_temp_id_generator(sa_vars->gc); //label1
     if(temp_label == NULL)
@@ -654,13 +655,13 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *label1 = op_init(NOBODY_CARES, temp_label);
+    Toperand *label1 = op_init(NOBODY_CARES, temp_label, sa_vars->gc);
     if(label1 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-   // tac_lable(sa_vars->tac_list, label1); ///////////////////////////////////////todo odkomentovat, nez na to denny prijde
+   // tac_lable(sa_vars->tac_list, label1, sa_vars->gc); ///////////////////////////////////////todo odkomentovat, nez na to denny prijde
 
     char *temp_label2_str = sax_temp_id_generator(sa_vars->gc); //priprava pro label2
     if(temp_label2_str == NULL)
@@ -668,7 +669,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace?
     }
-    Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str);
+    Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str, sa_vars->gc);
     if(label2 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
@@ -710,7 +711,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false;
     }
 
-    tac_jumpifneq(sa_vars->tac_list, label1, temp_cond, bool_temp);
+    tac_jumpifneq(sa_vars->tac_list, label1, temp_cond, bool_temp, sa_vars->gc);
 
     if(!nt_bodywhif(sa_vars))           //IFBODY
     {
@@ -720,7 +721,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     if(!err_check(t1, sa_vars))
         return false;
 
-    tac_jump(sa_vars->tac_list, label2);
+    tac_jump(sa_vars->tac_list, label2, sa_vars->gc);
 
     if(t1->type != KEY_ELSE) //ELSE
     {
@@ -735,7 +736,7 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false;
     }
 
-    tac_lable(sa_vars->tac_list, label1);
+    tac_lable(sa_vars->tac_list, label1, sa_vars->gc);
 
     if(!nt_bodywhif(sa_vars))           //ELSEBODY
     {
@@ -749,8 +750,8 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
         return false;
     }
 
-    tac_lable(sa_vars->tac_list, label2);
-    ta_endif(sa_vars->tac_list); //konec zarazky
+    tac_lable(sa_vars->tac_list, label2, sa_vars->gc);
+    ta_endif(sa_vars->tac_list, sa_vars->gc); //konec zarazky
 
     if(nt_eolf(sa_vars))                //EOLF
     {
@@ -783,14 +784,14 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
         return false; //todo denny dealokace neceho?
     }
 
-    Toperand *op = op_init(NOBODY_KNOWS, temp_id);
+    Toperand *op = op_init(NOBODY_KNOWS, temp_id, sa_vars->gc);
     if(op == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
         return false; //todo denny dealokace neceho?
     }
 
-    tac_defvar(sa_vars->tac_list, op);
+    tac_defvar(sa_vars->tac_list, op, sa_vars->gc);
     //**********KONEC TVORBY KODU*******************************************************************//
 
     sa_vars->dest = op; //reknu savu, aby mi ulozilo vyraz do teto promenne
@@ -804,7 +805,7 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     (*num_of_args)++; //pribyl argument
     if(nt_nextargs(sa_vars, num_of_args))
     {
-        tac_push(sa_vars->tac_list, op);
+        tac_push(sa_vars->tac_list, op, sa_vars->gc);
         return true;
     }
     else
@@ -827,13 +828,13 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
             sa_vars->err_code = ERR_INTERNAL;
             return false; //todo denny dealokoace neceho
         }
-        Toperand *op = op_init(NOBODY_KNOWS, temp_id);
+        Toperand *op = op_init(NOBODY_KNOWS, temp_id, sa_vars->gc);
         if(op == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
             return false; //todo denny dealokoace neceho
         }
-        tac_defvar(sa_vars->tac_list, op);
+        tac_defvar(sa_vars->tac_list, op, sa_vars->gc);
         sa_vars->dest = op; //reknu savu aby mi to dal do te docasne promenne
         //**********KONEC TVORBY KODU*******************************************************************//
 
@@ -847,7 +848,7 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         (*num_of_args)++; //pribyl argument
         if(nt_nextargs(sa_vars, num_of_args))
         {
-            tac_push(sa_vars->tac_list, op);
+            tac_push(sa_vars->tac_list, op, sa_vars->gc);
 
             return true;
         }
@@ -923,19 +924,19 @@ bool nt_assignment(TSynCommon *sa_vars)
             {
                 symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, 1, NOBODY_CARES); //pridani promenne do lokalni TS
                 //zalozeni nove promenne
-                Toperand *op = op_init(NOBODY_KNOWS, t1->attribute);
+                Toperand *op = op_init(NOBODY_KNOWS, t1->attribute, sa_vars->gc);
                 if(op == NULL)
                 {
                     sa_vars->err_code = ERR_INTERNAL;
                     return false; //todo denny dealokace neceho?
                 }
-                tac_defvar(sa_vars->tac_list, op);
+                tac_defvar(sa_vars->tac_list, op, sa_vars->gc);
                 sa_vars->dest = op;
 
             }
             else
             {
-                Toperand *op = op_init(symtab_find(sa_vars->local_tables->top->data, t1->attribute)->type, t1->attribute); //zakladam operand s typem z TS
+                Toperand *op = op_init(symtab_find(sa_vars->local_tables->top->data, t1->attribute)->type, t1->attribute, sa_vars->gc); //zakladam operand s typem z TS
                 if(op == NULL)
                 {
                     sa_vars->err_code = ERR_INTERNAL;
@@ -956,7 +957,7 @@ bool nt_assignment(TSynCommon *sa_vars)
             if(nt_right(sa_vars))           //right
             {
                 if(sa_vars->ret != NULL)
-                    tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest); //navratovou hodnotu z fce/vyrazu, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
+                    tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest, sa_vars->gc); //navratovou hodnotu z fce/vyrazu, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
                 return true;
             }
             else
@@ -1012,13 +1013,13 @@ bool nt_nextparams(TSynCommon *sa_vars)
                     {
                         symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
 
-                        Toperand *op = op_init(t1->type, t1->attribute);
+                        Toperand *op = op_init(t1->type, t1->attribute, sa_vars->gc);
                         if(op == NULL)
                         {
                             sa_vars->err_code = ERR_INTERNAL;
                             return false; //todo denny dealokace?
                         }
-                        tac_loadparam(sa_vars->tac_list, op);
+                        tac_loadparam(sa_vars->tac_list, op, sa_vars->gc);
 
                         if(nt_nextparams(sa_vars))
                         {
@@ -1076,13 +1077,13 @@ bool nt_params(TSynCommon *sa_vars)
                 {
                     symtab_edit_add(sa_vars->local_tables->top->data, t1->attribute, true, NOBODY_CARES);
 
-                    Toperand *op = op_init(t1->type, t1->attribute);
+                    Toperand *op = op_init(t1->type, t1->attribute, sa_vars->gc);
                     if(op == NULL)
                     {
                         sa_vars->err_code = ERR_INTERNAL;
                         return false; //todo denny dealokace?
                     }
-                    tac_loadparam(sa_vars->tac_list, op);
+                    tac_loadparam(sa_vars->tac_list, op, sa_vars->gc);
 
 
                     if(nt_nextparams(sa_vars))
@@ -1180,7 +1181,7 @@ bool nt_callfce(TSynCommon *sa_vars)
         if (temp_id == NULL) {
             return false; //todo denny dealokace neceho?
         }
-        Toperand *new_op = op_init(INTEGER, temp_id); //sem dam pocet argumentu //todo by berry potencialni chyba
+        Toperand *new_op = op_init(INTEGER, temp_id, sa_vars->gc); //sem dam pocet argumentu //todo by berry potencialni chyba
         if (new_op == NULL) {
             return false; //todo denny dealokace neceho?
         }
@@ -1189,13 +1190,13 @@ bool nt_callfce(TSynCommon *sa_vars)
         if (str_num_of_args == NULL) {
             return false; //todo denny dealokace neceho?
         }
-        Toperand *cons = op_init(INTEGER, str_num_of_args); //todo by berry potencialni chyba
+        Toperand *cons = op_init(INTEGER, str_num_of_args, sa_vars->gc); //todo by berry potencialni chyba
         if (cons == NULL) {
             return false; //todo denny dealokace neceho?
         }
         //problem: do defmoveconst prijde &sax1 &sax1, ale zadna hodnota
-        tac_defmove_const(sa_vars->tac_list, new_op, cons);
-        tac_push(sa_vars->tac_list, new_op); //pushnuti informace o poctu argumentu na zasobnik
+        tac_defmove_const(sa_vars->tac_list, new_op, cons, sa_vars->gc);
+        tac_push(sa_vars->tac_list, new_op, sa_vars->gc); //pushnuti informace o poctu argumentu na zasobnik
     }
     bool dest_bool = sa_vars->dest == NULL;
     if(dest_bool) //nikoho nezajima kam to hodim, presto musim nejakou dest. vytvorit protoze nase CALL vzdy popne zasobnik
@@ -1206,25 +1207,25 @@ bool nt_callfce(TSynCommon *sa_vars)
             sa_vars->err_code = ERR_INTERNAL;
             return false;
         }
-        sa_vars->dest = op_init(NOBODY_KNOWS, temp);
+        sa_vars->dest = op_init(NOBODY_KNOWS, temp, sa_vars->gc);
         if(sa_vars->dest == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
             return false;
         }
-        tac_defvar(sa_vars->tac_list, sa_vars->dest);
+        tac_defvar(sa_vars->tac_list, sa_vars->dest, sa_vars->gc);
     }
 
-    Toperand *label = op_init(t1->type,t1->attribute);
+    Toperand *label = op_init(t1->type,t1->attribute, sa_vars->gc);
     if(label == NULL)
     {
         return false; //todo denny dealokace neceho?
     }
 
-    tac_call(sa_vars->tac_list, sa_vars->dest, label);
+    tac_call(sa_vars->tac_list, sa_vars->dest, label, sa_vars->gc);
 
     if(sa_vars->ret != NULL)
-        tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest);
+        tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest, sa_vars->gc);
     //***********KONEC TVORBY KODU****************************************************************//
 
     if(dest_bool) //vratim do vychoziho stavu, pokus to nikoho nezajimalo
