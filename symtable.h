@@ -17,7 +17,7 @@
 */
 
 #ifndef IFJ2018_SYMTABLE_H
-#define IFJ2018_SYMTABLE_H
+#define IFJ2018_SYMTABLE_H//
 #include <stdbool.h>
 
 typedef struct symbol_table_item

@@ -5,7 +5,6 @@
 #include "sax.h"
 #include "savo.h"
 #include "err_codes.h"
-#include "garbage_collector.c"
 #include <string.h>
 
 void buffer_init(TBuffer *buffer_stack)
@@ -172,7 +171,7 @@ Ttoken *get_next_token(TSynCommon *sa_vars)
         ret = buffer_popBottom(sa_vars->buffer);
     else
     {
-        ret = get_token(sa_vars->arr);
+        ret = get_token(sa_vars->arr, sa_vars->gc);
         buffer_push_top(sa_vars->tokens_backup, ret);
     }
     return ret;

@@ -23,6 +23,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+typedef struct gc Tgarbage_collector;
+
 
 #define INIT_SIZE 256 //inicializacni velikost pole
 
@@ -65,7 +67,7 @@ typedef struct{
  *	@note pole arr je v rezii syntaktickeho analyzatoru a je jen jedno
 *	@return Ttoken - ukazatel na token
 */
-Ttoken *get_token(Tarray *arr);
+Ttoken *get_token(Tarray *arr, Tgarbage_collector *collector);
 
 /**
 *	@brief Inicializace dyn. alok. pole (Tarray)

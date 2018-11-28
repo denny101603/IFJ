@@ -19,9 +19,10 @@
 #include <string.h>
 #include "fsm.h"
 #include "err_codes.h"
+//#include "garbage_collector.h"
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
-Ttoken *get_token(Tarray *token_value)
+Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
 {
     int actual_state = START;
     int next_state = LEX_ERROR;
@@ -29,6 +30,8 @@ Ttoken *get_token(Tarray *token_value)
     int c; //znak ze stdin nebo bufferu
     static int first = 1; //pokud ==1, tak se jedna o prvni vstupni token
     Ttoken *token = (Ttoken *) malloc(sizeof(Ttoken));
+    gc_add_garbage(collector, token);
+
     if(token == NULL)
         return  NULL;
     token_init(token);
