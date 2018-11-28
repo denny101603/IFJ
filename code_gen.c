@@ -15,7 +15,7 @@
 */
 
 #include "code_gen.h"
-#include "seman.h"
+//#include "seman.h"
 #include "fsm.h"     /**/
 //#include <stdio.h>
 //#include <stdbool.h>

@@ -4,7 +4,7 @@
 
 #include "garbage_collector.h"
 #include <stdlib.h>
-
+#include "sax.h"
 
 
 void gc_add_garbage(Tgarbage_collector *gc, void *ptr)
@@ -17,7 +17,7 @@ void gc_add_garbage(Tgarbage_collector *gc, void *ptr)
 
 void valar_morghulis(Tgarbage_collector *gc)
 {
-    if (gc != NULL)
+    if (gc == NULL)
     {
         return;
     }
