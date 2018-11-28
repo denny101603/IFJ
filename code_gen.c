@@ -130,7 +130,9 @@ void pream()
     printf("POPS LF@n\n");
     printf("POPS LF@i\n");
     printf("POPS LF@s\n");
+    printf("GETCHAR LF@znak LF@s LF@i\n");
     printf("MOVE LF@podretezec LF@znak\n");
+    printf("ADD LF@i LF@i int@1\n");
     printf("LABEL while2\n");
     printf("JUMPIFEQ while2_end LF@i LF@n\n");
     printf("GETCHAR LF@znak LF@s LF@i\n");
