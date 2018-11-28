@@ -9,6 +9,7 @@
 * Matej Jelinek xjelin49
 *******************************/
 #include <stdio.h>
+#include "garbage_collector.h"
 #include "fsm.h"
 #include "sax.h"
 #include "seman.h"
@@ -171,6 +172,11 @@ char *enum2string(int num){
 
 
 int main() {
+
+    Tgarbage_collector *collector = malloc(sizeof(collector)); //jako jediny malloc neni v collectoru
+    collector->last_added = NULL;
+
+
     TTacList *tac_list = TAC_init();
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu

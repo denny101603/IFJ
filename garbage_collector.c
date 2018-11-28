@@ -5,15 +5,7 @@
 #include "garbage_collector.h"
 #include <stdlib.h>
 
-//Funkce a struktury pro garbage collector
-typedef struct gce{
-    void *ptr;
-    struct gce *previous;
-} GC_elem;
 
-typedef struct gc{
-    GC_elem *last_added;
-} garbage_collector;
 
 void gc_add_garbage(void *ptr, garbage_collector *gc)
 {
