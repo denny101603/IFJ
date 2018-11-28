@@ -6,6 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/IFJ2018.dir/symtable.c.obj"
   "CMakeFiles/IFJ2018.dir/seman.c.obj"
   "CMakeFiles/IFJ2018.dir/code_gen.c.obj"
+  "CMakeFiles/IFJ2018.dir/garbage_collector.c.obj"
   "IFJ2018.pdb"
   "IFJ2018.exe"
   "IFJ2018.exe.manifest"

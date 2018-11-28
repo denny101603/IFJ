@@ -5,17 +5,9 @@
 #include "garbage_collector.h"
 #include <stdlib.h>
 
-//Funkce a struktury pro garbage collector
-typedef struct gce{
-    void *ptr;
-    struct gce *previous;
-} GC_elem;
 
-typedef struct gc{
-    GC_elem *last_added;
-} garbage_collector;
 
-void gc_add_garbage(void *ptr, garbage_collector *gc)
+void gc_add_garbage(Tgarbage_collector *gc, void *ptr)
 {
     GC_elem *elem = malloc(sizeof(GC_elem));
     elem->ptr = ptr;
@@ -23,7 +15,7 @@ void gc_add_garbage(void *ptr, garbage_collector *gc)
     gc->last_added = elem;
 }
 
-void valar_morghulis(garbage_collector *gc)
+void valar_morghulis(Tgarbage_collector *gc)
 {
     while(gc->last_added != NULL)
     {

@@ -42,10 +42,10 @@ RM = "C:\Program Files\JetBrains\CLion 2018.2.4\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\danbu\CLionProjects\ifjprojektspravny
+CMAKE_SOURCE_DIR = C:\Users\janbe\Desktop\IFJ
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\janbe\Desktop\IFJ\cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/IFJ2018.dir/depend.make
@@ -58,94 +58,107 @@ include CMakeFiles/IFJ2018.dir/flags.make
 
 CMakeFiles/IFJ2018.dir/main.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/main.c.obj: ../main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/IFJ2018.dir/main.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\main.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\main.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/IFJ2018.dir/main.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\main.c.obj   -c C:\Users\janbe\Desktop\IFJ\main.c
 
 CMakeFiles/IFJ2018.dir/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/main.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\main.c > CMakeFiles\IFJ2018.dir\main.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\main.c > CMakeFiles\IFJ2018.dir\main.c.i
 
 CMakeFiles/IFJ2018.dir/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/main.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\main.c -o CMakeFiles\IFJ2018.dir\main.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\main.c -o CMakeFiles\IFJ2018.dir\main.c.s
 
 CMakeFiles/IFJ2018.dir/fsm.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/fsm.c.obj: ../fsm.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/IFJ2018.dir/fsm.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\fsm.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\fsm.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/IFJ2018.dir/fsm.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\fsm.c.obj   -c C:\Users\janbe\Desktop\IFJ\fsm.c
 
 CMakeFiles/IFJ2018.dir/fsm.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/fsm.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\fsm.c > CMakeFiles\IFJ2018.dir\fsm.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\fsm.c > CMakeFiles\IFJ2018.dir\fsm.c.i
 
 CMakeFiles/IFJ2018.dir/fsm.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/fsm.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\fsm.c -o CMakeFiles\IFJ2018.dir\fsm.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\fsm.c -o CMakeFiles\IFJ2018.dir\fsm.c.s
 
 CMakeFiles/IFJ2018.dir/savo.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/savo.c.obj: ../savo.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/IFJ2018.dir/savo.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\savo.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\savo.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/IFJ2018.dir/savo.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\savo.c.obj   -c C:\Users\janbe\Desktop\IFJ\savo.c
 
 CMakeFiles/IFJ2018.dir/savo.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/savo.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\savo.c > CMakeFiles\IFJ2018.dir\savo.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\savo.c > CMakeFiles\IFJ2018.dir\savo.c.i
 
 CMakeFiles/IFJ2018.dir/savo.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/savo.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\savo.c -o CMakeFiles\IFJ2018.dir\savo.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\savo.c -o CMakeFiles\IFJ2018.dir\savo.c.s
 
 CMakeFiles/IFJ2018.dir/sax.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/sax.c.obj: ../sax.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/IFJ2018.dir/sax.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\sax.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\sax.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/IFJ2018.dir/sax.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\sax.c.obj   -c C:\Users\janbe\Desktop\IFJ\sax.c
 
 CMakeFiles/IFJ2018.dir/sax.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/sax.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\sax.c > CMakeFiles\IFJ2018.dir\sax.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\sax.c > CMakeFiles\IFJ2018.dir\sax.c.i
 
 CMakeFiles/IFJ2018.dir/sax.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/sax.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\sax.c -o CMakeFiles\IFJ2018.dir\sax.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\sax.c -o CMakeFiles\IFJ2018.dir\sax.c.s
 
 CMakeFiles/IFJ2018.dir/symtable.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/symtable.c.obj: ../symtable.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/IFJ2018.dir/symtable.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\symtable.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\symtable.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/IFJ2018.dir/symtable.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\symtable.c.obj   -c C:\Users\janbe\Desktop\IFJ\symtable.c
 
 CMakeFiles/IFJ2018.dir/symtable.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/symtable.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\symtable.c > CMakeFiles\IFJ2018.dir\symtable.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\symtable.c > CMakeFiles\IFJ2018.dir\symtable.c.i
 
 CMakeFiles/IFJ2018.dir/symtable.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/symtable.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\symtable.c -o CMakeFiles\IFJ2018.dir\symtable.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\symtable.c -o CMakeFiles\IFJ2018.dir\symtable.c.s
 
 CMakeFiles/IFJ2018.dir/seman.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/seman.c.obj: ../seman.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/IFJ2018.dir/seman.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\seman.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\seman.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/IFJ2018.dir/seman.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\seman.c.obj   -c C:\Users\janbe\Desktop\IFJ\seman.c
 
 CMakeFiles/IFJ2018.dir/seman.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/seman.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\seman.c > CMakeFiles\IFJ2018.dir\seman.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\seman.c > CMakeFiles\IFJ2018.dir\seman.c.i
 
 CMakeFiles/IFJ2018.dir/seman.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/seman.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\seman.c -o CMakeFiles\IFJ2018.dir\seman.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\seman.c -o CMakeFiles\IFJ2018.dir\seman.c.s
 
 CMakeFiles/IFJ2018.dir/code_gen.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/code_gen.c.obj: ../code_gen.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/IFJ2018.dir/code_gen.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\code_gen.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\code_gen.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/IFJ2018.dir/code_gen.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\code_gen.c.obj   -c C:\Users\janbe\Desktop\IFJ\code_gen.c
 
 CMakeFiles/IFJ2018.dir/code_gen.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/code_gen.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\code_gen.c > CMakeFiles\IFJ2018.dir\code_gen.c.i
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\code_gen.c > CMakeFiles\IFJ2018.dir\code_gen.c.i
 
 CMakeFiles/IFJ2018.dir/code_gen.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/code_gen.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\code_gen.c -o CMakeFiles\IFJ2018.dir\code_gen.c.s
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\code_gen.c -o CMakeFiles\IFJ2018.dir\code_gen.c.s
+
+CMakeFiles/IFJ2018.dir/garbage_collector.c.obj: CMakeFiles/IFJ2018.dir/flags.make
+CMakeFiles/IFJ2018.dir/garbage_collector.c.obj: ../garbage_collector.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/IFJ2018.dir/garbage_collector.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\garbage_collector.c.obj   -c C:\Users\janbe\Desktop\IFJ\garbage_collector.c
+
+CMakeFiles/IFJ2018.dir/garbage_collector.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/garbage_collector.c.i"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\janbe\Desktop\IFJ\garbage_collector.c > CMakeFiles\IFJ2018.dir\garbage_collector.c.i
+
+CMakeFiles/IFJ2018.dir/garbage_collector.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/garbage_collector.c.s"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\janbe\Desktop\IFJ\garbage_collector.c -o CMakeFiles\IFJ2018.dir\garbage_collector.c.s
 
 # Object files for target IFJ2018
 IFJ2018_OBJECTS = \
@@ -155,7 +168,8 @@ IFJ2018_OBJECTS = \
 "CMakeFiles/IFJ2018.dir/sax.c.obj" \
 "CMakeFiles/IFJ2018.dir/symtable.c.obj" \
 "CMakeFiles/IFJ2018.dir/seman.c.obj" \
-"CMakeFiles/IFJ2018.dir/code_gen.c.obj"
+"CMakeFiles/IFJ2018.dir/code_gen.c.obj" \
+"CMakeFiles/IFJ2018.dir/garbage_collector.c.obj"
 
 # External object files for target IFJ2018
 IFJ2018_EXTERNAL_OBJECTS =
@@ -167,11 +181,12 @@ IFJ2018.exe: CMakeFiles/IFJ2018.dir/sax.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/symtable.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/seman.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/code_gen.c.obj
+IFJ2018.exe: CMakeFiles/IFJ2018.dir/garbage_collector.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/build.make
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/linklibs.rsp
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/objects1.rsp
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C executable IFJ2018.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable IFJ2018.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\IFJ2018.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -184,6 +199,6 @@ CMakeFiles/IFJ2018.dir/clean:
 .PHONY : CMakeFiles/IFJ2018.dir/clean
 
 CMakeFiles/IFJ2018.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\danbu\CLionProjects\ifjprojektspravny C:\Users\danbu\CLionProjects\ifjprojektspravny C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles\IFJ2018.dir\DependInfo.cmake --color=$(COLOR)
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\janbe\Desktop\IFJ C:\Users\janbe\Desktop\IFJ C:\Users\janbe\Desktop\IFJ\cmake-build-debug C:\Users\janbe\Desktop\IFJ\cmake-build-debug C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles\IFJ2018.dir\DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/IFJ2018.dir/depend
 
