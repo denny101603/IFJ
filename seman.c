@@ -129,31 +129,6 @@ TThreeAC *TAC_remove_this(TTacList *list, TThreeAC *operand)
     return ret;
 }
 
-TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
-{
-    //neexistujici seznam, prvek, prazdny seznam, jednoprvkovy seznam -> ERR
-    if(list == NULL || elem == NULL || list->first == NULL || list->first->next == NULL)
-        return  NULL;
-    if(elem->next == NULL) //elem je posledni prvek listu, neni co odstranit. Tohle ERR neni, jen to je hovadina :D
-        return NULL;
-    TThreeAC *ret = NULL;
-    ret = elem->next;
-    if(elem->next->next == NULL) //odstranuji posledni prvek
-    {
-        list->last = elem;
-        list->last->next = NULL;
-        ret->next = NULL;
-        ret->prev = NULL;
-    }
-    else //odstranuji prvek kdesi uprostred, musim napojit
-    {
-        elem->next = elem->next->next;
-        elem->next->prev = elem;
-        ret->next = NULL;
-        ret->prev = NULL;
-    }
-    return ret;
-}
 void TThreeAC_delete(TThreeAC* tac)
 {
     if(tac != NULL)
@@ -216,56 +191,6 @@ void TAC_delete_list(TTacList *list)
     list = NULL;
 }
 
-
-/*typedef struct tac_buffer{
-    Toperand *top;
-} Ttac_buffer;*/
-
-Ttac_buffer *op_buffer_init()
-{
-    Ttac_buffer *buffer = (Ttac_buffer *) malloc(sizeof(Ttac_buffer));
-    if(buffer == NULL)
-        return NULL;
-    buffer->top = NULL;
-    return buffer;
-}
-
-void op_push(Ttac_buffer *buffer, Toperand *operand)
-{
-    if(buffer == NULL || operand == NULL)
-        return;
-
-    TTAC_Elem *elem = (TTAC_Elem *) malloc(sizeof(TTAC_Elem));
-    if(elem == NULL)
-        return;
-
-    elem->operand = operand;
-
-    elem->prev = buffer->top;
-    buffer->top = elem;
-}
-
-Toperand *op_pop(Ttac_buffer *buffer)
-{
-    TTAC_Elem *elem = buffer->top;
-    buffer->top = buffer->top->prev;
-    Toperand *ret = elem->operand;
-    free(elem);
-    return ret;
-}
-
-void op_delete_buffer(Ttac_buffer *buffer)
-{
-    Toperand *temp = NULL;
-    while(buffer->top != NULL)
-    {
-        temp = op_pop(buffer);
-        free(temp);
-    }
-    free(buffer);
-}
-
-
 bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[])
 {
     TThreeAC *I1 = (TThreeAC *) malloc(sizeof(TThreeAC));
@@ -300,28 +225,7 @@ bool tac_move(TTacList *list, Toperand *dest, Toperand *op1)
         return true;
     return false;
 }
-/*
-bool tac_createframe(TTacList *list)
-{
-    if(instruc_init(list, CREATEFRAME, NULL, NULL, NULL))
-        return true;
-    return false;
-}
 
-bool tac_pushframe(TTacList *list)
-{
-    if(instruc_init(list, PUSHFRAME, NULL, NULL, NULL))
-        return true;
-    return false;
-}
-
-bool tac_popframe(TTacList *list)
-{
-    if(instruc_init(list, POPFRAME, NULL, NULL, NULL))
-        return true;
-    return false;
-}
-*/
 bool tac_loadparam(TTacList *list, Toperand *dest)
 {
     /*
@@ -436,49 +340,7 @@ bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
         return false;
     return true;
 }
-/*
-bool tac_inputi(TTacList *list, Toperand *dest)
-{
-    if (instruc_init(list, INPUTI, dest, NULL, NULL))
-        return true;
-    return false;
-}
 
-bool tac_inputs(TTacList *list, Toperand *dest)
-{
-    if (instruc_init(list, INPUTS, dest, NULL, NULL))
-        return true;
-    return false;
-}
-
-bool tac_inputf(TTacList *list, Toperand *dest)
-{
-    if (instruc_init(list, INPUTF, dest, NULL, NULL))
-        return true;
-    return false;
-}
-
-bool tac_length(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, LENGTH, dest, op1, NULL))
-        return true;
-    return false;
-}
-
-bool tac_ord(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
-{
-    if(instruc_init(list, ORD, dest, op1, op2))
-        return true;
-    return false;
-}
-
-bool tac_chr(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, CHR, dest, op1, NULL))
-        return true;
-    return false;
-}
-*/
 bool tac_call(TTacList *list, Toperand *dest, Toperand *op1)
 {
     if(instruc_init(list, CALL, dest, op1, NULL, NULL))
@@ -492,70 +354,7 @@ bool tac_return(TTacList *list, Toperand *op1, Toperand *op2)
         return true;
     return false;
 }
-/*
-bool tac_int2float(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, INT2FLOAT, dest, op1, NULL))
-        return true;
-    return false;
-}
 
-bool tac_float2int(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, FLOAT2INT, dest, op1, NULL))
-        return true;
-    return false;
-}
-
-bool tac_int2char(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, INT2CHAR, dest, op1, NULL))
-        return true;
-    return false;
-}
-
-bool tac_concat(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
-{
-    if(instruc_init(list, CONCAT, dest, op1, op2))
-        return true;
-    return false;
-}
-
-bool tac_setchar(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
-{
-    if(instruc_init(list, SETCHAR, dest, op1, op2))
-        return true;
-    return false;
-}
-
-bool tac_isint(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, ISINT, dest, op1, NULL))
-        return true;
-    return false;
-}
-
-bool tac_isfloat(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, ISFLOAT, dest, op1, NULL))
-        return true;
-    return false;
-}
-
-bool tac_isstring(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, ISSTRING, dest, op1, NULL))
-        return true;
-    return false;
-}
-
-bool tac_isbool(TTacList *list, Toperand *dest, Toperand *op1)
-{
-    if(instruc_init(list, ISBOOL, dest, op1, NULL))
-        return true;
-    return false;
-}
-*/
 bool tac_lable(TTacList *list, Toperand *op1)
 {
     if (instruc_init(list, LABLE, NULL, op1, NULL, NULL))
@@ -617,27 +416,6 @@ bool tac_jumpifneq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
     if(!instruc_init(list, JUMPIFNEQ, dest, op1, op2, names))
         return false;
     return true;
-}
-/*
-bool tac_jumpifgt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
-{
-    if(instruc_init(list, JUMPIFGT, dest, op1, op2))
-        return true;
-    return false;
-}
-
-bool tac_jumpiflt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
-{
-    if(instruc_init(list, JUMPIFLT, dest, op1, op2))
-        return true;
-    return false;
-}
-*/
-bool tac_dprint(TTacList *list, Toperand *op1)
-{
-    if(instruc_init(list, DPRINT, NULL, op1, NULL, NULL))
-        return true;
-    return false;
 }
 
 bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
@@ -820,3 +598,238 @@ char *codegen_temp_id_generator()
     sprintf(name, "&codegen%llu", cnt++);
     return name;
 }
+
+//********************************************************NASLEDUJI NEVYUZITY KOD*********************************************************************************/
+TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem)
+{
+    //neexistujici seznam, prvek, prazdny seznam, jednoprvkovy seznam -> ERR
+    if(list == NULL || elem == NULL || list->first == NULL || list->first->next == NULL)
+        return  NULL;
+    if(elem->next == NULL) //elem je posledni prvek listu, neni co odstranit. Tohle ERR neni, jen to je hovadina :D
+        return NULL;
+    TThreeAC *ret = NULL;
+    ret = elem->next;
+    if(elem->next->next == NULL) //odstranuji posledni prvek
+    {
+        list->last = elem;
+        list->last->next = NULL;
+        ret->next = NULL;
+        ret->prev = NULL;
+    }
+    else //odstranuji prvek kdesi uprostred, musim napojit
+    {
+        elem->next = elem->next->next;
+        elem->next->prev = elem;
+        ret->next = NULL;
+        ret->prev = NULL;
+    }
+    return ret;
+}
+
+bool tac_dprint(TTacList *list, Toperand *op1)
+{
+    if(instruc_init(list, DPRINT, NULL, op1, NULL, NULL))
+        return true;
+    return false;
+}
+
+
+/*
+
+typedef struct tac_buffer{
+    Toperand *top;
+} Ttac_buffer;
+
+Ttac_buffer *op_buffer_init()
+{
+    Ttac_buffer *buffer = (Ttac_buffer *) malloc(sizeof(Ttac_buffer));
+    if(buffer == NULL)
+        return NULL;
+    buffer->top = NULL;
+    return buffer;
+}
+
+void op_push(Ttac_buffer *buffer, Toperand *operand)
+{
+    if(buffer == NULL || operand == NULL)
+        return;
+
+    TTAC_Elem *elem = (TTAC_Elem *) malloc(sizeof(TTAC_Elem));
+    if(elem == NULL)
+        return;
+
+    elem->operand = operand;
+
+    elem->prev = buffer->top;
+    buffer->top = elem;
+}
+
+Toperand *op_pop(Ttac_buffer *buffer)
+{
+    TTAC_Elem *elem = buffer->top;
+    buffer->top = buffer->top->prev;
+    Toperand *ret = elem->operand;
+    free(elem);
+    return ret;
+}
+
+void op_delete_buffer(Ttac_buffer *buffer)
+{
+    Toperand *temp = NULL;
+    while(buffer->top != NULL)
+    {
+        temp = op_pop(buffer);
+        free(temp);
+    }
+    free(buffer);
+}
+
+*/
+
+/*
+bool tac_createframe(TTacList *list)
+{
+    if(instruc_init(list, CREATEFRAME, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool tac_pushframe(TTacList *list)
+{
+    if(instruc_init(list, PUSHFRAME, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool tac_popframe(TTacList *list)
+{
+    if(instruc_init(list, POPFRAME, NULL, NULL, NULL))
+        return true;
+    return false;
+}
+*/
+
+/*
+bool tac_int2float(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, INT2FLOAT, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_float2int(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, FLOAT2INT, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_int2char(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, INT2CHAR, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_concat(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
+{
+    if(instruc_init(list, CONCAT, dest, op1, op2))
+        return true;
+    return false;
+}
+
+bool tac_setchar(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
+{
+    if(instruc_init(list, SETCHAR, dest, op1, op2))
+        return true;
+    return false;
+}
+
+bool tac_isint(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, ISINT, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_isfloat(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, ISFLOAT, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_isstring(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, ISSTRING, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_isbool(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, ISBOOL, dest, op1, NULL))
+        return true;
+    return false;
+}
+*/
+
+/*
+bool tac_jumpifgt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
+{
+    if(instruc_init(list, JUMPIFGT, dest, op1, op2))
+        return true;
+    return false;
+}
+
+bool tac_jumpiflt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
+{
+    if(instruc_init(list, JUMPIFLT, dest, op1, op2))
+        return true;
+    return false;
+}
+*/
+
+/*
+bool tac_inputi(TTacList *list, Toperand *dest)
+{
+    if (instruc_init(list, INPUTI, dest, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool tac_inputs(TTacList *list, Toperand *dest)
+{
+    if (instruc_init(list, INPUTS, dest, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool tac_inputf(TTacList *list, Toperand *dest)
+{
+    if (instruc_init(list, INPUTF, dest, NULL, NULL))
+        return true;
+    return false;
+}
+
+bool tac_length(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, LENGTH, dest, op1, NULL))
+        return true;
+    return false;
+}
+
+bool tac_ord(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2)
+{
+    if(instruc_init(list, ORD, dest, op1, op2))
+        return true;
+    return false;
+}
+
+bool tac_chr(TTacList *list, Toperand *dest, Toperand *op1)
+{
+    if(instruc_init(list, CHR, dest, op1, NULL))
+        return true;
+    return false;
+}
+*/

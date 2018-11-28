@@ -208,21 +208,6 @@ void gen_defmove_const(TThreeAC *instruct)
 //    free(hodnota);
 }
 
-void gen_createframe(TThreeAC *instruct)
-{
-    printf("CREATEFRAME\n");
-}
-
-void gen_pushframe(TThreeAC *instruct)
-{
-    printf("PUSHFRAME\n");
-}
-
-void gen_popframe(TThreeAC *instruct)
-{
-    printf("POPFRAME\n");
-}
-
 void gen_loadparam_def(TThreeAC *instruct) //TODO zahodit tuto fci
 {
     printf("DEFVAR LF@%s\n", instruct->names[0]);
@@ -237,11 +222,6 @@ void gen_loadparam(TThreeAC *instruct)
 void gen_push(TThreeAC *instruct)
 {
     printf("PUSHS LF@%s\n", instruct->op_1->name);
-}
-
-void gen_pop(TThreeAC *instruct)
-{
-    printf("POPS LF@%s\n", instruct->destination->name);
 }
 
 void gen_add_def(TThreeAC *instruct)
@@ -617,63 +597,6 @@ void gen_return(TThreeAC *instruct)
     printf("LABEL %s\n", instruct->op_2->name);
 }
 
-void gen_int2float(TThreeAC *instruct)
-{
-    printf("INT2FLOAT LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
-}
-
-void gen_float2int(TThreeAC *instruct)
-{
-    printf("FLOAT2INT LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
-}
-
-void gen_int2char(TThreeAC *instruct)
-{
-    printf("INT2CHAR LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
-}
-
-void gen_concat(TThreeAC *instruct)
-{
-    printf("CONCAT LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-}
-
-void gen_setchar(TThreeAC *instruct)
-{
-    printf("SETCHAR LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
-}
-
-void gen_isint(TThreeAC *instruct) //až zjistím jak funguje generátor jmen
-{
-    char *pom = instruct->names[0]; //proměnná LF@pom
-    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
-    printf("EQ LF@%s LF@%s string@int\n",instruct->destination->name , pom);
-//    free(pom);
-}
-
-void gen_isfloat(TThreeAC *instruct)
-{
-    char *pom = instruct->names[0]; //proměnná LF@pom
-    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
-    printf("EQ LF@%s LF@%s string@float\n",instruct->destination->name , pom);
-//    free(pom);
-}
-
-void gen_isstring(TThreeAC *instruct)
-{
-    char *pom = instruct->names[0]; //proměnná LF@pom
-    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
-    printf("EQ LF@%s LF@%s string@string\n",instruct->destination->name , pom);
-//    free(pom);
-}
-
-void gen_isbool(TThreeAC *instruct)
-{
-    char *pom = instruct->names[0]; //proměnná LF@pom
-    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
-    printf("EQ LF@%s LF@%s string@bool\n",instruct->destination->name , pom);
-//    free(pom);
-}
-
 void gen_lable(TThreeAC *instruct)
 {
     printf("LABEL %s\n",instruct->op_1->name);
@@ -955,257 +878,6 @@ void gen_jumpifneq(TThreeAC *instruct)
     free(eqerrorend);
     free(eqfloatsame);
     free(eqintsame);
-    */
-}
-
-void gen_jumpifgt(TThreeAC *instruct)
-{
-    char *atype = instruct->names[0]; //promìnná LF@atype
-    char *atmp = instruct->names[1]; //promìnná LF@atmp
-    char *btype = instruct->names[2]; //promìnná LF@btype
-    char *btmp = instruct->names[3]; //promìnná LF@btmp
-    char *tmp = instruct->names[4]; //promìnná LF@atype
-
-    char *gtastring = codegen_temp_id_generator(); //label skoku když a je string
-    char *gtabool = codegen_temp_id_generator(); //label skoku když a je bool
-    char *gtaint = codegen_temp_id_generator(); //label skoku když a je int
-    char *gtaintretype = codegen_temp_id_generator(); //label skoku když intretype
-    char *gtaintsame = codegen_temp_id_generator(); //label skoku když intsame
-    char *gtafloat = codegen_temp_id_generator(); //label skoku když a je float
-    char *gtafloatretype = codegen_temp_id_generator(); //label skoku když floatretype
-    char *gtafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
-    char *gterror = codegen_temp_id_generator(); //label skoku když error
-    char *gtend = codegen_temp_id_generator(); //label skoku když end
-/*
-    if ((gtafloat == NULL)||
-        (gtaint == NULL)||
-        (gtastring == NULL)||
-        (gtabool == NULL)||
-        (gtaintretype == NULL)||
-        (gtafloatsame == NULL)||
-        (gtafloatretype == NULL)||
-        (gtend == NULL)||
-        (gterror == NULL)||
-        (gtaintsame == NULL))
-    {
-        free(atype);
-        free(atmp);
-        free(btype);
-        free(btmp);
-        free(tmp);
-        free(gtabool);
-        free(gtafloat);
-        free(gtaint);
-        free(gtaintretype);
-        free(gtafloatretype);
-        free(gtafloatsame);
-        free(gtaintsame);
-        free(gterror);
-        free(gtend);
-        free(gtastring);
-        return;
-    }
-*/
-
-    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
-    printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
-
-    printf("JUMPIFEQ %s LF@%s string@string\n",gtastring, atype);
-    printf("JUMPIFEQ %s LF@%s string@int\n",gtaint, atype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",gtafloat , atype);
-    printf("JUMPIFEQ %s LF@%s string@bool\n",gtabool , atype);
-    printf("JUMP %s\n",gterror);
-
-
-    printf("LABEL %s\n", gtafloat);
-    printf("JUMPIFEQ %s LF@%s string@int\n",gtafloatretype , btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",gtafloatsame , btype);
-    printf("JUMP %s\n",gterror);
-
-    printf("LABEL %s\n", gtafloatsame);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",gtend);
-
-    printf("LABEL %s\n", gtafloatretype);
-    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, btmp);
-    printf("JUMP %s\n",gtend);
-
-
-    printf("LABEL %s\n", gtaint);
-    printf("JUMPIFEQ %s LF@%s string@int\n",gtaintsame , btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",gtaintretype , btype);
-    printf("JUMP %s\n",gterror);
-
-    printf("LABEL %s\n", gtaintsame);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",gtend);
-
-    printf("LABEL %s\n", gtaintretype);
-    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, atmp, instruct->op_2->name);
-    printf("JUMP %s\n",gtend);
-
-
-    printf("LABEL %s\n", gtastring);
-    printf("JUMPIFNEQ %s LF@%s string@string\n",gterror , btype);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",gtend);
-
-
-    printf("LABEL %s\n", gtabool);
-    printf("JUMPIFNEQ %s LF@%s string@bool\n",gterror , btype);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",gtend);
-
-
-    printf("LABEL %s\n", gterror);
-    printf("EXIT int@4\n");
-
-    printf("LABEL %s\n", gtend);
-    printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
-/*
-    free(atype);
-    free(atmp);
-    free(btype);
-    free(btmp);
-    free(tmp);
-    free(gtabool);
-    free(gtafloat);
-    free(gtaint);
-    free(gtaintretype);
-    free(gtafloatretype);
-    free(gtafloatsame);
-    free(gtaintsame);
-    free(gterror);
-    free(gtend);
-    free(gtastring);
-    */
-}
-
-void gen_jumpiflt(TThreeAC *instruct)
-{
-
-    char *atype = instruct->names[0]; //promìnná LF@atype
-    char *atmp = instruct->names[1]; //promìnná LF@atmp
-    char *btype = instruct->names[2]; //promìnná LF@btype
-    char *btmp = instruct->names[3]; //promìnná LF@btmp
-    char *tmp = instruct->names[4]; //promìnná LF@atype
-
-
-    char *ltastring = codegen_temp_id_generator(); //label skoku když a je string
-    char *ltabool = codegen_temp_id_generator(); //label skoku když a je bool
-    char *ltaint = codegen_temp_id_generator(); //label skoku když a je int
-    char *ltaintretype = codegen_temp_id_generator(); //label skoku když intretype
-    char *ltaintsame = codegen_temp_id_generator(); //label skoku když intsame
-    char *ltafloat = codegen_temp_id_generator(); //label skoku když a je float
-    char *ltafloatretype = codegen_temp_id_generator(); //label skoku když floatretype
-    char *ltafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
-    char *lterror = codegen_temp_id_generator(); //label skoku když error
-    char *ltend = codegen_temp_id_generator(); //label skoku když end
-/*
-    if ((ltafloat == NULL)||
-        (ltaint == NULL)||
-        (ltastring == NULL)||
-        (ltabool == NULL)||
-        (ltaintretype == NULL)||
-        (ltafloatsame == NULL)||
-        (ltafloatretype == NULL)||
-        (ltend == NULL)||
-        (lterror == NULL)||
-        (ltaintsame == NULL))
-    {
-        free(atype);
-        free(atmp);
-        free(btype);
-        free(btmp);
-        free(tmp);
-        free(ltabool);
-        free(ltafloat);
-        free(ltaint);
-        free(ltaintretype);
-        free(ltafloatretype);
-        free(ltafloatsame);
-        free(ltaintsame);
-        free(lterror);
-        free(ltend);
-        free(ltastring);
-        return;
-    }
-*/
-    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
-    printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
-
-    printf("JUMPIFEQ %s LF@%s string@string\n",ltastring, atype);
-    printf("JUMPIFEQ %s LF@%s string@int\n",ltaint, atype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",ltafloat , atype);
-    printf("JUMPIFEQ %s LF@%s string@bool\n",ltabool , atype);
-    printf("JUMP %s\n",lterror);
-
-
-    printf("LABEL %s\n", ltafloat);
-    printf("JUMPIFEQ %s LF@%s string@int\n",ltafloatretype , btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",ltafloatsame , btype);
-    printf("JUMP %s\n",lterror);
-
-    printf("LABEL %s\n", ltafloatsame);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",ltend);
-
-    printf("LABEL %s\n", ltafloatretype);
-    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, btmp);
-    printf("JUMP %s\n",ltend);
-
-
-    printf("LABEL %s\n", ltaint);
-    printf("JUMPIFEQ %s LF@%s string@int\n",ltaintsame , btype);
-    printf("JUMPIFEQ %s LF@%s string@float\n",ltaintretype , btype);
-    printf("JUMP %s\n",lterror);
-
-    printf("LABEL %s\n", ltaintsame);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",ltend);
-
-    printf("LABEL %s\n", ltaintretype);
-    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, atmp, instruct->op_2->name);
-    printf("JUMP %s\n",ltend);
-
-
-    printf("LABEL %s\n", ltastring);
-    printf("JUMPIFNEQ %s LF@%s string@string\n",lterror , btype);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",ltend);
-
-
-    printf("LABEL %s\n", ltabool);
-    printf("JUMPIFNEQ %s LF@%s string@bool\n",lterror , btype);
-    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
-    printf("JUMP %s\n",ltend);
-
-
-    printf("LABEL %s\n", lterror);
-    printf("EXIT int@4\n");
-
-    printf("LABEL %s\n", ltend);
-    printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
-/*
-    free(atype);
-    free(atmp);
-    free(btype);
-    free(btmp);
-    free(tmp);
-    free(ltabool);
-    free(ltafloat);
-    free(ltaint);
-    free(ltaintretype);
-    free(ltafloatretype);
-    free(ltafloatsame);
-    free(ltaintsame);
-    free(lterror);
-    free(ltend);
-    free(ltastring);
     */
 }
 
@@ -2087,7 +1759,7 @@ void GEN_start(TTacList *list)
                 printf("#_________toto je DEFMOVE_____\n");
                 gen_defmove_const(inst);
                 break;
-            case CREATEFRAME:
+            /*case CREATEFRAME:
                 printf("#_________toto je CREATEFRAME_____\n");
                 gen_createframe(inst);
                 break;
@@ -2098,7 +1770,7 @@ void GEN_start(TTacList *list)
             case POPFRAME:
                 printf("#_________toto je POPFRAME_____\n");
                 gen_popframe(inst);
-                break;
+                break;*/
             case LOADPARAM:
                 printf("#_________toto je LOADPARAM_____\n");
                 gen_loadparam(inst);
@@ -2107,10 +1779,10 @@ void GEN_start(TTacList *list)
                 printf("#_________toto je PUSH_____\n");
                 gen_push(inst);
                 break;
-            case POP:
+            /*case POP:
                 printf("#_________toto je POP _____\n");
                 gen_pop(inst);
-                break;
+                break;*/
             case ADD:
                 printf("#_________toto je ADD _____\n");
                 gen_add(inst);
@@ -2135,7 +1807,7 @@ void GEN_start(TTacList *list)
                 printf("#_________toto je RETURN _____\n");
                 gen_return(inst);
                 break;
-            case INT2FLOAT:
+            /*case INT2FLOAT:
                 printf("#_________toto je INT2FLOAT _____\n");
                 gen_int2float(inst);
                 break;
@@ -2170,7 +1842,7 @@ void GEN_start(TTacList *list)
             case ISBOOL:
                 printf("#_________toto je ISBOOL _____\n");
                 gen_isbool(inst);
-                break;
+                break;*/
             case LABLE:
                 printf("#_________toto je LA BLEEEE _____\n");
                 gen_lable(inst);
@@ -2191,14 +1863,14 @@ void GEN_start(TTacList *list)
                 printf("#_________toto je JUMPIFNEQ _____\n");
                 gen_jumpifneq(inst);
                 break;
-            case JUMPIFGT:
+            /*case JUMPIFGT:
                 printf("#_________toto je JUMPIFGT _____\n");
                 gen_jumpifgt(inst);
                 break;
             case JUMPIFLT:
                 printf("#_________toto je JUMPIFLT _____\n");
                 gen_jumpiflt(inst);
-                break;
+                break;*/
             case DPRINT:
                 printf("#_________toto je DPRINT _____\n");
                 gen_dprint(inst);
@@ -2249,3 +1921,335 @@ void GEN_start(TTacList *list)
         inst = TAC_remove(list);
     }
 }
+
+/*
+void gen_jumpifgt(TThreeAC *instruct)
+{
+    char *atype = instruct->names[0]; //promìnná LF@atype
+    char *atmp = instruct->names[1]; //promìnná LF@atmp
+    char *btype = instruct->names[2]; //promìnná LF@btype
+    char *btmp = instruct->names[3]; //promìnná LF@btmp
+    char *tmp = instruct->names[4]; //promìnná LF@atype
+
+    char *gtastring = codegen_temp_id_generator(); //label skoku když a je string
+    char *gtabool = codegen_temp_id_generator(); //label skoku když a je bool
+    char *gtaint = codegen_temp_id_generator(); //label skoku když a je int
+    char *gtaintretype = codegen_temp_id_generator(); //label skoku když intretype
+    char *gtaintsame = codegen_temp_id_generator(); //label skoku když intsame
+    char *gtafloat = codegen_temp_id_generator(); //label skoku když a je float
+    char *gtafloatretype = codegen_temp_id_generator(); //label skoku když floatretype
+    char *gtafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
+    char *gterror = codegen_temp_id_generator(); //label skoku když error
+    char *gtend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((gtafloat == NULL)||
+        (gtaint == NULL)||
+        (gtastring == NULL)||
+        (gtabool == NULL)||
+        (gtaintretype == NULL)||
+        (gtafloatsame == NULL)||
+        (gtafloatretype == NULL)||
+        (gtend == NULL)||
+        (gterror == NULL)||
+        (gtaintsame == NULL))
+    {
+        free(atype);
+        free(atmp);
+        free(btype);
+        free(btmp);
+        free(tmp);
+        free(gtabool);
+        free(gtafloat);
+        free(gtaint);
+        free(gtaintretype);
+        free(gtafloatretype);
+        free(gtafloatsame);
+        free(gtaintsame);
+        free(gterror);
+        free(gtend);
+        free(gtastring);
+        return;
+    }
+
+    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
+    printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
+
+    printf("JUMPIFEQ %s LF@%s string@string\n",gtastring, atype);
+    printf("JUMPIFEQ %s LF@%s string@int\n",gtaint, atype);
+    printf("JUMPIFEQ %s LF@%s string@float\n",gtafloat , atype);
+    printf("JUMPIFEQ %s LF@%s string@bool\n",gtabool , atype);
+    printf("JUMP %s\n",gterror);
+
+
+    printf("LABEL %s\n", gtafloat);
+    printf("JUMPIFEQ %s LF@%s string@int\n",gtafloatretype , btype);
+    printf("JUMPIFEQ %s LF@%s string@float\n",gtafloatsame , btype);
+    printf("JUMP %s\n",gterror);
+
+    printf("LABEL %s\n", gtafloatsame);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",gtend);
+
+    printf("LABEL %s\n", gtafloatretype);
+    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, btmp);
+    printf("JUMP %s\n",gtend);
+
+
+    printf("LABEL %s\n", gtaint);
+    printf("JUMPIFEQ %s LF@%s string@int\n",gtaintsame , btype);
+    printf("JUMPIFEQ %s LF@%s string@float\n",gtaintretype , btype);
+    printf("JUMP %s\n",gterror);
+
+    printf("LABEL %s\n", gtaintsame);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",gtend);
+
+    printf("LABEL %s\n", gtaintretype);
+    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, atmp, instruct->op_2->name);
+    printf("JUMP %s\n",gtend);
+
+
+    printf("LABEL %s\n", gtastring);
+    printf("JUMPIFNEQ %s LF@%s string@string\n",gterror , btype);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",gtend);
+
+
+    printf("LABEL %s\n", gtabool);
+    printf("JUMPIFNEQ %s LF@%s string@bool\n",gterror , btype);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",gtend);
+
+
+    printf("LABEL %s\n", gterror);
+    printf("EXIT int@4\n");
+
+    printf("LABEL %s\n", gtend);
+    printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
+
+    free(atype);
+    free(atmp);
+    free(btype);
+    free(btmp);
+    free(tmp);
+    free(gtabool);
+    free(gtafloat);
+    free(gtaint);
+    free(gtaintretype);
+    free(gtafloatretype);
+    free(gtafloatsame);
+    free(gtaintsame);
+    free(gterror);
+    free(gtend);
+    free(gtastring);
+
+}
+
+void gen_jumpiflt(TThreeAC *instruct)
+{
+
+    char *atype = instruct->names[0]; //promìnná LF@atype
+    char *atmp = instruct->names[1]; //promìnná LF@atmp
+    char *btype = instruct->names[2]; //promìnná LF@btype
+    char *btmp = instruct->names[3]; //promìnná LF@btmp
+    char *tmp = instruct->names[4]; //promìnná LF@atype
+
+
+    char *ltastring = codegen_temp_id_generator(); //label skoku když a je string
+    char *ltabool = codegen_temp_id_generator(); //label skoku když a je bool
+    char *ltaint = codegen_temp_id_generator(); //label skoku když a je int
+    char *ltaintretype = codegen_temp_id_generator(); //label skoku když intretype
+    char *ltaintsame = codegen_temp_id_generator(); //label skoku když intsame
+    char *ltafloat = codegen_temp_id_generator(); //label skoku když a je float
+    char *ltafloatretype = codegen_temp_id_generator(); //label skoku když floatretype
+    char *ltafloatsame = codegen_temp_id_generator(); //label skoku když floatsame
+    char *lterror = codegen_temp_id_generator(); //label skoku když error
+    char *ltend = codegen_temp_id_generator(); //label skoku když end
+
+    if ((ltafloat == NULL)||
+        (ltaint == NULL)||
+        (ltastring == NULL)||
+        (ltabool == NULL)||
+        (ltaintretype == NULL)||
+        (ltafloatsame == NULL)||
+        (ltafloatretype == NULL)||
+        (ltend == NULL)||
+        (lterror == NULL)||
+        (ltaintsame == NULL))
+    {
+        free(atype);
+        free(atmp);
+        free(btype);
+        free(btmp);
+        free(tmp);
+        free(ltabool);
+        free(ltafloat);
+        free(ltaint);
+        free(ltaintretype);
+        free(ltafloatretype);
+        free(ltafloatsame);
+        free(ltaintsame);
+        free(lterror);
+        free(ltend);
+        free(ltastring);
+        return;
+    }
+
+    printf("TYPE LF@%s LF@%s\n", atype, instruct->op_1->name);
+    printf("TYPE LF@%s LF@%s\n", btype, instruct->op_2->name);
+
+    printf("JUMPIFEQ %s LF@%s string@string\n",ltastring, atype);
+    printf("JUMPIFEQ %s LF@%s string@int\n",ltaint, atype);
+    printf("JUMPIFEQ %s LF@%s string@float\n",ltafloat , atype);
+    printf("JUMPIFEQ %s LF@%s string@bool\n",ltabool , atype);
+    printf("JUMP %s\n",lterror);
+
+
+    printf("LABEL %s\n", ltafloat);
+    printf("JUMPIFEQ %s LF@%s string@int\n",ltafloatretype , btype);
+    printf("JUMPIFEQ %s LF@%s string@float\n",ltafloatsame , btype);
+    printf("JUMP %s\n",lterror);
+
+    printf("LABEL %s\n", ltafloatsame);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",ltend);
+
+    printf("LABEL %s\n", ltafloatretype);
+    printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, btmp);
+    printf("JUMP %s\n",ltend);
+
+
+    printf("LABEL %s\n", ltaint);
+    printf("JUMPIFEQ %s LF@%s string@int\n",ltaintsame , btype);
+    printf("JUMPIFEQ %s LF@%s string@float\n",ltaintretype , btype);
+    printf("JUMP %s\n",lterror);
+
+    printf("LABEL %s\n", ltaintsame);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",ltend);
+
+    printf("LABEL %s\n", ltaintretype);
+    printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, atmp, instruct->op_2->name);
+    printf("JUMP %s\n",ltend);
+
+
+    printf("LABEL %s\n", ltastring);
+    printf("JUMPIFNEQ %s LF@%s string@string\n",lterror , btype);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",ltend);
+
+
+    printf("LABEL %s\n", ltabool);
+    printf("JUMPIFNEQ %s LF@%s string@bool\n",lterror , btype);
+    printf("GT LF@%s LF@%s LF@%s\n", tmp, instruct->op_1->name, instruct->op_2->name);
+    printf("JUMP %s\n",ltend);
+
+
+    printf("LABEL %s\n", lterror);
+    printf("EXIT int@4\n");
+
+    printf("LABEL %s\n", ltend);
+    printf("JUMPIFEQ %s LF@%s bool@true\n", instruct->destination->name, tmp);
+
+    free(atype);
+    free(atmp);
+    free(btype);
+    free(btmp);
+    free(tmp);
+    free(ltabool);
+    free(ltafloat);
+    free(ltaint);
+    free(ltaintretype);
+    free(ltafloatretype);
+    free(ltafloatsame);
+    free(ltaintsame);
+    free(lterror);
+    free(ltend);
+    free(ltastring);
+
+}
+
+
+void gen_createframe(TThreeAC *instruct)
+{
+    printf("CREATEFRAME\n");
+}
+
+void gen_pushframe(TThreeAC *instruct)
+{
+    printf("PUSHFRAME\n");
+}
+
+void gen_popframe(TThreeAC *instruct)
+{
+    printf("POPFRAME\n");
+}
+
+void gen_pop(TThreeAC *instruct)
+{
+    printf("POPS LF@%s\n", instruct->destination->name);
+}
+
+
+void gen_int2float(TThreeAC *instruct)
+{
+    printf("INT2FLOAT LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
+
+void gen_float2int(TThreeAC *instruct)
+{
+    printf("FLOAT2INT LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
+
+void gen_int2char(TThreeAC *instruct)
+{
+    printf("INT2CHAR LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name);
+}
+
+void gen_concat(TThreeAC *instruct)
+{
+    printf("CONCAT LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+}
+
+void gen_setchar(TThreeAC *instruct)
+{
+    printf("SETCHAR LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
+}
+
+void gen_isint(TThreeAC *instruct) //až zjistím jak funguje generátor jmen
+{
+    char *pom = instruct->names[0]; //proměnná LF@pom
+    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
+    printf("EQ LF@%s LF@%s string@int\n",instruct->destination->name , pom);
+//    free(pom);
+}
+
+void gen_isfloat(TThreeAC *instruct)
+{
+    char *pom = instruct->names[0]; //proměnná LF@pom
+    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
+    printf("EQ LF@%s LF@%s string@float\n",instruct->destination->name , pom);
+//    free(pom);
+}
+
+void gen_isstring(TThreeAC *instruct)
+{
+    char *pom = instruct->names[0]; //proměnná LF@pom
+    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
+    printf("EQ LF@%s LF@%s string@string\n",instruct->destination->name , pom);
+//    free(pom);
+}
+
+void gen_isbool(TThreeAC *instruct)
+{
+    char *pom = instruct->names[0]; //proměnná LF@pom
+    printf("TYPE LF@%s LF@%s\n", pom, instruct->op_1->name);
+    printf("EQ LF@%s LF@%s string@bool\n",instruct->destination->name , pom);
+//    free(pom);
+}
+
+*/

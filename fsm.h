@@ -146,23 +146,6 @@ char *arr_get_value(Tarray *arr);
 int token_init(Ttoken *token);
 
 /**
- * @brief Funkce vraci typ tokenu
- * @author Jan Beran
- * @param in token - zdrojovy token (odkaz)
- * @return tyo tokenu (int/enum)
- */
-int token_get_type(Ttoken *token);
-
-/**
- * @brief NON IMPLEMENTED
- * @author Jan Beran
- * @param token  - zdrojovy token
- * @warning FUNKCE NENI IMPLEMENTOVANA
- * @return
- */
-char *token_get_attribute(Ttoken *token);
-
-/**
  * @brief Funkce nahraje do tokenu jeho typ
  * @author Jan Beran
  * @param token - cilovy token (odkaz)
@@ -287,6 +270,25 @@ enum states {
     UNI_NUMBER, //spolecny typ int float
     BOOLEAN //pro triadresnak
 };
+
+//********************************************************NASLEDUJI NEVYUZITY KOD*********************************************************************************/
+
+/**
+ * @brief Funkce vraci typ tokenu
+ * @author Jan Beran
+ * @param in token - zdrojovy token (odkaz)
+ * @return tyo tokenu (int/enum)
+ */
+//int token_get_type(Ttoken *token);
+
+/**
+ * @brief NON IMPLEMENTED
+ * @author Jan Beran
+ * @param token  - zdrojovy token
+ * @warning FUNKCE NENI IMPLEMENTOVANA
+ * @return
+ */
+//char *token_get_attribute(Ttoken *token);
 
 
 #endif //IFJ2018_FSM_H
