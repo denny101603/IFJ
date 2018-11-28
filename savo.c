@@ -16,7 +16,7 @@
 */
 #include "savo.h"
 #include "symtable.h"
-
+#include "garbage_collector.h"
 
 #define NUM_OF_RULES 22
 #define RULE_LENGTH 3
@@ -74,7 +74,7 @@ char prec_table[16][16] = {              //in
         /* == */   {'<','<','<','<','<','>','<','<','<','?','?','?','?','?','?','>'},
         /* $ */    {'<','<','<','<','<','?','<','<','<','<','<','<','<','<','<','?'}
 };
-//TODO ALL Zkontrolovat to po Janu Carbovi :). By Berry: pokud bude savo naoko fungovat, ale jinak, mrknout se sem.
+
 //
 //todo u vsech tac_funkci kontrolovat t/f a pripadne vratit err internal
 char get_action(Ttoken *input_token, Ttoken *stack_token)
@@ -216,18 +216,20 @@ bool is_terminus(Ttoken *token)
     return false;
 }
 
-TStack *stack_init()
+TStack *stack_init(TSynCommon *sa_vars)
 {
-    TStack *stack = (TStack *) malloc(sizeof(TStack));
+    TStack *stack = (TStack *) malloc(sizeof(TStack)); //stack je interni struktura a jako takova se vzdy rusi pouze a jen v savu
     if(stack == NULL)
         return NULL;
-    //fprintf(stderr,"init token");
-    TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));
+
+    //soucast stacku, viz hore
+    TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));//soucast stacku, viz hore
     if(top == NULL)
     {
         return NULL;
     }
-    Ttoken *first = (Ttoken *)malloc(sizeof(Ttoken));
+
+    Ttoken *first = (Ttoken *)malloc(sizeof(Ttoken));//soucast stacku, viz hore
     if(first == NULL)
     {
         return NULL;
@@ -244,6 +246,7 @@ TStack *stack_init()
 
 bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op)
 {
+    //jako vnitrni struktura prislusici ke stacku nebude tato struktura dealokovana garbage collectorem
     TStackElem *inputed = (TStackElem *) malloc(sizeof(TStackElem));
     if(inputed == NULL)
     {
@@ -262,8 +265,6 @@ bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *
         stack_elem->next->prev = inputed;
     stack_elem->next = inputed;
 
-   // stack->top = inputed;
-    //printf("test: %d %d\n",stack->top->data->type, token->type);
     return true;
 }
 
@@ -275,7 +276,7 @@ Ttoken *pop(TStack *stack)
     stack->top = stack->top->prev;
     stack->top->next = NULL;
     Ttoken *output = temp->data;
-    free(temp);
+    free(temp); //toto free koresponduje s mallocem z funkce push()
     return output;
 }
 
@@ -291,7 +292,7 @@ Ttoken *pop_extended(TStack *stack, Toperand *op)
     if(temp->operand != NULL)
         op = temp->operand;
 
-    free(temp);
+    free(temp); //toto free pripadne koresponduje s mallocem z push()
     return output;
 }
 
@@ -309,8 +310,6 @@ bool copy_buffer(TBuffer *src, TBuffer *dst)
     return true;
 }
 
-
-
 TStackElem *get_first_terminal(TStack *stack)
 {
     if (stack == NULL)
@@ -327,7 +326,6 @@ TStackElem *get_first_terminal(TStack *stack)
 
 Ttoken *get_token_from_elem(TStackElem *elem)
 {
-    //fprintf(stderr, "*********************** %d\n", elem->data->type);
     return elem->data;
 }
 
@@ -338,13 +336,15 @@ void delete_stack(TStack *stack)
     {
         temp = stack->top;
         stack->top = stack->top->prev;
-        if(temp != NULL) free(temp);
+        if(temp != NULL)
+            free(temp); //interni struktura pro stack - freeovano zde
     }
 }
-char *savo_name_generator()
+char *savo_name_generator(Tgarbage_collector *collector)
 {
     static unsigned long long cnt = 0;
     char *name = (char *) malloc(sizeof(char)*32);
+    gc_add_garbage(collector, name);
     if(name == NULL)
         return NULL;
     sprintf(name, "&savo%llu", cnt++);
@@ -358,7 +358,7 @@ Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBu
     Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
     {
-        if(strtof(ret->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        if(strtof(ret->attribute, NULL) < 0)
         {
             action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
             return  NULL;
@@ -390,6 +390,7 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
 {
     Ttoken *mensitko = NULL;
     mensitko = (Ttoken *)malloc(sizeof(Ttoken));
+    gc_add_garbage(sa_vars->gc, mensitko);
     if(mensitko == NULL)
         return NULL;
     token_init(mensitko);
@@ -440,7 +441,7 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 
 int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_buffer)
 {
-    fprintf(stderr, "savo err %d\n", error);
+    //fprintf(stderr, "savo err %d\n", error);
     //ERR_SYN je osetrovan pouhym vracenim false:
     // sax obcas dava savu i nerelevantni vstup s cilem zjistit, jestli je to vyraz. Toto nema zpusobit pad.
     if (error != ERR_SYN)
@@ -449,13 +450,13 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
     if (stack != NULL)
     {
         delete_stack(stack);
-        //free(stack); //todo znovu zacit freeovat
+
     }
 
     copy_buffer(internal_buffer, sa_vars->buffer); //presunuti interniho bufferu do spolecneho se sax
-    delete_buffer(internal_buffer);
+    //delete_buffer(internal_buffer);
    //free(internal_buffer); //todo znovu zacit freeovat
-
+/*
     switch (error) // err_sem_param nenastane
     {
         case ERR_LEX:
@@ -482,8 +483,7 @@ int action_err(TStack *stack, TSynCommon *sa_vars, int error, TBuffer *internal_
             break;
         default:
             break;
-    }
-
+    }*/
     return error;
 }
 
@@ -506,11 +506,6 @@ int find_rule(TStack *stack)
             {
                 if (rule[j] != rules[i][j]) //pravidlo se nerovna
                 {
-                    /*mozna delete
-                    rule[0] = 0;
-                    rule[1] = 0;
-                    rule[2] = 0; //vynulovani pole pravidel
-                     */
                     break;
                 }
                 else if (rule[j] == rules[i][j] && j == RULE_LENGTH-1) // cele pravidlo se rovna
@@ -518,7 +513,6 @@ int find_rule(TStack *stack)
             }
         }
     return ret;
-
 }
 
 bool is_pseudotoken(Ttoken *token)
@@ -531,6 +525,7 @@ bool is_pseudotoken(Ttoken *token)
         ret = true;
     return ret;
 }
+
 bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
     //pole tokenu pro semanticke akce. Poradi tokenu je takove, ze na [0] je op1, na [2] operator a na [3] op2
@@ -540,9 +535,13 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 
     //operandy pro semanticke akce
     Toperand *operand1 =(Toperand *) malloc(sizeof(Toperand));
+    gc_add_garbage(sa_vars->gc, operand1);
     Toperand *operand2 = (Toperand *)malloc(sizeof(Toperand));
+    gc_add_garbage(sa_vars->gc, operand2);
     Toperand *operand3 = (Toperand *)malloc(sizeof(Toperand));
+    gc_add_garbage(sa_vars->gc, operand3);
     Toperand *dest = (Toperand *)malloc(sizeof(Toperand));
+    gc_add_garbage(sa_vars->gc, dest);
     Tsymbol_table_item *item = NULL;
 
     //syntakticka predkontrola, protoze syntakticka analyza je destruktivni
@@ -594,7 +593,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         case 2: //{0,0,FLOAT_2}, //2
         case 3: //{0,0,STRING_1}, //3
         case 5: //{0,0,KEY_NIL},//5
-            dest = op_init(rule_tokens[0]->type, savo_name_generator());
+            dest = op_init(rule_tokens[0]->type, savo_name_generator(sa_vars->gc));
             if(rule_tokens[0]->type == KEY_NIL)
             {
                 operand1 = op_init(rule_tokens[0]->type, "nil");
@@ -621,7 +620,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         case 8://{LEFT_BRACKET, FLOAT_2, RIGHT_BRACKET},//8
         case 9: //{LEFT_BRACKET, STRING_1, RIGHT_BRACKET},//9
         case 21: //{LEFT_BRACKET, KEY_NIL, RIGHT_BRACKET},//6
-            dest = op_init(rule_tokens[1]->type, savo_name_generator());
+            dest = op_init(rule_tokens[1]->type, savo_name_generator(sa_vars->gc));
             operand1 = op_init(rule_tokens[1]->type, rule_tokens[1]->attribute);
             tac_defmove_const(sa_vars->tac_list, dest, operand1);
             break;
@@ -636,52 +635,52 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
             dest = op_init(item->type, rule_tokens[1]->attribute);
             break;
         case 11:// {EXPRESSION, OP_PLUS, EXPRESSION},//11
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
-            tac_add(sa_vars->tac_list, dest, operands[2], operands[0]);//TODO prohodit op1a aop2
+            tac_add(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 12: //{EXPRESSION, OP_MINUS, EXPRESSION},//12
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_sub(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 13: //{EXPRESSION, OP_MULT, EXPRESSION},//13
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_mul(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 14://{EXPRESSION, OP_DIV, EXPRESSION}, //14
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_div(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 15://{EXPRESSION, OP_MORE_1, EXPRESSION}, //15
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_gt(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 16://{EXPRESSION, OP_LESS_1, EXPRESSION},//16
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_lt(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 17://{EXPRESSION, OP_EQAL_1, EXPRESSION},//17
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_eq(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 18://{EXPRESSION, OP_LESS_EQUAL, EXPRESSION},//18
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_lteq(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 19:// {EXPRESSION, OP_MORE_EQUAL, EXPRESSION},//19
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_gteq(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
         case 20://{EXPRESSION, OP_NOT_EQ_1, EXPRESSION} //20
-            dest = op_init(NOBODY_KNOWS,savo_name_generator());
+            dest = op_init(NOBODY_KNOWS,savo_name_generator(sa_vars->gc));
             tac_defvar(sa_vars->tac_list, dest);
             tac_neq(sa_vars->tac_list, dest, operands[2], operands[0]);
             break;
@@ -722,7 +721,7 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
 bool savo(TSynCommon *sa_vars)
 {
     
-    //sa_vars->boolean = true; //todo odstranit, az bude sax funkcni
+    //sa_vars->boolean = true;
     int err = 0;  //interni error, pri SYN_ERRORU nepropagovany
     Ttoken *input_token = get_next_token(sa_vars); //token pusnut na buffer az po init bufferu
     if(input_token == NULL) //error handle
@@ -737,7 +736,7 @@ bool savo(TSynCommon *sa_vars)
     }
     if(input_token->type == FLOAT_2) // cislo
     {
-        if(strtof(input_token->attribute, NULL) < 0) //todo Denny by berry. Co mam vracet za err pri spatnem cisle?
+        if(strtof(input_token->attribute, NULL) < 0)
         {
             action_err(NULL, sa_vars, ERR_SEM_MISC, NULL);
             return false;
@@ -758,7 +757,7 @@ bool savo(TSynCommon *sa_vars)
     //fprintf(stderr,"INPUT TOKEN JE: %d\n\n", input_token->type);
     /*Konec ladiciho vypisu*/
 
-    TStack *stack = stack_init();
+    TStack *stack = stack_init(sa_vars);
     if(stack == NULL) //err handle
     {
         action_err(stack,sa_vars,ERR_INTERNAL, NULL);
@@ -770,6 +769,7 @@ bool savo(TSynCommon *sa_vars)
     /*Konec l.v.*/
 
     TBuffer *internal_buffer = (TBuffer *)malloc(sizeof(TBuffer));
+    gc_add_garbage(sa_vars->gc, internal_buffer);
     if(internal_buffer == NULL)
     {
         action_err(stack, sa_vars, ERR_INTERNAL, NULL);
@@ -873,8 +873,8 @@ bool savo(TSynCommon *sa_vars)
        buffer_push_bottom(sa_vars->buffer, buffer_popTop(internal_buffer));
 
        //delete_buffer(internal_buffer); //todo dealokovat buffer_elementy. Kvuli saxu musim udelat novou fci :D
-      // buffer_init(internal_buffer);
-       free(internal_buffer);
+
+
 
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand);
 
@@ -884,3 +884,4 @@ bool savo(TSynCommon *sa_vars)
        return true;
    }
 }
+//todo jak freeovat internal buffer struktury elementu?
