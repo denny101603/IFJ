@@ -1687,7 +1687,7 @@ void gen_neq(TThreeAC *instruct)
 */
 }
 
-void GEN_start(TTacList *list)
+void GEN_start(TTacList *list, Tgarbage_collector *collector)
 {
     TThreeAC *inst = list->first;
     TThreeAC *temp = NULL;

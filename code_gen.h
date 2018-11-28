@@ -28,7 +28,7 @@
  * @author Matej Jelinek, Jan Carba
  * @param list seznam triadresnych instrukci ke generaci kodu
  */
-void GEN_start(TTacList *list);
+void GEN_start(TTacList *list, Tgarbage_collector *collector);
 
 /**
  * @brief na stdou vlozi podobu triadresne instrukce v ifjcode2018
