@@ -83,17 +83,17 @@ void pream()
     printf("POPFRAME\n");
     printf("RETURN\n");
 
-    //length
+    //length -- toto jsem upravoval -- JC
     printf("LABEL length\n");
     printf("CREATEFRAME\n");
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@var\n");
     printf("DEFVAR LF@x\n");
+    printf("DEFVAR LF@xtype\n");
     printf("POPS LF@x\n");
     printf("TYPE LF@xtype LF@x\n");
     printf("JUMPIFNEQ lengtherror LF@xtype string@string\n");
     printf("STRLEN LF@var LF@x\n");
-    printf("SUB LF@var LF@var int@1\n");
     printf("PUSHS LF@var\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
@@ -178,6 +178,8 @@ void pream()
 void gen_defvar(TThreeAC *instruct)
 {
     printf("DEFVAR LF@%s\n", instruct->op_1->name);
+    printf("MOVE LF@%s nil@nil\n", instruct->op_1->name);
+
 }
 
 void gen_move(TThreeAC *instruct)
@@ -513,7 +515,9 @@ void gen_div(TThreeAC *instruct)
     char *divafloatbretype = codegen_temp_id_generator(); //label skoku když a je float a b int -> nutno přetypovat b na float
     char *divend = codegen_temp_id_generator(); //label skoku na konec instrukce add (po provedení add)
     char *diverrorend = codegen_temp_id_generator(); //label skoku když dojde k typové chybě pro ukončení s návratovým kódem 4
-/*
+    char *diverrorzero = codegen_temp_id_generator(); //label skoku když dojde k dělení nulou pro ukončení s návratovým kódem 9
+
+    /*
     if ((divafloat == NULL)||
         (divaint == NULL)||
         (divaintaretype == NULL)||
@@ -540,16 +544,19 @@ void gen_div(TThreeAC *instruct)
     printf("JUMPIFEQ %s LF@%s string@int\n",divaint, atype);
 
     printf("JUMPIFEQ %s LF@%s string@float\n",divafloat , atype);
+    printf("JUMP %s\n", diverrorend); //skočí na chybu typů
 
     printf("LABEL %s\n", divaint);
     printf("JUMPIFEQ %s LF@%s string@float\n", divaintaretype, btype);
     printf("JUMPIFNEQ %s LF@%s string@int\n", diverrorend, btype);
 
+    printf("JUMPIFEQ %s LF@%s int@0\n", diverrorzero, instruct->op_2->name);
     printf("IDIV LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s\n", divend); //skočí na úspěšný konec sub
 
     printf("LABEL %s\n", divaintaretype);
     printf("INT2FLOAT LF@%s LF@%s\n", atmp, instruct->op_1->name);
+    printf("JUMPIFEQ %s LF@%s float@0x0p+0\n", diverrorzero, instruct->op_2->name);
     printf("DIV LF@%s LF@%s LF@%s\n", instruct->destination->name, atmp, instruct->op_2->name);
     printf("JUMP %s\n", divend); //skočí na úspěšný konec sub
 
@@ -557,16 +564,21 @@ void gen_div(TThreeAC *instruct)
     printf("JUMPIFEQ %s LF@%s string@int\n", divafloatbretype, btype);
     printf("JUMPIFNEQ %s LF@%s string@float\n", diverrorend, btype);
 
+    printf("JUMPIFEQ %s LF@%s float@0x0p+0\n", diverrorzero, instruct->op_2->name);
     printf("DIV LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s\n", divend); //skočí na úspěšný konec sub
 
     printf("LABEL %s\n", divafloatbretype);
     printf("INT2FLOAT LF@%s LF@%s\n", btmp, instruct->op_2->name);
+    printf("JUMPIFEQ %s LF@%s float@0x0p+0\n", diverrorzero, btmp);
     printf("DIV LF@%s LF@%s LF@%s\n",instruct->destination->name, instruct->op_1->name, btmp);
     printf("JUMP %s\n", divend); //skočí na úspěšný konec sub
 
     printf("LABEL %s\n", diverrorend);
     printf("EXIT int@4\n");
+
+    printf("LABEL %s\n", diverrorzero);
+    printf("EXIT int@9\n");
 
     printf("LABEL %s\n", divend);
 /*
@@ -1139,7 +1151,7 @@ void gen_gt(TThreeAC *instruct)
     free(gtend);
     free(gtastring);
 */
- }
+}
 
 void gen_lt(TThreeAC *instruct)
 {
@@ -1257,7 +1269,7 @@ void gen_lt(TThreeAC *instruct)
     free(ltend);
     free(ltastring);
 */
- }
+}
 
 void gen_gteq_def(TThreeAC *instruct)
 {
@@ -1402,7 +1414,7 @@ void gen_gteq(TThreeAC *instruct)
     free(gteqend);
     free(gteqastring);
 */
- }
+}
 
 void gen_lteq(TThreeAC *instruct)
 {
@@ -1539,7 +1551,7 @@ void gen_lteq(TThreeAC *instruct)
     free(lteqend);
     free(lteqastring);
 */
- }
+}
 
 void gen_neq(TThreeAC *instruct)
 {
@@ -1673,7 +1685,7 @@ void gen_neq(TThreeAC *instruct)
     free(eqend);
     free(eqerrorend);
 */
- }
+}
 
 void GEN_start(TTacList *list, Tgarbage_collector *collector)
 {
@@ -1733,7 +1745,7 @@ void GEN_start(TTacList *list, Tgarbage_collector *collector)
                 while_count--;
         }
         if((inst->name == DEFVAR && while_count != 0) || (inst->name == DEFMOVE && while_count != 0) || (inst->name == ADD_DEF && while_count != 0)
-        || (inst->name == LOADPARAM_DEF && while_count != 0) || (inst->name == JUMPIFEQ_DEF && while_count != 0) || (inst->name == GTEQ_DEF && while_count != 0))
+           || (inst->name == LOADPARAM_DEF && while_count != 0) || (inst->name == JUMPIFEQ_DEF && while_count != 0) || (inst->name == GTEQ_DEF && while_count != 0))
         {
             tmp = inst->next;
             temp = TAC_remove_this(list, inst);
@@ -1759,18 +1771,18 @@ void GEN_start(TTacList *list, Tgarbage_collector *collector)
                 printf("#_________toto je DEFMOVE_____\n");
                 gen_defmove_const(inst);
                 break;
-            /*case CREATEFRAME:
-                printf("#_________toto je CREATEFRAME_____\n");
-                gen_createframe(inst);
-                break;
-            case PUSHFRAME:
-                printf("#_________toto je PUSHFRAME_____\n");
-                gen_pushframe(inst);
-                break;
-            case POPFRAME:
-                printf("#_________toto je POPFRAME_____\n");
-                gen_popframe(inst);
-                break;*/
+                /*case CREATEFRAME:
+                    printf("#_________toto je CREATEFRAME_____\n");
+                    gen_createframe(inst);
+                    break;
+                case PUSHFRAME:
+                    printf("#_________toto je PUSHFRAME_____\n");
+                    gen_pushframe(inst);
+                    break;
+                case POPFRAME:
+                    printf("#_________toto je POPFRAME_____\n");
+                    gen_popframe(inst);
+                    break;*/
             case LOADPARAM:
                 printf("#_________toto je LOADPARAM_____\n");
                 gen_loadparam(inst);
@@ -1779,10 +1791,10 @@ void GEN_start(TTacList *list, Tgarbage_collector *collector)
                 printf("#_________toto je PUSH_____\n");
                 gen_push(inst);
                 break;
-            /*case POP:
-                printf("#_________toto je POP _____\n");
-                gen_pop(inst);
-                break;*/
+                /*case POP:
+                    printf("#_________toto je POP _____\n");
+                    gen_pop(inst);
+                    break;*/
             case ADD:
                 printf("#_________toto je ADD _____\n");
                 gen_add(inst);
@@ -1807,42 +1819,42 @@ void GEN_start(TTacList *list, Tgarbage_collector *collector)
                 printf("#_________toto je RETURN _____\n");
                 gen_return(inst);
                 break;
-            /*case INT2FLOAT:
-                printf("#_________toto je INT2FLOAT _____\n");
-                gen_int2float(inst);
-                break;
-            case FLOAT2INT:
-                printf("#_________toto je FLOAT2INT _____\n");
-                gen_float2int(inst);
-                break;
-            case INT2CHAR:
-                printf("#_________toto je INT2CHAR _____\n");
-                gen_int2char(inst);
-                break;
-            case CONCAT:
-                printf("#_________toto je CONCAT _____\n");
-                gen_concat(inst);
-                break;
-            case SETCHAR:
-                printf("#_________toto je SETCHAR _____\n");
-                gen_setchar(inst);
-                break;
-            case ISINT:
-                printf("#_________toto je ISINT _____\n");
-                gen_isint(inst);
-                break;
-            case ISFLOAT:
-                printf("#_________toto je ISFLOAT _____\n");
-                gen_isfloat(inst);
-                break;
-            case ISSTRING:
-                printf("#_________toto je ISSTRING _____\n");
-                gen_isstring(inst);
-                break;
-            case ISBOOL:
-                printf("#_________toto je ISBOOL _____\n");
-                gen_isbool(inst);
-                break;*/
+                /*case INT2FLOAT:
+                    printf("#_________toto je INT2FLOAT _____\n");
+                    gen_int2float(inst);
+                    break;
+                case FLOAT2INT:
+                    printf("#_________toto je FLOAT2INT _____\n");
+                    gen_float2int(inst);
+                    break;
+                case INT2CHAR:
+                    printf("#_________toto je INT2CHAR _____\n");
+                    gen_int2char(inst);
+                    break;
+                case CONCAT:
+                    printf("#_________toto je CONCAT _____\n");
+                    gen_concat(inst);
+                    break;
+                case SETCHAR:
+                    printf("#_________toto je SETCHAR _____\n");
+                    gen_setchar(inst);
+                    break;
+                case ISINT:
+                    printf("#_________toto je ISINT _____\n");
+                    gen_isint(inst);
+                    break;
+                case ISFLOAT:
+                    printf("#_________toto je ISFLOAT _____\n");
+                    gen_isfloat(inst);
+                    break;
+                case ISSTRING:
+                    printf("#_________toto je ISSTRING _____\n");
+                    gen_isstring(inst);
+                    break;
+                case ISBOOL:
+                    printf("#_________toto je ISBOOL _____\n");
+                    gen_isbool(inst);
+                    break;*/
             case LABLE:
                 printf("#_________toto je LA BLEEEE _____\n");
                 gen_lable(inst);
@@ -1863,14 +1875,14 @@ void GEN_start(TTacList *list, Tgarbage_collector *collector)
                 printf("#_________toto je JUMPIFNEQ _____\n");
                 gen_jumpifneq(inst);
                 break;
-            /*case JUMPIFGT:
-                printf("#_________toto je JUMPIFGT _____\n");
-                gen_jumpifgt(inst);
-                break;
-            case JUMPIFLT:
-                printf("#_________toto je JUMPIFLT _____\n");
-                gen_jumpiflt(inst);
-                break;*/
+                /*case JUMPIFGT:
+                    printf("#_________toto je JUMPIFGT _____\n");
+                    gen_jumpifgt(inst);
+                    break;
+                case JUMPIFLT:
+                    printf("#_________toto je JUMPIFLT _____\n");
+                    gen_jumpiflt(inst);
+                    break;*/
             case DPRINT:
                 printf("#_________toto je DPRINT _____\n");
                 gen_dprint(inst);
