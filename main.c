@@ -173,26 +173,19 @@ char *enum2string(int num){
 
 int main() {
 
-    Tgarbage_collector *collector = malloc(sizeof(collector)); //jako jediny malloc neni v collectoru
+    Tgarbage_collector *collector = malloc(sizeof(collector));
     collector->last_added = NULL;
 
 
     TTacList *tac_list = TAC_init(collector);
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
-    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro zalohu tokenu
+
+    TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer));
     buffer_init(tokens_backup);
     TS_stack_init(symtabs_bin);
 
     int i = startSA(tac_list, symtabs_bin, tokens_backup);
-    //odmazat pod
-/*    TThreeAC *tt = tac_list->first;
-    while(tt != NULL)
-    {
-        printf("%i\n", tt->name);
-        tt = tt->next;
-    }*/
-    //odmazat nad
-    /*printf("navrat SA: %i", i);*/
+
     if(i == SUCCESS) //== 0
         GEN_start(tac_list);
 
