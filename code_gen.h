@@ -64,13 +64,13 @@ void gen_push(TThreeAC *instruct);
 
 void gen_pop(TThreeAC *instruct);
 
-void gen_add(TThreeAC *instruct);
+void gen_add(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_sub(TThreeAC *instruct);
+void gen_sub(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_mul(TThreeAC *instruct);
+void gen_mul(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_div(TThreeAC *instruct);
+void gen_div(TThreeAC *instruct, Tgarbage_collector *collector);
 
 void gen_call(TThreeAC *instruct);
 
@@ -100,9 +100,9 @@ void gen_deffunc(TThreeAC *instruct);
 
 void gen_jump(TThreeAC *instruct);
 
-void gen_jumpifeq(TThreeAC *instruct);
+void gen_jumpifeq(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_jumpifneq(TThreeAC *instruct);
+void gen_jumpifneq(TThreeAC *instruct, Tgarbage_collector *collector);
 
 void gen_jumpifgt(TThreeAC *instruct);
 
@@ -110,17 +110,17 @@ void gen_jumpiflt(TThreeAC *instruct);
 
 void gen_dprint(TThreeAC *instruct);
 
-void gen_eq(TThreeAC *instruct);
+void gen_eq(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_gt(TThreeAC *instruct);
+void gen_gt(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_lt(TThreeAC *instruct);
+void gen_lt(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_gteq(TThreeAC *instruct);
+void gen_gteq(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_lteq(TThreeAC *instruct);
+void gen_lteq(TThreeAC *instruct, Tgarbage_collector *collector);
 
-void gen_neq(TThreeAC *instruct);
+void gen_neq(TThreeAC *instruct, Tgarbage_collector *collector);
 
 char *whatType(int x);
 
