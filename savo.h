@@ -51,14 +51,14 @@ typedef struct StackElem{
   * @brief Funkce vraci jmeno pro docasnou promennou. Nutne pri sestavovani vysledneho kodu
   * @return vygenerovane jmeno pro promennou typu char *.
   */
- char *savo_name_generator();
+ char *savo_name_generator(Tgarbage_collector *collector);
 /**
  * @brief Funkce inicializuje zasobnik typu TStack tak, že do něj vlozi prvni prvek, kterym je token s typem BOTTOM_TOKEN
  * @author Jan Beran
  * @param in stack stack k inicializaci
  * @return true
  */
-TStack *stack_init();
+TStack *stack_init(TSynCommon *sa_vars);
 
 /**
  * @brief Funkce, ktera pridava token na vrchol zasobniku. Token nejprve obali do struktury TStackElem a pote ho vlozi. Zaroven do struktury TStackElem zahrne operand op
@@ -168,7 +168,7 @@ bool action_reduce(TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
  * @param dst destination buffer
  * @return t/f, podle úspěšnosti
  */
-bool copy_buffer(TBuffer *src, TBuffer *dst);
+bool copy_buffer(TBuffer *src, TBuffer *dst, TSynCommon *sa_vars);
 
 /**
  *@brief Funkce, ktera resi error v savu. Funkce dealokuje lokalni zasobnik,

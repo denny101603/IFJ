@@ -75,9 +75,10 @@ void TThreeAC_delete(TThreeAC* tac);
  * @author Daniel Bubenicek
  * @param type typ operandu
  * @param name jmeno promenne nebo u konstant hodnota
+ * @param collector
  * @return operand, pokud se nepovede alokace tak NULL
  */
-Toperand *op_init(int type, char *name);
+Toperand *op_init(int type, char *name, Tgarbage_collector *collector);
 
 
 /**
@@ -158,9 +159,10 @@ void TAC_delete_list(TTacList *list);
  * @param destination
  * @param op1
  * @param op2
+ * @param collector
  * @return tf
  */
-bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[]);
+bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1, Toperand *op2, char *names[], Tgarbage_collector *collector);
 
 /**
  * @brief do seznamu list vlozi triadresnou instrukci defvar s operandem op1
@@ -169,59 +171,60 @@ bool instruc_init(TTacList *list, int name, Toperand *destination, Toperand *op1
  * @param op1 - tenhle operand se tam prida
  * @return true pokud se vse povede (alokace apod.), jinak false
  */
-bool tac_defvar(TTacList *list, Toperand *op1);
+bool tac_defvar(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_move(TTacList *list, Toperand *dest, Toperand *op1);
+bool tac_move(TTacList *list, Toperand *dest, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1);
+bool tac_defmove_const( TTacList *list, Toperand *dest, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_loadparam(TTacList *list, Toperand *dest);
+bool tac_loadparam(TTacList *list, Toperand *dest, Tgarbage_collector *collector);
 
-bool tac_push(TTacList *list, Toperand *op1);
+bool tac_push(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_add(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_sub(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_sub(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_mul(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_mul(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_div(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_call(TTacList *list, Toperand *dest, Toperand *op1);
+bool tac_call(TTacList *list, Toperand *dest, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_return(TTacList *list, Toperand *op1, Toperand *op2);
+bool tac_return(TTacList *list, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_lable(TTacList *list, Toperand *op1);
+bool tac_lable(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_deffunc(TTacList *list, Toperand *op1, Toperand *op2);
+bool tac_deffunc(TTacList *list, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_jump(TTacList *list, Toperand *op1);
+bool tac_jump(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
 
-bool tac_jumpifeq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_jumpifeq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_jumpifneq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_jumpifneq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_eq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_gt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_gt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_lt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_lt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_gteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_gteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_lteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_lteq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
+bool tac_neq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
-bool tac_while(TTacList *list);
+bool tac_while(TTacList *list, Tgarbage_collector *collector);
 
-bool tac_endwhile(TTacList *list);
+bool tac_endwhile(TTacList *list, Tgarbage_collector *collector);
 
-bool ta_startif(TTacList *list);
+bool ta_startif(TTacList *list, Tgarbage_collector *collector);
 
-bool ta_endif(TTacList *list);
+bool ta_endif(TTacList *list, Tgarbage_collector *collector);
 
-char *codegen_temp_id_generator();
+char *codegen_temp_id_generator(Tgarbage_collector *collector);
+
 
 
 /**
@@ -285,7 +288,7 @@ enum instructions{
     ENDIF
 };
 
-bool tac_dprint(TTacList *list, Toperand *op1);
+bool tac_dprint(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
 /*
 
 bool tac_inputi(TTacList *list, Toperand *dest);

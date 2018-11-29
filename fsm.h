@@ -137,7 +137,7 @@ void arr_free(Tarray *arr);
 *	@return ukazatel na dyn. alokovany retezec zakonceny \0, pro prazdne pole "\0", pri neuspesne alokaci null
  *	@note pri neuspesne alokaci dealokuje arr
 */
-char *arr_get_value(Tarray *arr);
+char *arr_get_value(Tarray *arr, Tgarbage_collector *collector);
 
 /**
  * @brief Inicializace tokenu
@@ -166,7 +166,7 @@ int token_set_type(Ttoken *token, int token_type);
  * @note velikost pole token.attribute je automaticky regulovana
  * @return SUCCESS nebo ERR_INTERNAL
  */
-int token_set_attribute(Ttoken *token, Tarray *arr);
+int token_set_attribute(Ttoken *token, Tarray *arr, Tgarbage_collector *collector);
 
 /**
  *
