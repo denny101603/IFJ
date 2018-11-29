@@ -873,7 +873,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
     return token;
 }//konec get_token()
 
-int arr_init(Tarray *arr) //nepřidáváme do GC protože sigseg is coming :) řeší SAX
+int arr_init(Tarray *arr) //nepřidáváme do GC protože sigseg is coming :) řeší SAX TODO
 {
     arr->array = (char *) malloc(sizeof(char) * INIT_SIZE);
     if(arr->array == NULL)
@@ -888,7 +888,7 @@ int arr_init(Tarray *arr) //nepřidáváme do GC protože sigseg is coming :) ř
     return SUCCESS;
 }
 
-int arr_add_char(Tarray *arr, char c) //nepřidáváme do GC protože sigseg is coming :) řeší SAX
+int arr_add_char(Tarray *arr, char c) //nepřidáváme do GC protože sigseg is coming :) řeší SAX TODO
 {
     if(arr->lenght > arr->used) //pokud je misto
     {
