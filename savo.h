@@ -68,7 +68,7 @@ TStack *stack_init(TSynCommon *sa_vars);
  * @param op operand, spjaty s tokenem
  * @return true nebo false, podle vysledku alokace.
  */
-bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op);
+bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op, TSynCommon *sa_vars);
 
 /**
  * @brief Funkce popne vrchni polozku TSTackElem ze zasobniku stack a vrati hodnotu tokenu.

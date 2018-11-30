@@ -20,6 +20,7 @@
 #include "fsm.h"
 #include "err_codes.h"
 #include "garbage_collector.h"
+//#include "garbage_collector.c"
 
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
@@ -410,7 +411,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                     next_state = LEX_ERROR; //begin nelze pouzit jako ID
                 else
                     next_state = ID_2;
-                free(str);
+                //free(str);
                 break;
             case ID_2: //DONE
                 if(token_set_attribute(token, token_value, collector) == ERR_INTERNAL)
@@ -873,9 +874,12 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
     return token;
 }//konec get_token()
 
-int arr_init(Tarray *arr) //nepřidáváme do GC protože sigseg is coming :) řeší SAX TODO
+int arr_init(Tarray *arr, Tgarbage_collector *gc) //nepřidáváme do GC protože sigseg is coming :) řeší SAX TODO
 {
-    arr->array = (char *) malloc(sizeof(char) * INIT_SIZE);
+    char *temp = (char *) malloc(sizeof(char) * INIT_SIZE);
+    //gc_add_garbage(gc,temp );
+    arr->array = temp;
+
     if(arr->array == NULL)
     {
         fprintf(stderr, MESSAGE_ALLOCATION);
