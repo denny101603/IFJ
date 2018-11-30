@@ -4,7 +4,7 @@
 
 #include "garbage_collector.h"
 #include <stdlib.h>
-#include "sax.h"
+//#include "sax.h"
 
 
 void gc_add_garbage(Tgarbage_collector *gc, void *ptr)
@@ -21,9 +21,9 @@ void valar_morghulis(Tgarbage_collector *gc)
     {
         return;
     }
-    TS_stack_free(gc->others->sym_stack);
+    /*TS_stack_free(gc->others->sym_stack);
     TS_stack_free(gc->others->sym_bin);
-    symtab_free(gc->others->ts_func);
+    symtab_free(gc->others->ts_func);*/
 
     while(gc->last_added != NULL)
     {

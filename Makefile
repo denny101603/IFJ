@@ -7,8 +7,8 @@ CC = gcc
 
 all: main
 
-main: main.o fsm.o savo.o sax.o symtable.o seman.o code_gen.o
-	$(CC) $(CFLAGS) main.o fsm.o savo.o sax.o symtable.o seman.o code_gen.o -o main
+main: main.o fsm.o savo.o sax.o symtable.o seman.o code_gen.o garbage_collector.o
+	$(CC) $(CFLAGS) main.o fsm.o savo.o sax.o symtable.o seman.o code_gen.o garbage_collector.o -o main
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c -o main.o
@@ -31,6 +31,8 @@ seman.o: seman.c seman.h
 code_gen.o: code_gen.c code_gen.h
 	$(CC) $(CFLAGS) -c code_gen.c -o code_gen.o
 
+garbage_collector.o: garbage_collector.c garbage_collector.h
+	$(CC) $(CFLAGS) -c garbage_collector.c -o garbage_collector.o
 
 clean:
 	rm -f *.o main

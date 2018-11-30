@@ -173,12 +173,16 @@ char *enum2string(int num){
 
 int main() {
 
-    Tgarbage_collector *collector = malloc(sizeof(collector));
+    Tgarbage_collector *collector = malloc(sizeof(collector)); //dealokovan samostatne ve valaru
     collector->last_added = NULL;
 
     TTacList *tac_list = TAC_init(collector);
-    TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
-    collector->others->sym_bin = symtabs_bin;
+    TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack)); //symtables jedou na svoje triko
+    gc_add_garbage(collector,symtabs_bin );
+   /* collector->others = malloc(sizeof(Tothers));
+    collector->others->sym_stack = NULL;
+    collector->others->ts_func = NULL;
+    collector->others->sym_bin = symtabs_bin;*/
     TS_stack_init(symtabs_bin);
 
     //asi zrušit??
@@ -192,7 +196,7 @@ int main() {
         GEN_start(tac_list, collector);
 
    // TAC_delete_list(tac_list);
-   // TS_stack_free(symtabs_bin);
+    TS_stack_free(symtabs_bin);
     //free(symtabs_bin);
 
    // delete_buffer(tokens_backup);
