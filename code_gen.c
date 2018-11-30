@@ -207,11 +207,11 @@ void pream()
     printf("DEFVAR LF@type\n");
     printf("DEFVAR LF@s\n");
     printf("POPS LF@i\n");
-    printf("TYPE LF@znak\n");
+    printf("TYPE LF@type LF@znak\n");
     printf("JUMPIFNEQ label_type_chr LF@type string@int\n");
-    printf("GT LF@temp_bool LF@i LF@255\n");
+    printf("GT LF@temp_bool LF@i int@255\n");
     printf("JUMPIFEQ label_type_chr LF@temp_bool bool@true\n");
-    printf("LT LF@temp_bool LF@i LF@0\n");
+    printf("LT LF@temp_bool LF@i int@0\n");
     printf("JUMPIFEQ label_type_chr LF@temp_bool bool@true\n");
     printf("INT2CHAR LF@znak LF@i\n");
     printf("PUSHS LF@znak\n");
