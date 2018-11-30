@@ -217,18 +217,21 @@ bool is_terminus(Ttoken *token)
 
 TStack *stack_init(TSynCommon *sa_vars)
 {
-    TStack *stack = (TStack *) malloc(sizeof(TStack)); //stack je interni struktura a jako takova se vzdy rusi pouze a jen v savu
+    TStack *stack = (TStack *) malloc(sizeof(TStack));
+    gc_add_garbage(sa_vars->gc, stack);
     if(stack == NULL)
         return NULL;
 
-    //soucast stacku, viz hore
-    TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));//soucast stacku, viz hore
+
+    TStackElem *top = (TStackElem *) malloc(sizeof(TStackElem));
+    gc_add_garbage(sa_vars->gc, top);
     if(top == NULL)
     {
         return NULL;
     }
 
     Ttoken *first = (Ttoken *)malloc(sizeof(Ttoken));//soucast stacku, viz hore
+    gc_add_garbage(sa_vars->gc, first);
     if(first == NULL)
     {
         return NULL;
@@ -243,10 +246,11 @@ TStack *stack_init(TSynCommon *sa_vars)
     return stack;
 }
 
-bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op)
+bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *op, TSynCommon *sa_vars)
 {
-    //jako vnitrni struktura prislusici ke stacku nebude tato struktura dealokovana garbage collectorem
+
     TStackElem *inputed = (TStackElem *) malloc(sizeof(TStackElem));
+    gc_add_garbage(sa_vars->gc, inputed);
     if(inputed == NULL)
     {
         return false;
@@ -275,7 +279,7 @@ Ttoken *pop(TStack *stack)
     stack->top = stack->top->prev;
     stack->top->next = NULL;
     Ttoken *output = temp->data;
-    free(temp); //toto free koresponduje s mallocem z funkce push()
+    //free(temp); //toto free koresponduje s mallocem z funkce push()
     return output;
 }
 
@@ -291,7 +295,7 @@ Ttoken *pop_extended(TStack *stack, Toperand *op)
     if(temp->operand != NULL)
         op = temp->operand;
 
-    free(temp); //toto free pripadne koresponduje s mallocem z push()
+    //free(temp); //toto free pripadne koresponduje s mallocem z push()
     return output;
 }
 
@@ -335,8 +339,8 @@ void delete_stack(TStack *stack)
     {
         temp = stack->top;
         stack->top = stack->top->prev;
-        if(temp != NULL)
-            free(temp); //interni struktura pro stack - freeovano zde
+        //if(temp != NULL)
+            //free(temp); //interni struktura pro stack - freeovano zde
     }
 }
 char *savo_name_generator(Tgarbage_collector *collector)
@@ -352,7 +356,7 @@ char *savo_name_generator(Tgarbage_collector *collector)
 
 Ttoken *action_push(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, TBuffer *internal_buffer)
 {
-    push(stack, stack->top,input_token, NULL);
+    push(stack, stack->top,input_token, NULL, sa_vars);
 
     Ttoken *ret = get_next_token(sa_vars);
     if(ret->type == FLOAT_2) // cislo
@@ -395,8 +399,8 @@ Ttoken *action_change(Ttoken *input_token, TStack *stack, TSynCommon *sa_vars, T
     token_init(mensitko);
     mensitko->type = ACTION_MENSITKO;
 
-    push(stack,get_first_terminal(stack), mensitko, NULL); //pushneme mensitko za prvni terminal
-    push(stack, stack->top, input_token, NULL); //push input tokenu na top
+    push(stack,get_first_terminal(stack), mensitko, NULL, sa_vars); //pushneme mensitko za prvni terminal
+    push(stack, stack->top, input_token, NULL, sa_vars); //push input tokenu na top
 
     //nacteme dalsi token a okamzite ukladame do interniho bufferu
     Ttoken *ret = get_next_token(sa_vars);
@@ -706,13 +710,14 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
         action_err(stack, sa_vars, ERR_SEM_MISC, internal_buffer);
     //token_free(temp);
     Ttoken *expr_token = (Ttoken *)malloc(sizeof(Ttoken));
+    gc_add_garbage(sa_vars->gc, expr_token);
     if (expr_token == NULL)
         return false;
     token_init(expr_token);
     expr_token->type = EXPRESSION;
     if(rule_tokens[0]->type == KEY_NIL)
         expr_token->attribute = "nil";
-    push(stack, stack->top, expr_token, dest);
+    push(stack, stack->top, expr_token, dest, sa_vars);
     //token free trules tokens
     return true;
 }
@@ -877,7 +882,7 @@ bool savo(TSynCommon *sa_vars)
        tac_move(sa_vars->tac_list, sa_vars->dest, stack->top->operand, sa_vars->gc);
 
        delete_stack(stack);
-       free(stack);
+       //free(stack);
 
        return true;
    }

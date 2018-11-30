@@ -23,7 +23,7 @@
 
 Tsymbol_table *symtab_init(unsigned long size)
 {
-    Tsymbol_table *tab = (Tsymbol_table *) malloc(sizeof(Tsymbol_table) + sizeof(struct symbol_table_item *) * size);
+    Tsymbol_table *tab = (Tsymbol_table *) malloc(sizeof(Tsymbol_table) + sizeof(struct symbol_table_item *) * size); //todo tohle se nikde nedealokuje!
     if(tab == NULL) //pokud se nepovedlo alokovat, vracim null
     {
         fprintf(stderr, MESSAGE_ALLOCATION);
@@ -96,7 +96,7 @@ void symtab_clear(Tsymbol_table *t)
     }
 }
 
-void symtab_free(Tsymbol_table *t)
+void    symtab_free(Tsymbol_table *t)
 {
     if(t == NULL)
         return;

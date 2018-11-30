@@ -77,7 +77,7 @@ Ttoken *buffer_popTop(TBuffer *buffer) //pro savo
         buffer->top = NULL;
         buffer->bottom = NULL;
     }
-    free(temp);
+    //free(temp);
     return ret;
 }
 
@@ -97,7 +97,7 @@ Ttoken *buffer_popBottom(TBuffer *buffer) //rpo sax
         buffer->bottom = temp->next;
         buffer->bottom->prev = NULL;
     }
-    free(temp);
+    //free(temp);
     return ret;
 }
 
@@ -115,14 +115,14 @@ void delete_buffer(TBuffer *buffer)
                 if(temp->data != NULL)
                 {
                     //dealok tokenu:
-                    free(temp->data->attribute); //dealok vnitrku tokenu
-                    free(temp->data); //dealok tokenu
+                    //free(temp->data->attribute); //dealok vnitrku tokenu
+                    //free(temp->data); //dealok tokenu
                 }
-                free(temp); //dealok buffer elem
+                //free(temp); //dealok buffer elem
             }
         }
         buffer->bottom = NULL;
-        free(buffer);
+       // free(buffer);
     }
 }
 
@@ -1431,10 +1431,10 @@ bool nt_bodywhif(TSynCommon *sa_vars)
 }
 
 
-bool init_ts_fun(TSynCommon *sa_vars)
+bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
 {
     sa_vars->ts_fun = symtab_init(TS_SIZE);
-    sa_vars->gc->others->ts_func = sa_vars->ts_fun;
+//    gc->others->ts_func = sa_vars->ts_fun;
     if(sa_vars->ts_fun == NULL) //chyba alokace
         return false;
 
@@ -1448,14 +1448,14 @@ bool init_ts_fun(TSynCommon *sa_vars)
     char *ord = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *chr = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
 
-    gc_add_garbage(sa_vars->gc, inputs);
-    gc_add_garbage(sa_vars->gc, inputi);
-    gc_add_garbage(sa_vars->gc, inputf);
-    gc_add_garbage(sa_vars->gc, print);
-    gc_add_garbage(sa_vars->gc, lenght);
-    gc_add_garbage(sa_vars->gc, substr);
-    gc_add_garbage(sa_vars->gc, ord);
-    gc_add_garbage(sa_vars->gc, chr);
+    gc_add_garbage(gc, inputs);
+    gc_add_garbage(gc, inputi);
+    gc_add_garbage(gc, inputf);
+    gc_add_garbage(gc, print);
+    gc_add_garbage(gc, lenght);
+    gc_add_garbage(gc, substr);
+    gc_add_garbage(gc, ord);
+    gc_add_garbage(gc, chr);
 
     if(inputs == NULL || inputi == NULL || inputf == NULL || print == NULL
         || lenght == NULL || substr == NULL || ord == NULL || chr == NULL) //nepovedena alokace
@@ -1534,11 +1534,16 @@ bool err_check(Ttoken *t, TSynCommon *sa_vars)
 TSynCommon *alloc_sa(Tgarbage_collector *gc)
 {
     TSynCommon *sa_vars = (TSynCommon *) malloc(sizeof(TSynCommon)); //struktura s promennymi pro komunikaci mezi castmi prekladace
+    gc_add_garbage(gc, sa_vars);
     Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener //arr nema prijit do garbage collectoru
+    //gc_add_garbage(gc, arr);
+    //gc_add_garbage(gc, arr);
     TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
+    gc_add_garbage(gc, buffer);
     TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
+    gc_add_garbage(gc, local_tables);
     Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
-
+   // sa_vars->gc = gc;
 
 
     if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
@@ -1551,7 +1556,7 @@ TSynCommon *alloc_sa(Tgarbage_collector *gc)
         return NULL;
     }
 
-    if(arr_init(arr) == ERR_INTERNAL || !init_ts_fun(sa_vars)) //neuspesna alokace
+    if(arr_init(arr, gc) == ERR_INTERNAL || !init_ts_fun(sa_vars, gc)) //neuspesna alokace
     { //dealokace
         /*if(arr_init(arr) != ERR_INTERNAL)
             arr_free(arr);
@@ -1562,7 +1567,7 @@ TSynCommon *alloc_sa(Tgarbage_collector *gc)
         symtab_free(symtab_local);*/
         return NULL;
     }
-    buffer_init(buffer);
+    buffer_init(buffer );
     TS_stack_init(local_tables);
 
     sa_vars->local_tables = local_tables;
@@ -1573,10 +1578,7 @@ TSynCommon *alloc_sa(Tgarbage_collector *gc)
     sa_vars->ret = NULL;
 
     TS_push(sa_vars->local_tables, symtab_local);
-
-    gc_add_garbage(gc, sa_vars);
-    gc_add_garbage(gc, buffer);
-    gc->others->sym_stack = local_tables;
+//    gc->others->sym_stack = local_tables;
 
     return sa_vars;
 }
@@ -1586,13 +1588,13 @@ void dealloc_sa(TSynCommon *sa_vars)
     arr_free(sa_vars->arr); //jedine arr se ma dealokovat podle dohody
     free(sa_vars->arr);
 
-    //TS_stack_free(sa_vars->local_tables);
+    TS_stack_free(sa_vars->local_tables);
     //free(sa_vars->local_tables);
 
     //delete_buffer(sa_vars->buffer);
     //free(sa_vars->buffer);
 
-    //symtab_free(sa_vars->ts_fun);
+    symtab_free(sa_vars->ts_fun);
 
     //free(sa_vars);
 }
