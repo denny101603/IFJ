@@ -1,0 +1,229 @@
+.IFJcode18
+JUMP main
+LABEL inputi
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@var
+READ LF@var int
+PUSHS LF@var
+POPFRAME
+RETURN
+LABEL inputf
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@var
+READ LF@var float
+PUSHS LF@var
+POPFRAME
+RETURN
+LABEL inputs
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@var
+READ LF@var string
+PUSHS LF@var
+POPFRAME
+RETURN
+LABEL length
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@var
+DEFVAR LF@x
+POPS LF@x
+TYPE LF@xtype LF@x
+JUMPIFNEQ lengtherror LF@xtype string@string
+STRLEN LF@var LF@x
+SUB LF@var LF@var int@1
+PUSHS LF@var
+POPFRAME
+RETURN
+LABEL lengtherror
+EXIT int@4
+LABEL print
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@counter
+DEFVAR LF@test
+DEFVAR LF@term
+POPS LF@counter
+LABEL loop
+POPS LF@term
+WRITE LF@term
+SUB LF@counter LF@counter int@1
+GT LF@test LF@counter int@0
+JUMPIFEQ loop LF@test bool@true
+PUSHS nil@nil
+POPFRAME
+RETURN
+LABEL substr
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@podretezec
+DEFVAR LF@znak
+DEFVAR LF@s
+DEFVAR LF@i
+DEFVAR LF@n
+POPS LF@n
+POPS LF@i
+POPS LF@s
+MOVE LF@podretezec LF@znak
+LABEL while2
+JUMPIFEQ while2_end LF@i LF@n
+GETCHAR LF@znak LF@s LF@i
+CONCAT LF@podretezec LF@podretezec LF@znak
+ADD LF@i LF@i int@1
+JUMP while2
+LABEL while2_end
+PUSHS LF@podretezec
+POPFRAME
+RETURN
+LABEL ord
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@hodnota
+DEFVAR LF@s
+DEFVAR LF@i
+POPS LF@i
+POPS LF@s
+STRI2INT LF@hodnota LF@s LF@i
+PUSHS LF@hodnota
+POPFRAME
+RETURN
+LABEL chr
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@znak
+DEFVAR LF@s
+POPS LF@i
+INT2CHAR LF@znak LF@i
+PUSHS LF@znak
+POPFRAME
+RETURN
+LABEL main
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@a
+DEFVAR LF@&savo0
+MOVE LF@&savo0 int@42
+MOVE LF@a LF@&savo0
+DEFVAR LF@&sax0
+MOVE LF@&sax0 bool@true
+DEFVAR LF@&sax1
+LABEL &sax2
+DEFVAR LF@&savo1
+MOVE LF@&savo1 int@5
+DEFVAR LF@&savo2
+MOVE LF@&savo2 int@42
+DEFVAR LF@&savo3
+TYPE LF@&codegen0 LF@&savo2
+TYPE LF@&codegen2 LF@&savo1
+JUMPIFEQ &codegen5 LF@&codegen0 string@float
+JUMPIFEQ &codegen4 LF@&codegen0 string@int
+JUMPIFEQ &codegen8 LF@&codegen0 string@nil
+JUMPIFEQ &codegen6 LF@&codegen0 string@string
+JUMPIFEQ &codegen7 LF@&codegen0 string@bool
+JUMP &codegen13 
+LABEL &codegen5
+JUMPIFEQ &codegen11 LF@&codegen2 string@int
+JUMPIFEQ &codegen10 LF@&codegen2 string@float
+JUMP &codegen13 
+LABEL &codegen10
+EQ LF@&savo3 LF@&savo2 LF@&savo1
+JUMP &codegen12 
+LABEL &codegen11
+INT2FLOAT LF@&codegen3 LF@&savo1
+EQ LF@&savo3 LF@&savo2 LF@&codegen3
+JUMP &codegen12 
+LABEL &codegen4
+JUMPIFEQ &codegen14 LF@&codegen2 string@int
+JUMPIFEQ &codegen9 LF@&codegen2 string@float
+JUMP &codegen13 
+LABEL &codegen14
+EQ LF@&savo3 LF@&savo2 LF@&savo1
+JUMP &codegen12 
+LABEL &codegen9
+INT2FLOAT LF@&codegen1 LF@&savo2
+EQ LF@&savo3 LF@&codegen1 LF@&savo1
+JUMP &codegen12 
+LABEL &codegen8
+JUMPIFNEQ &codegen13 LF@&codegen2 string@nil
+EQ LF@&savo3 LF@&savo2 LF@&savo1
+JUMP &codegen12 
+LABEL &codegen7
+JUMPIFNEQ &codegen13 LF@&codegen2 string@bool
+EQ LF@&savo3 LF@&savo2 LF@&savo1
+JUMP &codegen12 
+LABEL &codegen6
+JUMPIFNEQ &codegen13 LF@&codegen2 string@string
+EQ LF@&savo3 LF@&savo2 LF@&savo1
+JUMP &codegen12 
+MOVE LF@&sax1 LF@&savo3
+TYPE LF@&codegen15 LF@&sax1
+TYPE LF@&codegen17 LF@&sax0
+JUMPIFEQ &codegen21 LF@&codegen15 string@float
+JUMPIFEQ &codegen20 LF@&codegen15 string@int
+JUMPIFEQ &codegen24 LF@&codegen15 string@nil
+JUMPIFEQ &codegen22 LF@&codegen15 string@string
+JUMPIFEQ &codegen23 LF@&codegen15 string@bool
+JUMP &codegen29 
+LABEL &codegen21
+JUMPIFEQ &codegen27 LF@&codegen17 string@int
+JUMPIFEQ &codegen26 LF@&codegen17 string@float
+JUMP &codegen29 
+LABEL &codegen26
+EQ LF@&codegen19 LF@&sax1 LF@&sax0
+JUMP &codegen28 
+LABEL &codegen27
+INT2FLOAT LF@&codegen18 LF@&sax0
+EQ LF@&codegen19 LF@&sax1 LF@&codegen18
+JUMP &codegen28 
+LABEL &codegen20
+JUMPIFEQ &codegen30 LF@&codegen17 string@int
+JUMPIFEQ &codegen25 LF@&codegen17 string@float
+JUMP &codegen29 
+LABEL &codegen30
+EQ LF@&codegen19 LF@&sax1 LF@&sax0
+JUMP &codegen28 
+LABEL &codegen25
+INT2FLOAT LF@&codegen16 LF@&sax1
+EQ LF@&codegen19 LF@&codegen16 LF@&sax0
+JUMP &codegen28 
+LABEL &codegen24
+JUMPIFNEQ &codegen29 LF@&codegen17 string@nil
+EQ LF@&codegen19 LF@&sax1 LF@&sax0
+JUMP &codegen28 
+LABEL &codegen23
+JUMPIFNEQ &codegen29 LF@&codegen17 string@bool
+EQ LF@&codegen19 LF@&sax1 LF@&sax0
+JUMP &codegen28 
+LABEL &codegen22
+JUMPIFNEQ &codegen29 LF@&codegen17 string@string
+EQ LF@&codegen19 LF@&sax1 LF@&sax0
+JUMP &codegen28 
+LABEL &codegen29
+EXIT int@4
+LABEL &codegen28
+JUMPIFNEQ &sax2 LF@&codegen19 bool@true
+DEFVAR LF@&sax4
+DEFVAR LF@&savo4
+MOVE LF@&savo4 string@ahoj\010
+MOVE LF@&sax4 LF@&savo4
+PUSHS LF@&sax4
+DEFVAR LF@&sax5
+MOVE LF@&sax5 int@1
+PUSHS LF@&sax5
+CALL print
+POPS LF@&sax4
+JUMP &sax3
+LABEL &sax2
+DEFVAR LF@&sax6
+DEFVAR LF@&savo5
+MOVE LF@&savo5 string@ne
+MOVE LF@&sax6 LF@&savo5
+PUSHS LF@&sax6
+DEFVAR LF@&sax7
+MOVE LF@&sax7 int@1
+PUSHS LF@&sax7
+CALL print
+POPS LF@&sax6
+LABEL &sax3

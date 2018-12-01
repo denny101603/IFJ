@@ -1,0 +1,6 @@
+#missing eol after else
+i = 0
+if i > 0 then
+   print "Slepice vymrely"
+else print "slepice nevymrely"
+end

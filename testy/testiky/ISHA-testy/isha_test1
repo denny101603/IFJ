@@ -1,0 +1,10 @@
+=begin toto bude trochu podvod
+=begin
+=begin
+=en
+ =end
+=end ale tak co, měl by to být v pořádku komentář
+
+#tohle je obyč přiřazení
+a = 5 * 6 / 8+3-10*9999999999.1
+b = a - 1

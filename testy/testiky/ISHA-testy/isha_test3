@@ -1,0 +1,3 @@
+i = 0
+while i < 9 do i = i + 1 end
+#mělo by failnout, protože za do má být eol
