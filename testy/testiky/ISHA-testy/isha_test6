@@ -1,0 +1,10 @@
+#test na vestavěné funkce
+nejakyString = inputs()
+nejakeInteger = inputi()
+_floatik = inputf()
+print(nejakyString, nejakeInteger,_floatik)
+s = nejakyString
+delka = length(nejakyString)
+podretezec = substr(s, 2, delka)
+ascii = ord(s, 0)
+char = chr(ascii)

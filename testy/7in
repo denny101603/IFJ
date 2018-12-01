@@ -1,0 +1,7 @@
+# definice funkce s VICE parametry
+def test?(_a,_b,_c,_d,_e,_f)
+	a = 5
+	print "Test fce s vice parametry - ok\n"
+end
+
+test?(1,2,3,4,5,6)
