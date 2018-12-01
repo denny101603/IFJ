@@ -1,0 +1,7 @@
+i = 0
+soucet = 0
+while i < 9 do
+   soucet = soucet + i
+   i = i + 1
+end
+print soucet
