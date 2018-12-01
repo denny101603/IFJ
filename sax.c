@@ -958,6 +958,7 @@ bool nt_assignment(TSynCommon *sa_vars)
             {
                 if(sa_vars->ret != NULL)
                     tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest, sa_vars->gc); //navratovou hodnotu z fce/vyrazu, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
+                    sa_vars->dest = NULL;
                 return true;
             }
             else
