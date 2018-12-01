@@ -587,6 +587,7 @@ bool nt_expression(TSynCommon *sa_vars)
             sa_vars->err_code = ERR_INTERNAL;
             return false;
         }
+        tac_defvar(sa_vars->tac_list, sa_vars->dest, sa_vars->gc);
     }
 
     if(!savo(sa_vars))
