@@ -124,51 +124,101 @@ void pream()
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@podretezec\n");
     printf("DEFVAR LF@znak\n");
+    printf("DEFVAR LF@delka\n");
+    printf("DEFVAR LF@temp_bool\n");
+    printf("DEFVAR LF@type\n");
     printf("DEFVAR LF@s\n");
     printf("DEFVAR LF@i\n");
     printf("DEFVAR LF@n\n");
     printf("POPS LF@n\n");
     printf("POPS LF@i\n");
     printf("POPS LF@s\n");
+    printf("TYPE LF@type LF@n\n");
+    printf("JUMPIFNEQ label_type_substr LF@type string@int\n");
+    printf("TYPE LF@type LF@i\n");
+    printf("JUMPIFNEQ label_type_substr LF@type string@int\n");
+    printf("TYPE LF@type LF@s\n");
+    printf("JUMPIFNEQ label_type_substr LF@type string@string\n");
+    printf("STRLEN LF@delka LF@s\n");
+    printf("SUB LF@delka LF@delka int@1\n");
+    printf("GT LF@temp_bool LF@i LF@delka\n");
+    printf("JUMPIFEQ label_nil_substr LF@temp_bool bool@true\n");
+    printf("LT LF@temp_bool LF@i int@0\n");
+    printf("JUMPIFEQ label_nil_substr LF@temp_bool bool@true\n");
+    printf("LT LF@temp_bool LF@n int@0\n");
+    printf("JUMPIFEQ label_nil_substr LF@temp_bool bool@true\n");
     printf("GETCHAR LF@znak LF@s LF@i\n");
     printf("MOVE LF@podretezec LF@znak\n");
-    printf("ADD LF@i LF@i int@1\n");
     printf("LABEL while2\n");
     printf("JUMPIFEQ while2_end LF@i LF@n\n");
+    printf("ADD LF@i LF@i int@1\n");
     printf("GETCHAR LF@znak LF@s LF@i\n");
     printf("CONCAT LF@podretezec LF@podretezec LF@znak\n");
-    printf("ADD LF@i LF@i int@1\n");
+    printf("JUMPIFEQ while2_end LF@delka LF@i\n");
     printf("JUMP while2\n");
+    printf("LABEL label_nil_substr\n");
+    printf("MOVE LF@podretezec nil@nil\n");
     printf("LABEL while2_end\n");
     printf("PUSHS LF@podretezec\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL label_type_substr\n");
+    printf("EXIT int@4\n");
 
     //ord
     printf("LABEL ord\n");
     printf("CREATEFRAME\n");
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@hodnota\n");
+    printf("DEFVAR LF@delka\n");
+    printf("DEFVAR LF@varbool\n");
     printf("DEFVAR LF@s\n");
     printf("DEFVAR LF@i\n");
+    printf("DEFVAR LF@vartype\n");
     printf("POPS LF@i\n");
+    printf("TYPE LF@vartype LF@i\n");
+    printf("JUMPIFNEQ orderror LF@vartype string@int\n");
     printf("POPS LF@s\n");
+    printf("TYPE LF@vartype LF@s\n");
+    printf("JUMPIFNEQ orderror LF@vartype string@string\n");
+    printf("STRLEN LF@delka LF@s\n");
+    printf("SUB LF@delka LF@delka int@1\n");
+    printf("LT LF@varbool LF@i int@0\n");
+    printf("JUMPIFEQ ordnil LF@varbool bool@true\n");
+    printf("GT LF@varbool LF@i LF@delka\n");
+    printf("JUMPIFEQ ordnil LF@varbool bool@true\n");
     printf("STRI2INT LF@hodnota LF@s LF@i\n");
+    printf("LABEL end\n");
     printf("PUSHS LF@hodnota\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL ordnil\n");
+    printf("MOVE LF@hodnota nil@nil\n");
+    printf("JUMP end\n");
+    printf("LABEL orderror\n");
+    printf("EXIT int@4\n");
 
     //chr
     printf("LABEL chr\n");
     printf("CREATEFRAME\n");
     printf("PUSHFRAME\n");
     printf("DEFVAR LF@znak\n");
+    printf("DEFVAR LF@temp_bool\n");
+    printf("DEFVAR LF@type\n");
     printf("DEFVAR LF@s\n");
     printf("POPS LF@i\n");
+    printf("TYPE LF@type LF@znak\n");
+    printf("JUMPIFNEQ label_type_chr LF@type string@int\n");
+    printf("GT LF@temp_bool LF@i int@255\n");
+    printf("JUMPIFEQ label_type_chr LF@temp_bool bool@true\n");
+    printf("LT LF@temp_bool LF@i int@0\n");
+    printf("JUMPIFEQ label_type_chr LF@temp_bool bool@true\n");
     printf("INT2CHAR LF@znak LF@i\n");
     printf("PUSHS LF@znak\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL label_type_chr\n");
+    printf("EXIT int@4\n");
 
     //začátek kódu
     printf("LABEL main\n");
@@ -316,6 +366,7 @@ void gen_add(TThreeAC *instruct, Tgarbage_collector *collector)
     printf("CONCAT LF@%s LF@%s LF@%s\n", instruct->destination->name, instruct->op_1->name, instruct->op_2->name);
     printf("JUMP %s\n", addend); //skočí na úspěšný konec add
 
+    printf("LABEL %s\n", adderrorend);
     printf("EXIT int@4\n");
 
     printf("LABEL %s\n", addend);

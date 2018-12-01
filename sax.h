@@ -307,7 +307,7 @@ bool nt_callfce(TSynCommon *sa_vars);
  *	@param sa_vars ukazatel na strukturu kam se prida TS funkci
 *	@return true pro uspech jinak false
 */
-bool init_ts_fun(TSynCommon *sa_vars);
+bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc);
 
 /**
 *	@brief kontroluje token od skeneru, v pripade chyby ji zpropaguje do struktury sa_vars->err_code a v pripade chyby dealokuje token
