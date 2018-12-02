@@ -343,7 +343,6 @@ bool nt_deffunc(TSynCommon *sa_vars)
             char *nil_str = sax_temp_id_generator(sa_vars->gc);
             if(nil_str == NULL)
                 return false;
-            Toperand *op_nil = op_init(KEY_NIL, nil_str, sa_vars->gc);
 
             char *nil_const_str = (char *) malloc(sizeof(char)*4); //nil\0
             gc_add_garbage(sa_vars->gc, nil_const_str);
@@ -1530,7 +1529,7 @@ TSynCommon *alloc_sa(Tgarbage_collector *gc)
     if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
         return NULL;
 
-    if(arr_init(arr, gc) == ERR_INTERNAL || !init_ts_fun(sa_vars, gc)) //neuspesna alokace
+    if(arr_init(arr) == ERR_INTERNAL || !init_ts_fun(sa_vars, gc)) //neuspesna alokace
         return NULL;
 
     buffer_init(buffer );
