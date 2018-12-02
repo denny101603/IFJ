@@ -10,8 +10,8 @@ set(CMAKE_DEPENDS_CHECK_C
   "C:/Users/danbu/CLionProjects/ifjprojektspravny/parser.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/parser.c.obj"
   "C:/Users/danbu/CLionProjects/ifjprojektspravny/parser_expr.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/parser_expr.c.obj"
   "C:/Users/danbu/CLionProjects/ifjprojektspravny/scanner.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/scanner.c.obj"
-  "C:/Users/danbu/CLionProjects/ifjprojektspravny/seman.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/seman.c.obj"
   "C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/tac.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/tac.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

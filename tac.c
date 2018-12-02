@@ -9,16 +9,13 @@
 *                                      *
 ***************************************/
 /**
-*	@file seman.c
-*	@author Matěj Jelínek, Jan Beran
-*	@brief soubor s definicemi funkci ze seman.h
- *	v1.2: Vsechny funkce vytvorene Janem Beranem otestovane v simulaci (nemam semanticky generator, ktery by je otestoval naostro).
- *	      V simulovanych testech vsechno fungovalo dobre.
+*	@file tac.c
+*	@author Matěj Jelínek, Jan Beran, Daniel Bubenicek
+*	@brief soubor s definicemi funkci ze tac.h
 */
-#include "seman.h"
+#include "tac.h"
 #include "garbage_collector.h"
 #include <stdio.h>
-//
 
 TTacList *TAC_init(Tgarbage_collector *collector)
 {

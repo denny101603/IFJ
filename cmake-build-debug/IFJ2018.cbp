@@ -112,16 +112,16 @@
 		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/scanner.h">
 			<Option target="IFJ2018"/>
 		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/seman.c">
-			<Option target="IFJ2018"/>
-		</Unit>
-		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/seman.h">
-			<Option target="IFJ2018"/>
-		</Unit>
 		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.c">
 			<Option target="IFJ2018"/>
 		</Unit>
 		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.h">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/tac.c">
+			<Option target="IFJ2018"/>
+		</Unit>
+		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/tac.h">
 			<Option target="IFJ2018"/>
 		</Unit>
 		<Unit filename="C:/Users/danbu/CLionProjects/ifjprojektspravny/CMakeLists.txt">

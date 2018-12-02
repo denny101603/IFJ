@@ -12,7 +12,7 @@
 #include "garbage_collector.h"
 #include "scanner.h"
 #include "parser.h"
-#include "seman.h"
+#include "tac.h"
 #include "code_gen.h"
 #include "err_codes.h"
 

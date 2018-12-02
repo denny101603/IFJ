@@ -19,7 +19,7 @@
 
 #include "scanner.h"
 #include "symtable.h"
-#include "seman.h"
+#include "tac.h"
 #include "garbage_collector.h"
 
 #define TS_SIZE 127ul //TODO domluvit se na nejake velikosti. Musi to byt prvocislo. A stastne cislo (viz wiki).

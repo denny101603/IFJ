@@ -9,7 +9,7 @@
 *                                      *
 ***************************************/
 /**
-*	@file fsm.c
+*	@file scanner.c
 *	@author Daniel Bubenicek, Jan Beran
 *	@brief implementace konecneho automatu pro lexikalni analyzator
  *	v2.0: prvni stabilni a otestovana verze

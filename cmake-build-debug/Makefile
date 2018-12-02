@@ -284,33 +284,6 @@ scanner.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/scanner.c.s
 .PHONY : scanner.c.s
 
-seman.obj: seman.c.obj
-
-.PHONY : seman.obj
-
-# target to build an object file
-seman.c.obj:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/seman.c.obj
-.PHONY : seman.c.obj
-
-seman.i: seman.c.i
-
-.PHONY : seman.i
-
-# target to preprocess a source file
-seman.c.i:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/seman.c.i
-.PHONY : seman.c.i
-
-seman.s: seman.c.s
-
-.PHONY : seman.s
-
-# target to generate assembly for a file
-seman.c.s:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/seman.c.s
-.PHONY : seman.c.s
-
 symtable.obj: symtable.c.obj
 
 .PHONY : symtable.obj
@@ -337,6 +310,33 @@ symtable.s: symtable.c.s
 symtable.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/symtable.c.s
 .PHONY : symtable.c.s
+
+tac.obj: tac.c.obj
+
+.PHONY : tac.obj
+
+# target to build an object file
+tac.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/tac.c.obj
+.PHONY : tac.c.obj
+
+tac.i: tac.c.i
+
+.PHONY : tac.i
+
+# target to preprocess a source file
+tac.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/tac.c.i
+.PHONY : tac.c.i
+
+tac.s: tac.c.s
+
+.PHONY : tac.s
+
+# target to generate assembly for a file
+tac.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/tac.c.s
+.PHONY : tac.c.s
 
 # Help Target
 help:
@@ -365,12 +365,12 @@ help:
 	@echo ... scanner.obj
 	@echo ... scanner.i
 	@echo ... scanner.s
-	@echo ... seman.obj
-	@echo ... seman.i
-	@echo ... seman.s
 	@echo ... symtable.obj
 	@echo ... symtable.i
 	@echo ... symtable.s
+	@echo ... tac.obj
+	@echo ... tac.i
+	@echo ... tac.s
 .PHONY : help
 
 

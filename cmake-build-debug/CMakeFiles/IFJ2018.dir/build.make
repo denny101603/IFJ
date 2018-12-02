@@ -121,18 +121,18 @@ CMakeFiles/IFJ2018.dir/symtable.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/symtable.c.s"
 	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\symtable.c -o CMakeFiles\IFJ2018.dir\symtable.c.s
 
-CMakeFiles/IFJ2018.dir/seman.c.obj: CMakeFiles/IFJ2018.dir/flags.make
-CMakeFiles/IFJ2018.dir/seman.c.obj: ../seman.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/IFJ2018.dir/seman.c.obj"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\seman.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\seman.c
+CMakeFiles/IFJ2018.dir/tac.c.obj: CMakeFiles/IFJ2018.dir/flags.make
+CMakeFiles/IFJ2018.dir/tac.c.obj: ../tac.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/IFJ2018.dir/tac.c.obj"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\IFJ2018.dir\tac.c.obj   -c C:\Users\danbu\CLionProjects\ifjprojektspravny\tac.c
 
-CMakeFiles/IFJ2018.dir/seman.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/seman.c.i"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\seman.c > CMakeFiles\IFJ2018.dir\seman.c.i
+CMakeFiles/IFJ2018.dir/tac.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/IFJ2018.dir/tac.c.i"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\danbu\CLionProjects\ifjprojektspravny\tac.c > CMakeFiles\IFJ2018.dir\tac.c.i
 
-CMakeFiles/IFJ2018.dir/seman.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/seman.c.s"
-	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\seman.c -o CMakeFiles\IFJ2018.dir\seman.c.s
+CMakeFiles/IFJ2018.dir/tac.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/IFJ2018.dir/tac.c.s"
+	C:\MinGW\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\danbu\CLionProjects\ifjprojektspravny\tac.c -o CMakeFiles\IFJ2018.dir\tac.c.s
 
 CMakeFiles/IFJ2018.dir/code_gen.c.obj: CMakeFiles/IFJ2018.dir/flags.make
 CMakeFiles/IFJ2018.dir/code_gen.c.obj: ../code_gen.c
@@ -167,7 +167,7 @@ IFJ2018_OBJECTS = \
 "CMakeFiles/IFJ2018.dir/parser_expr.c.obj" \
 "CMakeFiles/IFJ2018.dir/parser.c.obj" \
 "CMakeFiles/IFJ2018.dir/symtable.c.obj" \
-"CMakeFiles/IFJ2018.dir/seman.c.obj" \
+"CMakeFiles/IFJ2018.dir/tac.c.obj" \
 "CMakeFiles/IFJ2018.dir/code_gen.c.obj" \
 "CMakeFiles/IFJ2018.dir/garbage_collector.c.obj"
 
@@ -179,7 +179,7 @@ IFJ2018.exe: CMakeFiles/IFJ2018.dir/scanner.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/parser_expr.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/parser.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/symtable.c.obj
-IFJ2018.exe: CMakeFiles/IFJ2018.dir/seman.c.obj
+IFJ2018.exe: CMakeFiles/IFJ2018.dir/tac.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/code_gen.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/garbage_collector.c.obj
 IFJ2018.exe: CMakeFiles/IFJ2018.dir/build.make
