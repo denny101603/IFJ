@@ -14,13 +14,13 @@
 *	@brief knihovna pro potreby Syntaktickeho AnalyzatOru Vyrazu (SAVO)
  *	v1.2: Vsechny funkce deklarovany, behem refaktorizace sava.c budou doplneny komentare a dalsi dokumentace.
 */
-#ifndef IFJ2018_SAVO_H
-#define IFJ2018_SAVO_H
+#ifndef IFJ2018_PARSER_EXPR_H
+#define IFJ2018_PARSER_EXPR_H
 
 //
-#include "fsm.h"
+#include "scanner.h"
 #include "err_codes.h"
-#include "sax.h"
+#include "parser.h"
 #include "seman.h"
 
 //#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
@@ -208,4 +208,4 @@ bool execute_rule(int rule, TStack *stack, TSynCommon *sa_vars, TBuffer *interna
  */
 bool savo(TSynCommon *sa_vars);
 
-#endif //IFJ2018_SAVO_H
+#endif //IFJ2018_PARSER_EXPR_H

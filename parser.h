@@ -1,11 +1,23 @@
-//
-// Created by janbe on 08.11.2018.
-//
+/***************************************
+* 	IFJ projekt 2018                   *
+* 						               *
+*	Autori:			                   *
+*	Jan Beran (xberan43)	           *
+*	Daniel Bubenicek (xbuben05)	       *
+*	Jan Carba (xcarba00)		       *
+*	Matej Jelinek (xjelen49)	       *
+*                                      *
+***************************************/
+/**
+*	@file parser.h
+*	@authors Daniel Bubenicek, Jan Beran, Jan Carba, Matej Jelinek
+*	@brief syntakticky analyzator shora dolu - rekurzivni pristup
+*/
 
-#ifndef IFJ2018_SAX_H
-#define IFJ2018_SAX_H
+#ifndef IFJ2018_PARSER_H
+#define IFJ2018_PARSER_H
 
-#include "fsm.h"
+#include "scanner.h"
 #include "symtable.h"
 #include "seman.h"
 #include "garbage_collector.h"
@@ -363,4 +375,4 @@ char *sax_temp_id_generator(Tgarbage_collector *gc);
 char *long_to_string(long num, Tgarbage_collector *gc);
 
 
-#endif //IFJ2018_SAX_H
+#endif //IFJ2018_PARSER_H

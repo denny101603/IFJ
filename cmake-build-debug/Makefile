@@ -47,10 +47,10 @@ RM = "C:\Program Files\JetBrains\CLion 2018.2.4\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\janbe\Desktop\IFJ
+CMAKE_SOURCE_DIR = C:\Users\danbu\CLionProjects\ifjprojektspravny
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\janbe\Desktop\IFJ\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -79,9 +79,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles\progress.marks
 	$(MAKE) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\janbe\Desktop\IFJ\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\danbu\CLionProjects\ifjprojektspravny\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -149,33 +149,6 @@ code_gen.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/code_gen.c.s
 .PHONY : code_gen.c.s
 
-fsm.obj: fsm.c.obj
-
-.PHONY : fsm.obj
-
-# target to build an object file
-fsm.c.obj:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.obj
-.PHONY : fsm.c.obj
-
-fsm.i: fsm.c.i
-
-.PHONY : fsm.i
-
-# target to preprocess a source file
-fsm.c.i:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.i
-.PHONY : fsm.c.i
-
-fsm.s: fsm.c.s
-
-.PHONY : fsm.s
-
-# target to generate assembly for a file
-fsm.c.s:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/fsm.c.s
-.PHONY : fsm.c.s
-
 garbage_collector.obj: garbage_collector.c.obj
 
 .PHONY : garbage_collector.obj
@@ -230,59 +203,86 @@ main.c.s:
 	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/main.c.s
 .PHONY : main.c.s
 
-savo.obj: savo.c.obj
+parser.obj: parser.c.obj
 
-.PHONY : savo.obj
-
-# target to build an object file
-savo.c.obj:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/savo.c.obj
-.PHONY : savo.c.obj
-
-savo.i: savo.c.i
-
-.PHONY : savo.i
-
-# target to preprocess a source file
-savo.c.i:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/savo.c.i
-.PHONY : savo.c.i
-
-savo.s: savo.c.s
-
-.PHONY : savo.s
-
-# target to generate assembly for a file
-savo.c.s:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/savo.c.s
-.PHONY : savo.c.s
-
-sax.obj: sax.c.obj
-
-.PHONY : sax.obj
+.PHONY : parser.obj
 
 # target to build an object file
-sax.c.obj:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.obj
-.PHONY : sax.c.obj
+parser.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/parser.c.obj
+.PHONY : parser.c.obj
 
-sax.i: sax.c.i
+parser.i: parser.c.i
 
-.PHONY : sax.i
+.PHONY : parser.i
 
 # target to preprocess a source file
-sax.c.i:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.i
-.PHONY : sax.c.i
+parser.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/parser.c.i
+.PHONY : parser.c.i
 
-sax.s: sax.c.s
+parser.s: parser.c.s
 
-.PHONY : sax.s
+.PHONY : parser.s
 
 # target to generate assembly for a file
-sax.c.s:
-	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/sax.c.s
-.PHONY : sax.c.s
+parser.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/parser.c.s
+.PHONY : parser.c.s
+
+parser_expr.obj: parser_expr.c.obj
+
+.PHONY : parser_expr.obj
+
+# target to build an object file
+parser_expr.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/parser_expr.c.obj
+.PHONY : parser_expr.c.obj
+
+parser_expr.i: parser_expr.c.i
+
+.PHONY : parser_expr.i
+
+# target to preprocess a source file
+parser_expr.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/parser_expr.c.i
+.PHONY : parser_expr.c.i
+
+parser_expr.s: parser_expr.c.s
+
+.PHONY : parser_expr.s
+
+# target to generate assembly for a file
+parser_expr.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/parser_expr.c.s
+.PHONY : parser_expr.c.s
+
+scanner.obj: scanner.c.obj
+
+.PHONY : scanner.obj
+
+# target to build an object file
+scanner.c.obj:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/scanner.c.obj
+.PHONY : scanner.c.obj
+
+scanner.i: scanner.c.i
+
+.PHONY : scanner.i
+
+# target to preprocess a source file
+scanner.c.i:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/scanner.c.i
+.PHONY : scanner.c.i
+
+scanner.s: scanner.c.s
+
+.PHONY : scanner.s
+
+# target to generate assembly for a file
+scanner.c.s:
+	$(MAKE) -f CMakeFiles\IFJ2018.dir\build.make CMakeFiles/IFJ2018.dir/scanner.c.s
+.PHONY : scanner.c.s
 
 seman.obj: seman.c.obj
 
@@ -350,21 +350,21 @@ help:
 	@echo ... code_gen.obj
 	@echo ... code_gen.i
 	@echo ... code_gen.s
-	@echo ... fsm.obj
-	@echo ... fsm.i
-	@echo ... fsm.s
 	@echo ... garbage_collector.obj
 	@echo ... garbage_collector.i
 	@echo ... garbage_collector.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
-	@echo ... savo.obj
-	@echo ... savo.i
-	@echo ... savo.s
-	@echo ... sax.obj
-	@echo ... sax.i
-	@echo ... sax.s
+	@echo ... parser.obj
+	@echo ... parser.i
+	@echo ... parser.s
+	@echo ... parser_expr.obj
+	@echo ... parser_expr.i
+	@echo ... parser_expr.s
+	@echo ... scanner.obj
+	@echo ... scanner.i
+	@echo ... scanner.s
 	@echo ... seman.obj
 	@echo ... seman.i
 	@echo ... seman.s

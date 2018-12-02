@@ -17,10 +17,9 @@
 */
 
 #include <string.h>
-#include "fsm.h"
+#include "scanner.h"
 #include "err_codes.h"
 #include "garbage_collector.h"
-//#include "garbage_collector.c"
 
 char *key_words[10] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
@@ -54,7 +53,7 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                     case EOL:
                         next_state = EOL_0;
                         break;
-                    case '+': //denny neumí s githubem. Potvrzeno
+                    case '+':
                         next_state = OP_PLUS;
                         break;
                     case '-':
@@ -110,28 +109,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                     case '#':
                         next_state = ONE_LINE_COMMENT;
                         break;
-                        /*case '.': //.IFJcode18 ??
-                        {
-                            char ifj[] = ".IFJcode18";
-                            for (int i = 0; ifj[i] != '\0'; i++)
-                            {
-                                if(ifj[i] != c)
-                                {
-                                    next_state = LEX_ERROR;
-                                    break; //break for
-                                }
-                                else
-                                {
-                                    arr_add_char(token_value, (char)c);
-                                }
-                                c = get_next_char(token_value);
-                            }
-                            if (c == EOL) // ifj preambule ma byt na samostatnem radku
-                                next_state = IFJ_CODE_PREAM;
-                            else
-                                next_state = LEX_ERROR; //
-                            break; //break case
-                        }*/
                     case EOF:
                         next_state = EOF_STATE;
                         break;
@@ -156,10 +133,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 fprintf(stderr, MESSAGE_LEX);
                 fflush(stderr);
                 break;
-                /*case IFJ_CODE_PREAM: //DONE
-                    token_set_type(&token, IFJ_CODE_PREAM); //token ready
-                    final_state = true;
-                    break;*/
             case OP_PLUS: //DONE
                 token_set_type(token, OP_PLUS); //token ready
                 final_state = true;
@@ -276,7 +249,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 {
                     if(comm_begin[i] != c)
                     {
-                        //fprintf(stderr, "znak je: '%c'.\n", c);
                         next_state = LEX_ERROR;
                         break; //break for
                     }
@@ -298,7 +270,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 if ((c == ' ' || c == '\t' || c == '\n') && begin_compared_successfully) //c == whitespace, musi byt za =begin
                 {
                     next_state = BLOCK_COMMENT_1;
-                   // arr_set_buffer(token_value, c);
                 }
                 else
                     next_state = LEX_ERROR;}
@@ -411,7 +382,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                     next_state = LEX_ERROR; //begin nelze pouzit jako ID
                 else
                     next_state = ID_2;
-                //free(str);
                 break;
             case ID_2: //DONE
                 if(token_set_attribute(token, token_value, collector) == ERR_INTERNAL)
@@ -520,7 +490,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 final_state = true;
                 break;
             case ESCAPE_0:
-                //fprintf(stderr, "jsem v ESCAPE_0\n");
                 c = get_next_char(token_value);
                 switch(c)
                 {
@@ -663,17 +632,16 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                    (c >= 'a' && c <= 'f') ||
                    (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                 {
-                    hexa[0] = c;
+                    hexa[0] = (char) c;
                     c = get_next_char(token_value);
                     if ((c >= '0' && c <= '9') ||
                         (c >= 'a' && c <= 'f') ||
                         (c >= 'A' && c <= 'F'))    //pokud je c 0..9a..fA..F
                     {
-                        hexa[1] = c;
-                        //fprintf(stderr, "hexa0 = %c, hexa1 = %c\n", hexa[0], hexa[1]);
+                        hexa[1] = (char) c;
                         sscanf(hexa, "%x", &num);
-                        char pica[4];
-                        sprintf(pica, "%i", num); //do píče to dá hodnotu cisla num ve stringu
+                        char numstr[4];
+                        sprintf(numstr, "%i", num); //do  to dá hodnotu cisla num ve stringu
                         if(arr_add_char(token_value, '\\') == ERR_INTERNAL)
                         {
                             token_set_type(token, ERR_INTERNAL);
@@ -685,21 +653,14 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                             return token;
                         }
 
-                        for(int kurva = 0; kurva < 2; kurva++)
+                        for(int i = 0; i < 2; i++)
                         {
-                            if(arr_add_char(token_value, pica[kurva]) == ERR_INTERNAL)
+                            if(arr_add_char(token_value, numstr[i]) == ERR_INTERNAL)
                             {
                                 token_set_type(token, ERR_INTERNAL);
                                 return token;
                             }
                         }
-                        //c = num;
-                        //fprintf(stderr, "c je: %d %c %c\n ", c, c, 153);
-                       /* if(arr_add_char(token_value, (char)c) == ERR_INTERNAL)
-                        {
-                            token_set_type(token, ERR_INTERNAL);
-                            return token;
-                        }*/
                     }
                     else
                     {
@@ -805,7 +766,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                 sscanf(token_value->array, "%f", &num);
                 char *temp = malloc(sizeof(char)*128);
                 gc_add_garbage(collector, temp);
-                //sprintf(token_value->array, "%a", num);
                 sprintf(temp, "%.20a", num);
 
                 arr_reset(token_value);
@@ -999,31 +959,8 @@ int token_set_attribute(Ttoken *token, Tarray *arr, Tgarbage_collector *collecto
     }
     token->attribute = attribute;
     return SUCCESS;
-    /*if(token->a_len <= arr->used) //pokud je maximalni delka atributu mensi nebo rovna nez arr->used  realokovat
-    {
-        char *temp_ptr = (char *) realloc(token->attribute, sizeof(char) * token->a_len * 2); //zvetseni pole na dvojnasobek, stejne jako u arr
-        if(temp_ptr == NULL) //realokace neuspesna
-        {
-            fprintf(stderr, MESSAGE_ALLOCATION);
-            free(token->attribute); //dealokace pole
-            return ERR_INTERNAL;
-        }
-        token->attribute = temp_ptr; //predani noveho ukazatele na pole
-        token->a_len *= 2; //zdvojnasobena velikost pole
-    }
-    for(int i = 0; i < arr->used; i++) //kopirujeme z arr->array do token->attribute
-    {
-        token->attribute[i] = arr->array[i];
-        token->a_used += 1;
-    }*/
 }
 
-void token_free(Ttoken *token)
-{
-    free(token->attribute);
-    token->attribute = NULL;
-    free(token);
-}
 
 int type_of_char(const int c)
 {
@@ -1046,26 +983,3 @@ int is_keyword(const char *str)
     }
     return false; //nenasel
 }
-/*
-
-int token_get_type(Ttoken *token)
-{
-    return token->type;
-}
-
-
-char *token_get_attribute(Ttoken *token)
-{
-     char *output = (char *) malloc(sizeof(char)*(token->a_used +1));//alokace pro predavany retezec, jedno misto navic pro \0
-     if(output == NULL)
-     {
-         fprintf(stderr, MESSAGE_ALLOCATION);
-         return NULL;
-     }
-     for(int i = 0; i < token->a_used; i++) //kopirovani pole
-         output[i] = token->attribute[i];
-     output[token->a_used] = '\0'; //na konec retezce dam ukoncovaci znak
-     return output;
-    return NULL;
-}
-*/
