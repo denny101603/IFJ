@@ -1147,7 +1147,6 @@ bool nt_callfce(TSynCommon *sa_vars)
     long num_of_args = 0; //pocitadlo argumentu pro overeni s TS
     if(!nt_args(sa_vars, &num_of_args)) //nepovedlo se, zkusim tedy jestli nebyla zavorka, pokud ano, zkusim to znovu
     {
-
         num_of_args = 0;
         Ttoken *t2 = get_next_token(sa_vars);
         if(!err_check(t2, sa_vars))
@@ -1453,7 +1452,7 @@ bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
     char *inputi = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *inputf = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *print = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
-    char *lenght = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
+    char *length = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *substr = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *ord = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
     char *chr = (char *) malloc(sizeof(char) * 7); //7 je potrebna delka pro nejdelsi nazev integrovane fce (6znaku + ukoncovaci)
@@ -1462,13 +1461,13 @@ bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
     gc_add_garbage(gc, inputi);
     gc_add_garbage(gc, inputf);
     gc_add_garbage(gc, print);
-    gc_add_garbage(gc, lenght);
+    gc_add_garbage(gc, length);
     gc_add_garbage(gc, substr);
     gc_add_garbage(gc, ord);
     gc_add_garbage(gc, chr);
 
     if(inputs == NULL || inputi == NULL || inputf == NULL || print == NULL
-        || lenght == NULL || substr == NULL || ord == NULL || chr == NULL) //nepovedena alokace
+        || length == NULL || substr == NULL || ord == NULL || chr == NULL) //nepovedena alokace
     {
         return false;
     }
@@ -1477,7 +1476,7 @@ bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
     strcpy(inputi, "inputi");
     strcpy(inputf, "inputf");
     strcpy(print, "print");
-    strcpy(lenght, "lenght");
+    strcpy(length, "length");
     strcpy(substr, "substr");
     strcpy(ord, "ord");
     strcpy(chr, "chr");
@@ -1486,7 +1485,7 @@ bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
     Tsymbol_table_item *b = symtab_edit_add(sa_vars->ts_fun, inputi, true, 0);
     Tsymbol_table_item *c = symtab_edit_add(sa_vars->ts_fun, inputf, true, 0);
     Tsymbol_table_item *d = symtab_edit_add(sa_vars->ts_fun, print, true, ZERO_TO_INF);
-    Tsymbol_table_item *e = symtab_edit_add(sa_vars->ts_fun, lenght, true, 1);
+    Tsymbol_table_item *e = symtab_edit_add(sa_vars->ts_fun, length, true, 1);
     Tsymbol_table_item *f = symtab_edit_add(sa_vars->ts_fun, substr, true, 3);
     Tsymbol_table_item *g = symtab_edit_add(sa_vars->ts_fun, ord, true, 2);
     Tsymbol_table_item *h = symtab_edit_add(sa_vars->ts_fun, chr, true, 1);
