@@ -1,9 +1,21 @@
-//
-// Created by janbe on 08.11.2018.
-//
+/***************************************
+* 	IFJ projekt 2018                   *
+* 						               *
+*	Autori:			                   *
+*	Jan Beran (xberan43)	           *
+*	Daniel Bubenicek (xbuben05)	       *
+*	Jan Carba (xcarba00)		       *
+*	Matej Jelinek (xjelen49)	       *
+*                                      *
+***************************************/
+/**
+*	@file parser.c
+*	@authors Daniel Bubenicek, Jan Beran, Jan Carba, Matej Jelinek
+*	@brief syntakticky analyzator shora dolu - rekurzivni pristup
+*/
 
-#include "sax.h"
-#include "savo.h"
+#include "parser.h"
+#include "parser_expr.h"
 #include "err_codes.h"
 #include <string.h>
 
@@ -77,7 +89,6 @@ Ttoken *buffer_popTop(TBuffer *buffer) //pro savo
         buffer->top = NULL;
         buffer->bottom = NULL;
     }
-    //free(temp);
     return ret;
 }
 
@@ -97,11 +108,10 @@ Ttoken *buffer_popBottom(TBuffer *buffer) //rpo sax
         buffer->bottom = temp->next;
         buffer->bottom->prev = NULL;
     }
-    //free(temp);
     return ret;
 }
 
-void delete_buffer(TBuffer *buffer)
+void delete_buffer(TBuffer *buffer)  //nevyuzito
 {
     if(buffer != NULL)
     {
@@ -253,7 +263,7 @@ bool progr(TSynCommon *sa_vars)
            return nt_assignment(sa_vars);
        }
        else if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
-       { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
+       { //TODO hrozi zatim nedefinovane fce
            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
            buffer_push_bottom(sa_vars->buffer, token, sa_vars);
            return nt_expression(sa_vars);
@@ -317,14 +327,14 @@ bool nt_deffunc(TSynCommon *sa_vars)
             Toperand *label = op_init(KEY_NIL, label_str, sa_vars->gc);
             if(label == NULL)
             {
-                sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
+                sa_vars->err_code = ERR_INTERNAL;
                 return false;
             }
 
             Toperand *op = op_init(t1->type, t1->attribute, sa_vars->gc);
             if(op == NULL)
             {
-                sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
+                sa_vars->err_code = ERR_INTERNAL;
                 return false;
             }
             tac_deffunc(sa_vars->tac_list, op, label, sa_vars->gc);
@@ -349,7 +359,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
             Toperand *ret = op_init(KEY_NIL, ret_str, sa_vars->gc);
             if(ret == NULL)
             {
-                sa_vars->err_code = ERR_INTERNAL; //todo denny dealokace neceho?
+                sa_vars->err_code = ERR_INTERNAL;
                 return false;
             }
             tac_defmove_const(sa_vars->tac_list, ret, op_nil_const, sa_vars->gc);
@@ -429,26 +439,26 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     if(bool_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *bool_temp = op_init(BOOLEAN, bool_str, sa_vars->gc);
     if(bool_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
 
-    char *cons_str = long_to_string(1, sa_vars->gc); //todo denny kdyby zbyl cas: poresit leakovani te jednicky, na 98% ji nikde nedealokuju
+    char *cons_str = long_to_string(1, sa_vars->gc);
     if(cons_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *cons_temp = op_init(BOOLEAN, cons_str, sa_vars->gc);
     if(cons_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp, sa_vars->gc); //true konstanta, kvuli urceni skoku
 
@@ -456,13 +466,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     if(temp_cond_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str, sa_vars->gc);
     if(temp_cond == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     tac_defvar(sa_vars->tac_list, temp_cond, sa_vars->gc);
 
@@ -470,13 +480,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     if(temp_label == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *label1 = op_init(NOBODY_CARES, temp_label, sa_vars->gc);
     if(label1 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     tac_lable(sa_vars->tac_list, label1, sa_vars->gc);
 
@@ -497,13 +507,13 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
     if(temp_label2_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str, sa_vars->gc);
     if(label2 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
 
     tac_jumpifneq(sa_vars->tac_list, label2, bool_temp, temp_cond, sa_vars->gc);
@@ -613,26 +623,26 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     if(bool_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *bool_temp = op_init(BOOLEAN, bool_str, sa_vars->gc);
     if(bool_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
 
     char *cons_str = long_to_string(1, sa_vars->gc);
     if(cons_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *cons_temp = op_init(BOOLEAN, cons_str, sa_vars->gc);
     if(cons_temp == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     tac_defmove_const(sa_vars->tac_list, bool_temp, cons_temp, sa_vars->gc); //true konstanta, kvuli urceni skoku
 
@@ -640,13 +650,13 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     if(temp_cond_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *temp_cond = op_init(NOBODY_CARES, temp_cond_str, sa_vars->gc);
     if(temp_cond == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     tac_defvar(sa_vars->tac_list, temp_cond, sa_vars->gc); //promenna pro podminku
 
@@ -654,27 +664,26 @@ bool nt_ifthenelse(TSynCommon *sa_vars)
     if(temp_label == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *label1 = op_init(NOBODY_CARES, temp_label, sa_vars->gc);
     if(label1 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
-   // tac_lable(sa_vars->tac_list, label1, sa_vars->gc); ///////////////////////////////////////todo odkomentovat, nez na to denny prijde
 
     char *temp_label2_str = sax_temp_id_generator(sa_vars->gc); //priprava pro label2
     if(temp_label2_str == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
     Toperand *label2 = op_init(NOBODY_CARES, temp_label2_str, sa_vars->gc);
     if(label2 == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace?
+        return false;
     }
 
     //KONEC TVORBY KODU*************************************//
@@ -782,14 +791,14 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
     if(temp_id == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace neceho?
+        return false;
     }
 
     Toperand *op = op_init(NOBODY_KNOWS, temp_id, sa_vars->gc);
     if(op == NULL)
     {
         sa_vars->err_code = ERR_INTERNAL;
-        return false; //todo denny dealokace neceho?
+        return false;
     }
 
     tac_defvar(sa_vars->tac_list, op, sa_vars->gc);
@@ -827,13 +836,13 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         if(temp_id == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
-            return false; //todo denny dealokoace neceho
+            return false;
         }
         Toperand *op = op_init(NOBODY_KNOWS, temp_id, sa_vars->gc);
         if(op == NULL)
         {
             sa_vars->err_code = ERR_INTERNAL;
-            return false; //todo denny dealokoace neceho
+            return false;
         }
         tac_defvar(sa_vars->tac_list, op, sa_vars->gc);
         sa_vars->dest = op; //reknu savu aby mi to dal do te docasne promenne
@@ -929,7 +938,7 @@ bool nt_assignment(TSynCommon *sa_vars)
                 if(op == NULL)
                 {
                     sa_vars->err_code = ERR_INTERNAL;
-                    return false; //todo denny dealokace neceho?
+                    return false;
                 }
                 tac_defvar(sa_vars->tac_list, op, sa_vars->gc);
                 sa_vars->dest = op;
@@ -941,7 +950,7 @@ bool nt_assignment(TSynCommon *sa_vars)
                 if(op == NULL)
                 {
                     sa_vars->err_code = ERR_INTERNAL;
-                    return false; //todo denny dealokace neceho?
+                    return false;
                 }
                 sa_vars->dest = op;
             }
@@ -1019,7 +1028,7 @@ bool nt_nextparams(TSynCommon *sa_vars)
                         if(op == NULL)
                         {
                             sa_vars->err_code = ERR_INTERNAL;
-                            return false; //todo denny dealokace?
+                            return false;
                         }
                         tac_loadparam(sa_vars->tac_list, op, sa_vars->gc);
 
@@ -1083,7 +1092,7 @@ bool nt_params(TSynCommon *sa_vars)
                     if(op == NULL)
                     {
                         sa_vars->err_code = ERR_INTERNAL;
-                        return false; //todo denny dealokace?
+                        return false;
                     }
                     tac_loadparam(sa_vars->tac_list, op, sa_vars->gc);
 
@@ -1181,20 +1190,20 @@ bool nt_callfce(TSynCommon *sa_vars)
     {
         char *temp_id = sax_temp_id_generator(sa_vars->gc);
         if (temp_id == NULL) {
-            return false; //todo denny dealokace neceho?
+            return false;
         }
-        Toperand *new_op = op_init(INTEGER, temp_id, sa_vars->gc); //sem dam pocet argumentu //todo by berry potencialni chyba
+        Toperand *new_op = op_init(INTEGER, temp_id, sa_vars->gc); //sem dam pocet argumentu
         if (new_op == NULL) {
-            return false; //todo denny dealokace neceho?
+            return false;
         }
 
         char *str_num_of_args = long_to_string(num_of_args, sa_vars->gc);
         if (str_num_of_args == NULL) {
-            return false; //todo denny dealokace neceho?
+            return false;
         }
-        Toperand *cons = op_init(INTEGER, str_num_of_args, sa_vars->gc); //todo by berry potencialni chyba
+        Toperand *cons = op_init(INTEGER, str_num_of_args, sa_vars->gc);
         if (cons == NULL) {
-            return false; //todo denny dealokace neceho?
+            return false;
         }
         //problem: do defmoveconst prijde &sax1 &sax1, ale zadna hodnota
         tac_defmove_const(sa_vars->tac_list, new_op, cons, sa_vars->gc);
@@ -1221,7 +1230,7 @@ bool nt_callfce(TSynCommon *sa_vars)
     Toperand *label = op_init(t1->type,t1->attribute, sa_vars->gc);
     if(label == NULL)
     {
-        return false; //todo denny dealokace neceho?
+        return false;
     }
 
     tac_call(sa_vars->tac_list, sa_vars->dest, label, sa_vars->gc);
@@ -1436,7 +1445,6 @@ bool nt_bodywhif(TSynCommon *sa_vars)
 bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
 {
     sa_vars->ts_fun = symtab_init(TS_SIZE);
-//    gc->others->ts_func = sa_vars->ts_fun;
     if(sa_vars->ts_fun == NULL) //chyba alokace
         return false;
 
@@ -1462,16 +1470,6 @@ bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
     if(inputs == NULL || inputi == NULL || inputf == NULL || print == NULL
         || lenght == NULL || substr == NULL || ord == NULL || chr == NULL) //nepovedena alokace
     {
-        /*
-        free(inputs);
-        free(inputi);
-        free(inputf);
-        free(print);
-        free(lenght);
-        free(substr);
-        free(ord);
-        free(chr);
-        symtab_free(sa_vars->ts_fun);*/
         return false;
     }
 
@@ -1494,27 +1492,7 @@ bool init_ts_fun(TSynCommon *sa_vars, Tgarbage_collector *gc)
     Tsymbol_table_item *h = symtab_edit_add(sa_vars->ts_fun, chr, true, 1);
 
     if(a == NULL || b == NULL || c == NULL || d == NULL || e == NULL || f == NULL || g == NULL || h == NULL) //neuspesna alokace
-    {
-        /*
-        free(inputs);
-        free(inputi);
-        free(inputf);
-        free(print);
-        free(lenght);
-        free(substr);
-        free(ord);
-        free(chr);
-        free(a);
-        free(b);
-        free(c);
-        free(e);
-        free(d);
-        free(f);
-        free(g);
-        free(h);
-        free(sa_vars->ts_fun);*/
         return false;
-    }
 
     return true;
 }
@@ -1537,38 +1515,25 @@ TSynCommon *alloc_sa(Tgarbage_collector *gc)
 {
     TSynCommon *sa_vars = (TSynCommon *) malloc(sizeof(TSynCommon)); //struktura s promennymi pro komunikaci mezi castmi prekladace
     gc_add_garbage(gc, sa_vars);
+
     Tarray *arr = (Tarray *) malloc(sizeof(Tarray)); //struktura pole pro skener //arr nema prijit do garbage collectoru
-    //gc_add_garbage(gc, arr);
-    //gc_add_garbage(gc, arr);
+
     TBuffer *buffer = (TBuffer *) malloc(sizeof(TBuffer)); //buffer pro vraceni lookahead tokenu
     gc_add_garbage(gc, buffer);
+
     TSymtables_stack *local_tables = (TSymtables_stack *) malloc(sizeof(TSymtables_stack));
     gc_add_garbage(gc, local_tables);
+
     Tsymbol_table *symtab_local = symtab_init(TS_SIZE);
-   // sa_vars->gc = gc;
+
 
 
     if(sa_vars == NULL || arr == NULL || buffer == NULL || local_tables == NULL || symtab_local == NULL) //neuspesna alokace
-    {
-        /*free(sa_vars);
-        free(arr);
-        free(buffer);
-        free(local_tables);
-        symtab_free(symtab_local);*/
         return NULL;
-    }
 
     if(arr_init(arr, gc) == ERR_INTERNAL || !init_ts_fun(sa_vars, gc)) //neuspesna alokace
-    { //dealokace
-        /*if(arr_init(arr) != ERR_INTERNAL)
-            arr_free(arr);
-        free(sa_vars);
-        free(arr);
-        free(buffer);
-        free(local_tables);
-        symtab_free(symtab_local);*/
         return NULL;
-    }
+
     buffer_init(buffer );
     TS_stack_init(local_tables);
 
@@ -1580,7 +1545,6 @@ TSynCommon *alloc_sa(Tgarbage_collector *gc)
     sa_vars->ret = NULL;
 
     TS_push(sa_vars->local_tables, symtab_local);
-//    gc->others->sym_stack = local_tables;
 
     return sa_vars;
 }
@@ -1591,14 +1555,7 @@ void dealloc_sa(TSynCommon *sa_vars)
     free(sa_vars->arr);
 
     TS_stack_free(sa_vars->local_tables);
-    //free(sa_vars->local_tables);
-
-    //delete_buffer(sa_vars->buffer);
-    //free(sa_vars->buffer);
-
     symtab_free(sa_vars->ts_fun);
-
-    //free(sa_vars);
 }
 
 void TS_stack_free(TSymtables_stack *ts_stack)
