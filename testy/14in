@@ -25,4 +25,5 @@ end
 
 lm = 12
 fib(lm)
+print "\n"
 fakt(lm)
