@@ -96,7 +96,7 @@ void symtab_clear(Tsymbol_table *t)
     }
 }
 
-void    symtab_free(Tsymbol_table *t)
+void symtab_free(Tsymbol_table *t)
 {
     if(t == NULL)
         return;

@@ -9,13 +9,13 @@
 *                                      *
 ***************************************/
 /**
-*	@file seman.h
+*	@file tac.h
 *	@author Matěj Jelínek, Jan Beran, Daniel Bubenicek
-*	@brief knihovna pro potreby semantickeho generatoru
+*	@brief hlavickovy soubor pro generaci triadresneho kodu
 */
 
-#ifndef PROJECT_IFJCODE_H
-#define PROJECT_IFJCODE_H
+#ifndef PROJECT_TAC_H
+#define PROJECT_TAC_H
 
 typedef struct gc Tgarbage_collector;
 
@@ -274,4 +274,4 @@ enum instructions{
     ENDIF
 };
 
-#endif //IFJ2018_SEMAN_H
+#endif //IFJ2018_TAC_H

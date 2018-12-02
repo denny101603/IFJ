@@ -9,7 +9,7 @@
 *                                      *
 ***************************************/
 /**
-*	@file fsm.h
+*	@file scanner.h
 *	@author Daniel Bubenicek, Jan Beran
 *	@brief knihovna pro potreby konecneho automatu pro lexikalni analyzator
  *	v1.1: opraveny chyby v komentech

@@ -21,7 +21,7 @@
 #include "scanner.h"
 #include "err_codes.h"
 #include "parser.h"
-#include "seman.h"
+#include "tac.h"
 
 //#define TERMINUS 666 //Proč zrovna toto? Protoze nikdy nebudeme mit 666 stavu. Pokud ano, satan nam pomahej...
 
