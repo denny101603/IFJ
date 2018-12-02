@@ -70,7 +70,7 @@ Ttoken *get_token(Tarray *arr, Tgarbage_collector *collector);
 *	@param[in, out] arr – pole k inicializaci
 *	@return SUCCES nebo ERR_INTERNAL pro neuspesnou alokaci
 */
-int arr_init(Tarray *arr, Tgarbage_collector *gc);
+int arr_init(Tarray *arr);
 
 /**
 *	@brief Pridani znaku do pole arr (hlida presahnuti lenght a pripadne realokuje na vetsi)
