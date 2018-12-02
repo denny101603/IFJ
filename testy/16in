@@ -1,0 +1,3 @@
+a = "ahoj jak se mas"
+b = substr a, 5, 3
+print b, "\n"

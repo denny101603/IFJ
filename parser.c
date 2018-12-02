@@ -202,7 +202,7 @@ int startSA(TTacList *list, TSymtables_stack *symtabs_bin, Tgarbage_collector *g
     sa_vars->err_code = IN_PROGRESS;
     while(sa_vars->err_code == IN_PROGRESS) //dokud je co prekladat, prekladam
     {
-        if (!progr(sa_vars)) //todo denny upravit asi
+        if (!progr(sa_vars))
         {
             if (sa_vars->err_code == IN_PROGRESS) //pokud neni doplnen jiny err_code, nastala syntakticka chyba
             {
@@ -263,7 +263,7 @@ bool progr(TSynCommon *sa_vars)
            return nt_assignment(sa_vars);
        }
        else if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
-       { //TODO hrozi zatim nedefinovane fce
+       {
            buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
            buffer_push_bottom(sa_vars->buffer, token, sa_vars);
            return nt_expression(sa_vars);
@@ -280,7 +280,7 @@ bool progr(TSynCommon *sa_vars)
         if(symtab_find(sa_vars->ts_fun, token->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
             buffer_push_bottom(sa_vars->buffer, token, sa_vars);
-            return false; //TODO denny mozna to neni chyba
+            return false;
         }
         else
         {
@@ -307,8 +307,8 @@ bool nt_deffunc(TSynCommon *sa_vars)
         return false;
 
     if(t1->type == ID_FCE || t1->type == ID_2)
-    {   //todo denny nemel bych vzdy prochazet vsechny i lokalni TS?
-        if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL && symtab_find(sa_vars->local_tables->bottom->data, t1->attribute) == NULL) //pokud jeste takove ID neexistuje
+    {
+        if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL && !is_in_local_symtabs(sa_vars, t1->attribute)) // symtab_find(sa_vars->local_tables->bottom->data, t1->attribute) == NULL) //pokud jeste takove ID neexistuje
         {
             symtab_edit_add(sa_vars->ts_fun, t1->attribute, true, NOBODY_CARES);
             TS_push(sa_vars->local_tables, symtab_init(TS_SIZE)); //vytvorim novou lokalni TS pro telo fce
@@ -395,15 +395,9 @@ bool nt_deffunc(TSynCommon *sa_vars)
             if (t1->type != KEY_END)
                 return false;
 
-            //*****ZACATEK TVORBY KODU **************************************/
-
-
-            //tac_defmove_const(sa_vars->tac_list, op_nil, op_nil_const, sa_vars->gc);
             tac_return(sa_vars->tac_list, sa_vars->ret, label, sa_vars->gc);
-            //******KONEC TVORBY KODU****************************************/
 
-            //todo denny - muzu ji zahodit? nemel bych je nekde spis skladovat kvuli kolizi ID lokalni promenne a fce..
-            TS_push(sa_vars->symtabs_bin, TS_pop(sa_vars->local_tables));
+            TS_push(sa_vars->symtabs_bin, TS_pop(sa_vars->local_tables)); //lokalni tabulku "hodim do kose", kam se pak divam kvuli kolizi nazvu promenne a fce
 
             if (!nt_eolf(sa_vars))
                 return false;
@@ -412,6 +406,7 @@ bool nt_deffunc(TSynCommon *sa_vars)
         }
         else
         {
+            sa_vars->err_code = ERR_SEM_MISC;
             return false;
         }
     }
@@ -564,7 +559,7 @@ bool nt_cycl(TSynCommon *sa_vars)       //cycl -> WHILE EXPR  DO EOL bodywhif EN
 bool nt_eolf(TSynCommon *sa_vars)
 {
     Ttoken *t1 = get_next_token(sa_vars);
-    if((t1->type == EOL_1)) //EOF NEBO EOL
+    if(t1->type == EOL_1) //EOF NEBO EOL
     {
         return true;
     }
@@ -807,6 +802,7 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
 
     if(!savo(sa_vars))
     {
+        sa_vars->dest = backup; //vracim do vychoziho stavu
         return false;
     }
     sa_vars->dest = backup; //vracim do vychoziho stavu
@@ -850,6 +846,7 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         if(!savo(sa_vars))
         {
             buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
+            sa_vars->dest = backup; //vracim do vychoziho stavu
             return false;
         }
         sa_vars->dest = backup; //vracim do vychoziho stavu
@@ -967,7 +964,7 @@ bool nt_assignment(TSynCommon *sa_vars)
             {
                 if(sa_vars->ret != NULL)
                     tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest, sa_vars->gc); //navratovou hodnotu z fce/vyrazu, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
-                    sa_vars->dest = NULL;
+                sa_vars->dest = NULL;
                 return true;
             }
             else
@@ -1130,19 +1127,7 @@ bool nt_callfce(TSynCommon *sa_vars)
         sa_vars->err_code = ERR_SEM_DEF;
         return false;
     }
-    //todo denny poresit volitelne zavorky
-//////////
-/*
-    Ttoken *t2 = get_next_token(sa_vars);
-    if(!err_check(t2, sa_vars))
-        return false;
-    bool brackets = true;
-    if(t2->type != LEFT_BRACKET) //zkusim sezrat levou zavorku a zavolat to znovu
-    {
-        brackets = false;
-        buffer_push_bottom(sa_vars->buffer, t2);
-    }*/
-//////////////
+
     long num_of_args = 0; //pocitadlo argumentu pro overeni s TS
     if(!nt_args(sa_vars, &num_of_args)) //nepovedlo se, zkusim tedy jestli nebyla zavorka, pokud ano, zkusim to znovu
     {
@@ -1162,19 +1147,6 @@ bool nt_callfce(TSynCommon *sa_vars)
         if(t2->type != RIGHT_BRACKET) //pokud neprisla i prava zavorka, fakt to nepujde...
             return false;
     } //muzu pokraovat normalne
-
-    ///////////
-    /*
-    if(brackets)
-    {
-        t2 = get_next_token(sa_vars);
-        if (!err_check(t2, sa_vars))
-            return false;
-
-        if (t2->type != RIGHT_BRACKET) //pokud neprisla i prava zavorka, fakt to nepujde...
-            return false;
-    }*/
-    //////////////
 
     if(!check_num_of_params(sa_vars->ts_fun, t1, num_of_args)) //nesedi pocet parametru s definici
     {
@@ -1302,7 +1274,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
             return nt_bodyfce(sa_vars);
         }
         else if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
-        { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
+        {
             buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
             buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_expression(sa_vars))
@@ -1327,7 +1299,7 @@ bool nt_bodyfce(TSynCommon *sa_vars)
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
             buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
-            return false; //TODO denny mozna to neni chyba
+            return false;
         }
         else
         {
@@ -1394,7 +1366,7 @@ bool nt_bodywhif(TSynCommon *sa_vars)
             return nt_bodywhif(sa_vars);
         }
         else if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //neni v TS funkci, a je vylouceno i assignment takze je to expression
-        { //TODO hrozi tady ty pitomosti kolem zatim nedefinovane fce
+        {
             buffer_push_bottom(sa_vars->buffer, look_ahead, sa_vars); //vraceni tokenu ve spravnem poradi
             buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
             if(nt_expression(sa_vars))
@@ -1419,7 +1391,7 @@ bool nt_bodywhif(TSynCommon *sa_vars)
         if(symtab_find(sa_vars->ts_fun, t1->attribute) == NULL) //pokud neni v TS funkci, tak je to chyba
         {
             buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
-            return false; //TODO denny mozna to neni chyba
+            return false;
         }
         else
         {
@@ -1597,4 +1569,24 @@ char *long_to_string(long num, Tgarbage_collector *gc)
         return NULL;
     sprintf(name, "%li", num);
     return name;
+}
+
+bool is_in_local_symtabs(TSynCommon *sa_vars, const char *key)
+{
+    TLTElem *temp = sa_vars->symtabs_bin->top; //hledam v "kosi"
+    while(temp != NULL)
+    {
+        if(symtab_find(temp->data, key) != NULL)
+            return true;
+        temp = temp->prev;
+    }
+
+    temp = sa_vars->local_tables->top; //hledam v aktualnich lokalnich tabulkach
+    while(temp != NULL)
+    {
+        if(symtab_find(temp->data, key) != NULL)
+            return true;
+        temp = temp->prev;
+    }
+    return false; //nenasel jsem
 }
