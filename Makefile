@@ -38,4 +38,4 @@ clean:
 	rm -f *.o main
 
 test:
-    python3 test.py --fast=true
+	python3 test.py --fast=true
