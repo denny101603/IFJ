@@ -10,11 +10,10 @@
 ***************************************/
 /**
 *	@file seman.h
-*	@author Matěj Jelínek, Jan Beran
+*	@author Matěj Jelínek, Jan Beran, Daniel Bubenicek
 *	@brief knihovna pro potreby semantickeho generatoru
- *	v1.2: Vsechny funkce vytvorene Janem Beranem otestovane v simulaci (nemam semanticky generator, ktery by je otestoval naostro).
- *	      V simulovanych testech vsechno fungovalo dobre.
 */
+
 #ifndef PROJECT_IFJCODE_H
 #define PROJECT_IFJCODE_H
 
@@ -22,7 +21,6 @@ typedef struct gc Tgarbage_collector;
 
 #include <stdlib.h>
 #include <stdbool.h>
-//#include "garbage_collector.h"
 
 #define MAX_NAMES 6 //do struktury TThreeAC
 /**
@@ -120,17 +118,6 @@ void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted);
 void TAC_insert(TTacList *list, TThreeAC *inserted);
 
 /**
- * @brief Funkce odstrani prvek ZA prvek elem ze seznamu list a vrati ho.
- * @author Jan Beran
- * @param list ukazatel na seznam
- * @param elem ukazatel na prvek, ZA kterým se nachází mazaný prvek
- * @return smazany prvek.
- * @note Pro mazani posledniho prvku staci parametr elem nastavit na list->last->prev.
- * @warning Touto funkci nelze mazat prvni prvek seznamu!
- */
-TThreeAC *TAC_remove_post(TTacList *list, TThreeAC *elem);
-
-/**
  * //TODO doplnit doku
  * @param list
  * @param operand
@@ -149,6 +136,7 @@ TThreeAC *TAC_remove(TTacList *list);
  * @brief Funkce kompletne smaze a dealokuje vsechny prvky seznamu list i seznam samotny, ktery nastavi na NULL.
  * @author Jan Beran
  * @param list Seznam ke smazani.
+ * @warning NEVYUZITO - ponechano pro ukazku, ze to umime
  */
 void TAC_delete_list(TTacList *list);
 
@@ -198,8 +186,6 @@ bool tac_lable(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
 bool tac_deffunc(TTacList *list, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
 bool tac_jump(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
-
-bool tac_jumpifeq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
 bool tac_jumpifneq(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Tgarbage_collector *collector);
 
@@ -287,64 +273,5 @@ enum instructions{
     STARTIF,
     ENDIF
 };
-
-bool tac_dprint(TTacList *list, Toperand *op1, Tgarbage_collector *collector);
-/*
-
-bool tac_inputi(TTacList *list, Toperand *dest);
-
-bool tac_inputs(TTacList *list, Toperand *dest);
-
-bool tac_inputf(TTacList *list, Toperand *dest);
-
-bool tac_print(TTacList *list, Ttac_buffer *buffer);
-
-bool tac_length(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_substr(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2, Ttac_buffer *buffer);
-
-bool tac_ord(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
-
-bool tac_chr(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_int2float(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_float2int(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_int2char(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_concat(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
-
-bool tac_setchar(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
-
-bool tac_isint(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_isfloat(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_isstring(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_isbool(TTacList *list, Toperand *dest, Toperand *op1);
-
-bool tac_jumpifgt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
-
-bool tac_jumpiflt(TTacList *list, Toperand *dest, Toperand *op1, Toperand *op2);
-
- bool tac_pop(TTacList *list, Toperand *dest);
-
-
-bool tac_createframe(TTacList *list);
-
-bool tac_pushframe(TTacList *list);
-
-bool tac_popframe(TTacList *list);
-
-Ttac_buffer *op_buffer_init();
-
-void op_push(Ttac_buffer *buffer, Toperand *operand);
-
-Toperand *op_pop(Ttac_buffer *buffer);
-
-void op_delete_buffer(Ttac_buffer *buffer);
-*/
 
 #endif //IFJ2018_SEMAN_H

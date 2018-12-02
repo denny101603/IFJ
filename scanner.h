@@ -15,10 +15,8 @@
  *	v1.1: opraveny chyby v komentech
 */
 
-
-
-#ifndef IFJ2018_FSM_H
-#define IFJ2018_FSM_H
+#ifndef IFJ2018_SCANNER_H
+#define IFJ2018_SCANNER_H
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -55,9 +53,6 @@ typedef struct{
 typedef struct{
     int type; //pole pro typ tokenu
     char *attribute; //pole pro atribut tokenu
-   // int t_used; //skutecna delka typu
-    //int a_used; //skutecna delka atributu
-    //int a_len; //maximalni delka atributu, pri presahu nutno realokovat
 }Ttoken;
 
 /**
@@ -169,15 +164,6 @@ int token_set_type(Ttoken *token, int token_type);
 int token_set_attribute(Ttoken *token, Tarray *arr, Tgarbage_collector *collector);
 
 /**
- *
- * @brief Uvolni token
- * @author Jan Beran
- * @param token - token k zabiti
- * @note Uvolnuje jak token, tak jeho atribut
- */
-void token_free(Ttoken *token);
-
-/**
  * @brief Zjisti typ znaku (male, velke pismeno, cislice, ostatni) (viz enum char_type)
  * @author Daniel Bubenicek
  * @param c znak
@@ -273,24 +259,4 @@ enum states {
     BOOLEAN //pro triadresnak
 };
 
-//********************************************************NASLEDUJI NEVYUZITY KOD*********************************************************************************/
-
-/**
- * @brief Funkce vraci typ tokenu
- * @author Jan Beran
- * @param in token - zdrojovy token (odkaz)
- * @return tyo tokenu (int/enum)
- */
-//int token_get_type(Ttoken *token);
-
-/**
- * @brief NON IMPLEMENTED
- * @author Jan Beran
- * @param token  - zdrojovy token
- * @warning FUNKCE NENI IMPLEMENTOVANA
- * @return
- */
-//char *token_get_attribute(Ttoken *token);
-
-
-#endif //IFJ2018_FSM_H
+#endif //IFJ2018_SCANNER_H

@@ -10,166 +10,11 @@
 *******************************/
 #include <stdio.h>
 #include "garbage_collector.h"
-#include "fsm.h"
-#include "sax.h"
+#include "scanner.h"
+#include "parser.h"
 #include "seman.h"
 #include "code_gen.h"
 #include "err_codes.h"
-
-//pomocna funkce, ke konci jde smazat nebo dat nekam do pryc
-char *enum2string(int num){
-    enum {DEFVAR,MOVE,CREATEFRAME,PUSHFRAME,POPFRAME,PUSH,POP,ADD,SUB,MUL,DIV,INPUTI,INPUTS,INPUTF,PRINT,LENGTH,SUBSTR,ORD,CHR,CALL,
-        RETURN,INT2FLOAT,FLOAT2INT,INT2CHAR,CONCAT,SETCHAR,ISINT,ISFLOAT,ISSTRING,ISBOOL,LABLE,JUMP,JUMPIFEQ,JUMPIFNEQ,JUMPIFGT,JUMPIFLT,DPRINT,
-        DEFFUNC,EQ,GT,LT,GTEQ,LTEQ,NEQ,LOADPARAM,DEFMOVE,WHILE,ENDWHILE};
-    switch (num)
-    {
-        case DEFVAR:
-            return "DEFVAR";
-            break;
-        case MOVE:
-            return "MOVE";
-            break;
-        case CREATEFRAME:
-            return "CREATEFRAME";
-            break;
-        case PUSHFRAME:
-            return "PUSHFRAME";
-            break;
-        case POPFRAME:
-            return "POPFRAME";
-            break;
-        case PUSH:
-            return "PUSH";
-            break;
-        case POP:
-            return "POP";
-            break;
-        case ADD:
-            return "ADD";
-            break;
-        case SUB:
-            return "SUB";
-            break;
-        case MUL:
-            return "MUL";
-            break;
-        case DIV:
-            return "DIV";
-            break;
-        case INPUTI:
-            return "INPUTI";
-            break;
-        case INPUTS:
-            return "INPUTS";
-            break;
-        case INPUTF:
-            return "INPUTF";
-            break;
-        case PRINT:
-            return "PRINT";
-            break;
-        case LENGTH:
-            return "LENGTH";
-            break;
-        case SUBSTR:
-            return "SUBSTR";
-            break;
-        case ORD:
-            return "ORD";
-            break;
-        case CHR:
-            return "CHR";
-            break;
-        case CALL:
-            return "CALL";
-            break;
-        case RETURN:
-            return "RETURN";
-            break;
-        case INT2FLOAT:
-            return "INT2FLOAT";
-            break;
-        case FLOAT2INT:
-            return "FLOAT2INT";
-            break;
-        case INT2CHAR:
-            return "INT2CHAR";
-            break;
-        case CONCAT:
-            return "CONCAT";
-            break;
-        case SETCHAR:
-            return "SETCHAR";
-            break;
-        case ISINT:
-            return "ISINT";
-            break;
-        case ISFLOAT:
-            return "ISFLOAT";
-            break;
-        case ISSTRING:
-            return "ISSTRING";
-            break;
-        case ISBOOL:
-            return "ISBOOL";
-            break;
-        case LABLE:
-            return "LABLE";
-            break;
-        case JUMP:
-            return "JUMP";
-            break;
-        case JUMPIFEQ:
-            return "JUMPIFEQ";
-            break;
-        case JUMPIFNEQ:
-            return "JUMPIFNEQ";
-            break;
-        case JUMPIFGT:
-            return "JUMPIFGT";
-            break;
-        case JUMPIFLT:
-            return "JUMPIFLT";
-        case DPRINT:
-            return "DPRINT";
-        case DEFFUNC:
-            return "DEFFUNC";
-            break;
-        case EQ:
-            return "EQ";
-            break;
-        case GT:
-            return "GT";
-            break;
-        case LT:
-            return "LT";
-            break;
-        case GTEQ:
-            return "GTEQ";
-            break;
-        case LTEQ:
-            return "LTEQ";
-            break;
-        case NEQ:
-            return "NEQ";
-            break;
-        case LOADPARAM:
-            return "LOADPARAM";
-            break;
-        case DEFMOVE:
-            return "DEFMOVE";
-            break;
-        case WHILE:
-            return "WHILE";
-            break;
-        case ENDWHILE:
-            return "ENDWHILE";
-
-    }
-
-}
-
-
 
 int main() {
 
@@ -179,28 +24,16 @@ int main() {
     TTacList *tac_list = TAC_init(collector);
     TSymtables_stack *symtabs_bin = (TSymtables_stack *) malloc(sizeof(TSymtables_stack)); //symtables jedou na svoje triko
     gc_add_garbage(collector,symtabs_bin );
-   /* collector->others = malloc(sizeof(Tothers));
-    collector->others->sym_stack = NULL;
-    collector->others->ts_func = NULL;
-    collector->others->sym_bin = symtabs_bin;*/
+
     TS_stack_init(symtabs_bin);
-
-    //asi zrušit??
-    /*TBuffer *tokens_backup = (TBuffer *) malloc(sizeof(TBuffer));
-    buffer_init(tokens_backup);*/
-
 
     int i = startSA(tac_list, symtabs_bin, collector);
 
     if(i == SUCCESS) //== 0
         GEN_start(tac_list, collector);
 
-   // TAC_delete_list(tac_list);
     TS_stack_free(symtabs_bin);
-    //free(symtabs_bin);
 
-   // delete_buffer(tokens_backup);
-    valar_morghulis(collector);
-
+    gc_dealloc_all(collector);
     return i;
 }

@@ -27,7 +27,7 @@ typedef struct gc{
 
 void gc_add_garbage(Tgarbage_collector *gc, void *ptr);
 
-void valar_morghulis(Tgarbage_collector *gc);
+void gc_dealloc_all(Tgarbage_collector *gc);
 
 
 #endif //IFJ2018_GARBAGE_COLLECTOR_H
