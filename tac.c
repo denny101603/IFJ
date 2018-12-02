@@ -75,20 +75,9 @@ TThreeAC *TAC_remove(TTacList *list)
 void TAC_insert_post(TTacList *list, TThreeAC *elem, TThreeAC *inserted)
 {
     //neni seznam, neni urceno, za co vkladat, neni urceno co vkladat, seznam je prazdny -> ERR
-    // (list->last == NULL netestovano, first a last jsou bud zaroven NULL nebo zaroven NULL nejsou pri pouziti fci) //todo denny, dokaz opak :)
     if(list == NULL || elem == NULL || inserted == NULL || list->first == NULL)
         return;
 
-    /* Toto je insert_post, o kterem mi denny rekl, at ho naimplementuju, aby to vzapeti poprel -_- :D
-     inserted->prev = elem->prev;
-    if(elem->prev != NULL)
-        elem->prev->next = inserted;
-    elem->prev = inserted;
-    inserted->next = elem;
-    if(elem == list->first)
-        list->first = inserted;*/
-
-/**/
     inserted->next = elem->next;
     if(elem->next != NULL)
         elem->next->prev = inserted;
