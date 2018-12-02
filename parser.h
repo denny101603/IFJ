@@ -368,11 +368,13 @@ bool check_num_of_params(Tsymbol_table *ts, Ttoken *t, long num_of_params);
 char *sax_temp_id_generator(Tgarbage_collector *gc);
 
 /**
-*	@brief z longu udela string napr. 654 -> "564"
+*	@brief z longu udela string napr. 654 -> "654"
 *	@author Daniel Bubenicek
  *	@return string, pri neuspesne alokaci NULL
 */
 char *long_to_string(long num, Tgarbage_collector *gc);
+
+bool is_in_local_symtabs(TSynCommon *sa_vars, const char *key);
 
 
 #endif //IFJ2018_PARSER_H
