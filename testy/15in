@@ -1,0 +1,11 @@
+a = "ahoj"
+i = 0
+
+max = length a
+print "delka stringu je:", max, "\n"
+while i < max do
+	b = ord a, i
+	c = chr b
+	print c, "\n"
+	i = i + 1
+end
