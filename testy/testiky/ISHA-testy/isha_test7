@@ -1,0 +1,3 @@
+#chyba missing eol po then
+i = 0
+if i > 0 then print "Slepice" end

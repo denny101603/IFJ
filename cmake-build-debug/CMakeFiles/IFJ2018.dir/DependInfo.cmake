@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/carbik/CLionProjects/IFJ/code_gen.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/code_gen.c.o"
-  "/home/carbik/CLionProjects/IFJ/fsm.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/fsm.c.o"
-  "/home/carbik/CLionProjects/IFJ/garbage_collector.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/garbage_collector.c.o"
-  "/home/carbik/CLionProjects/IFJ/main.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.o"
-  "/home/carbik/CLionProjects/IFJ/savo.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/savo.c.o"
-  "/home/carbik/CLionProjects/IFJ/sax.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/sax.c.o"
-  "/home/carbik/CLionProjects/IFJ/seman.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/seman.c.o"
-  "/home/carbik/CLionProjects/IFJ/symtable.c" "/home/carbik/CLionProjects/IFJ/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.o"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/code_gen.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/code_gen.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/garbage_collector.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/garbage_collector.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/main.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/main.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/parser.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/parser.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/parser_expr.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/parser_expr.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/scanner.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/scanner.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/symtable.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/symtable.c.obj"
+  "C:/Users/danbu/CLionProjects/ifjprojektspravny/tac.c" "C:/Users/danbu/CLionProjects/ifjprojektspravny/cmake-build-debug/CMakeFiles/IFJ2018.dir/tac.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

@@ -12,20 +12,20 @@
 /**
 *	@file code_gen.h
 *	@author Matej Jelinek, Jan Carba
-*	@brief soubor s definicemi funkci ze code_gen.h
+*	@brief soubor s definicemi funkci z code_gen.h
 */
 
 #ifndef IFJ2018_CODE_GEN_H
 #define IFJ2018_CODE_GEN_H
 
-#include "seman.h"
+#include "tac.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 
 /**
  * @brief funkce pro zacatek generovani kodu
- * @author Matej Jelinek, Jan Carba
+ * @author Matej Jelinek, Jan Carba, Daniel Bubenicek
  * @param list seznam triadresnych instrukci ke generaci kodu
  */
 void GEN_start(TTacList *list, Tgarbage_collector *collector);
@@ -52,17 +52,9 @@ void gen_move(TThreeAC *instruct);
 
 void gen_defmove_const( TThreeAC *instruct);
 
-void gen_createframe(TThreeAC *instruct);
-
-void gen_pushframe(TThreeAC *instruct);
-
-void gen_popframe(TThreeAC *instruct);
-
 void gen_loadparam(TThreeAC *instruct);
 
 void gen_push(TThreeAC *instruct);
-
-void gen_pop(TThreeAC *instruct);
 
 void gen_add(TThreeAC *instruct, Tgarbage_collector *collector);
 
@@ -76,24 +68,6 @@ void gen_call(TThreeAC *instruct);
 
 void gen_return(TThreeAC *instruct);
 
-void gen_int2float(TThreeAC *instruct);
-
-void gen_float2int(TThreeAC *instruct);
-
-void gen_int2char(TThreeAC *instruct);
-
-void gen_concat(TThreeAC *instruct);
-
-void gen_setchar(TThreeAC *instruct);
-
-void gen_isint(TThreeAC *instruct);
-
-void gen_isfloat(TThreeAC *instruct);
-
-void gen_isstring(TThreeAC *instruct);
-
-void gen_isbool(TThreeAC *instruct);
-
 void gen_lable(TThreeAC *instruct);
 
 void gen_deffunc(TThreeAC *instruct);
@@ -103,10 +77,6 @@ void gen_jump(TThreeAC *instruct);
 void gen_jumpifeq(TThreeAC *instruct, Tgarbage_collector *collector);
 
 void gen_jumpifneq(TThreeAC *instruct, Tgarbage_collector *collector);
-
-void gen_jumpifgt(TThreeAC *instruct);
-
-void gen_jumpiflt(TThreeAC *instruct);
 
 void gen_dprint(TThreeAC *instruct);
 

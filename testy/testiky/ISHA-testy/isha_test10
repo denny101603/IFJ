@@ -1,0 +1,7 @@
+def foo(a,b)
+a+b
+end
+
+a = 6
+b = 8
+c = foo a,b
