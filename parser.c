@@ -807,6 +807,7 @@ bool nt_args(TSynCommon *sa_vars, long *num_of_args)
 
     if(!savo(sa_vars))
     {
+        sa_vars->dest = backup; //vracim do vychoziho stavu
         return false;
     }
     sa_vars->dest = backup; //vracim do vychoziho stavu
@@ -850,6 +851,7 @@ bool nt_nextargs(TSynCommon *sa_vars, long *num_of_args)
         if(!savo(sa_vars))
         {
             buffer_push_bottom(sa_vars->buffer, t1, sa_vars);
+            sa_vars->dest = backup; //vracim do vychoziho stavu
             return false;
         }
         sa_vars->dest = backup; //vracim do vychoziho stavu
@@ -967,7 +969,7 @@ bool nt_assignment(TSynCommon *sa_vars)
             {
                 if(sa_vars->ret != NULL)
                     tac_move(sa_vars->tac_list, sa_vars->ret, sa_vars->dest, sa_vars->gc); //navratovou hodnotu z fce/vyrazu, ktera je v dest, ulozim do ret (pokud o to nekdo stoji)
-                    sa_vars->dest = NULL;
+                sa_vars->dest = NULL;
                 return true;
             }
             else
