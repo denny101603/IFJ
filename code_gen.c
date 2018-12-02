@@ -127,6 +127,7 @@ void pream()
     printf("DEFVAR LF@s\n");
     printf("DEFVAR LF@i\n");
     printf("DEFVAR LF@n\n");
+    printf("MOVE LF@counter int@0\n");
     printf("POPS LF@s\n");
     printf("POPS LF@i\n");
     printf("POPS LF@n\n");
