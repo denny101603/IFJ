@@ -63,7 +63,7 @@ unsigned long symtab_get_arr_size(Tsymbol_table *t);
  *	@param token_type - pro upravu/inicializaci tehoz ve strukture
 *	@return NULL pro neuspesnou alokaci jinak ukazatel na dany item (mozne dalsi upravy)
 */
-Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, long int num_of_params); //TODO denny asi upravit pro pridani celeho pripraveneho itemu
+Tsymbol_table_item *symtab_edit_add(Tsymbol_table *t, char *key, bool defined, long int num_of_params);
 
 /**
 *	@brief najde a vrati item v tabulce symbolu

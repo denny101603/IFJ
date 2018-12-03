@@ -410,8 +410,6 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
                  next_state = LEX_ERROR;
                 }
                 break;
-            case KEY_WORD: //TODO by denny asi pryc, poreseno na prasaka v ID_1
-                break;
             case EOF_STATE: //DONE
                 token_set_type(token, EOF_STATE); //token ready
                 final_state = true;
@@ -834,10 +832,10 @@ Ttoken *get_token(Tarray *token_value, Tgarbage_collector *collector)
     return token;
 }//konec get_token()
 
-int arr_init(Tarray *arr, Tgarbage_collector *gc) //nepřidáváme do GC protože sigseg is coming :) řeší SAX TODO
+int arr_init(Tarray *arr) //nepřidáváme do GC
 {
     char *temp = (char *) malloc(sizeof(char) * INIT_SIZE);
-    //gc_add_garbage(gc,temp );
+
     arr->array = temp;
 
     if(arr->array == NULL)
@@ -852,7 +850,7 @@ int arr_init(Tarray *arr, Tgarbage_collector *gc) //nepřidáváme do GC protož
     return SUCCESS;
 }
 
-int arr_add_char(Tarray *arr, char c) //nepřidáváme do GC protože sigseg is coming :) řeší SAX TODO
+int arr_add_char(Tarray *arr, char c)
 {
     if(arr->lenght > arr->used) //pokud je misto
     {

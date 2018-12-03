@@ -283,22 +283,6 @@ Ttoken *pop(TStack *stack)
     return output;
 }
 
-Ttoken *pop_extended(TStack *stack, Toperand *op)
-{
-    if (stack == NULL)
-        return NULL;
-    TStackElem *temp = stack->top;
-    stack->top = stack->top->prev;
-    stack->top->next = NULL;
-    Ttoken *output = temp->data;
-
-    if(temp->operand != NULL)
-        op = temp->operand;
-
-    //free(temp); //toto free pripadne koresponduje s mallocem z push()
-    return output;
-}
-
 bool copy_buffer(TBuffer *src, TBuffer *dst, TSynCommon *sa_vars)
 {
     if(src == NULL)
@@ -334,13 +318,9 @@ Ttoken *get_token_from_elem(TStackElem *elem)
 
 void delete_stack(TStack *stack)
 {
-    TStackElem *temp = NULL;// = stack->top;
     while (stack->top != NULL)
     {
-        temp = stack->top;
         stack->top = stack->top->prev;
-        //if(temp != NULL)
-            //free(temp); //interni struktura pro stack - freeovano zde
     }
 }
 char *savo_name_generator(Tgarbage_collector *collector)

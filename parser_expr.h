@@ -79,14 +79,6 @@ bool push(TStack *stack, TStackElem *stack_elem, Ttoken *input_token, Toperand *
 Ttoken *pop(TStack *stack);
 
 /**
- * @brief Funkce popne vrchni polozku TSTackElem ze zasobniku stack a vrati hodnotu tokenu. zaroven do promenne op preda hodnotu operandu
- * @author Jan Beran
- * @param Stack zasobnik, ze ktereho bereme hodnotu
- * @param op ukazatel na operand, do ktereho davame hodnotu operandu
- * @return Popnuty token.
- */
-Ttoken *pop_extended(TStack *stack, Toperand *op);
-/**
  * @brief Funkce vymaze zasobnik vcetne prvni polozky.
  * @author Jan Beran
  * @param stack Zasobnik k vymazani.

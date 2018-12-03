@@ -70,7 +70,7 @@ Ttoken *get_token(Tarray *arr, Tgarbage_collector *collector);
 *	@param[in, out] arr – pole k inicializaci
 *	@return SUCCES nebo ERR_INTERNAL pro neuspesnou alokaci
 */
-int arr_init(Tarray *arr, Tgarbage_collector *gc);
+int arr_init(Tarray *arr);
 
 /**
 *	@brief Pridani znaku do pole arr (hlida presahnuti lenght a pripadne realokuje na vetsi)
@@ -219,12 +219,12 @@ enum states {
     BLOCK_COMMENT_0,
     BLOCK_COMMENT_1,
     BLOCK_COMMENT_2,
-    BLOCK_COMMMENT_3, //TODO vyplati se to opravovat?
+    BLOCK_COMMMENT_3,
     ONE_LINE_COMMENT,
     ID_0,
     ID_1,
     ID_2,
-    ID_FCE, //todo denny udelat ve skeneru (zatim vzdy vraci id_2)
+    ID_FCE,
     KEY_WORD,
     EOF_STATE,
     STRING_0,
